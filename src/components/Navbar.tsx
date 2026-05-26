@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: "/#sencillito", label: "Punto Sencillito" },
   { href: "/#equipos", label: "Equipos" },
   { href: "/#casos", label: "Casos" },
+  { href: "/contacto", label: "Contacto" },
 ];
 
 export default function Navbar() {

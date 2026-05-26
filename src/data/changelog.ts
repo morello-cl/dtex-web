@@ -20,6 +20,23 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.6.0",
+    date: "2026-05-26",
+    summary: "Nueva página de contacto con formulario.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Página de contacto en /contacto con formulario para escribirnos sin salir del sitio. Los mensajes llegan directo al correo comercial y respondemos en horario hábil.",
+      },
+      {
+        type: "added",
+        description:
+          "Acceso directo a Contacto desde el menú principal y desde el pie del sitio.",
+      },
+    ],
+  },
+  {
     version: "0.5.1",
     date: "2026-05-26",
     summary: "Mejoras de accesibilidad detectadas por Lighthouse.",

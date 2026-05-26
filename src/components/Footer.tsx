@@ -59,6 +59,11 @@ export default function Footer() {
           </h3>
           <ul className="space-y-2 text-sm text-muted">
             <li>
+              <Link href="/contacto" className="hover:text-brand-700">
+                Formulario de contacto
+              </Link>
+            </li>
+            <li>
               <a
                 href={whatsappLink("info")}
                 target="_blank"

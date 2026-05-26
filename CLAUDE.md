@@ -65,6 +65,18 @@ magick dtex-logo.jpg -crop 1254x680+0+250 +repage -fuzz 10% -transparent white -
 - `themeColor` va en `export const viewport` (no en `metadata`).
 - Imágenes locales se sirven con `next/image` con `width`/`height` explícitos.
 
+## Formulario de contacto (/contacto)
+
+- Página: `src/app/contacto/page.tsx`. Formulario en `src/components/ContactForm.tsx` (client, `useActionState`).
+- Server Action: `src/lib/contact.ts` → `sendContactEmail`. Envía vía **Resend**.
+- Remitente: `no-reply@mail.dtex.cl` (dominio verificado en Resend = `mail.dtex.cl`, **no** `dtex.cl`).
+- Destinatario: `ventas@dtex.cl` por defecto (override con env `CONTACT_TO`).
+- Anti-spam: honeypot oculto `name="website"` + validación server-side.
+- Variables de entorno:
+  - `RESEND_API_KEY` — **obligatoria**, sin ella el form responde con error visible.
+  - `CONTACT_TO` — opcional, override del destinatario (default `ventas@dtex.cl`).
+  - `CONTACT_FROM` — opcional, override del remitente (default `DTEx® Web <no-reply@mail.dtex.cl>`). Debe estar en un dominio verificado en Resend.
+
 ## Pendientes conocidos (datos provisionales en `src/lib/site.ts`)
 - URLs de redes sociales (`social.instagram`, `linkedin`, `facebook`) son placeholders.
 - Logos reales de comercios/distribuidores en la sección Clientes (`Clientes.tsx`) están como nombres-placeholder + LogoMark SVG genérico.
