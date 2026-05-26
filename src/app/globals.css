@@ -19,9 +19,9 @@
   --brand-800: #07204f;
   --brand-900: #03132e;
 
-  --accent-400: #4ddfc4;
-  --accent-500: #21c1a6;
-  --accent-600: #129a87;
+  --accent-400: #3ec5ad;
+  --accent-500: #0a7b69;
+  --accent-600: #065a4d;
 }
 
 @theme inline {
@@ -100,7 +100,7 @@ body {
     ),
     radial-gradient(
       900px 500px at 90% 10%,
-      rgba(33, 193, 166, 0.18),
+      rgba(10, 123, 105, 0.20),
       transparent 60%
     ),
     linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%);

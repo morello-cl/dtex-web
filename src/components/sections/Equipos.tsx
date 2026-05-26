@@ -212,7 +212,7 @@ function DeviceIllustration({ variant }: { variant: number }) {
 
         <defs>
           <linearGradient id="sunmi-p3-screen" x1="0" y1="0" x2="1" y2="1">
-            <stop stopColor="#4ddfc4" />
+            <stop stopColor="#3ec5ad" />
             <stop offset="1" stopColor="#143f95" />
           </linearGradient>
         </defs>

@@ -21,9 +21,9 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="mb-3 text-sm font-semibold text-foreground">
+          <h3 className="mb-3 text-sm font-semibold text-foreground">
             Producto
-          </h4>
+          </h3>
           <ul className="space-y-2 text-sm text-muted">
             <li>
               <Link href="/#beneficios" className="hover:text-brand-700">
@@ -54,9 +54,9 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="mb-3 text-sm font-semibold text-foreground">
+          <h3 className="mb-3 text-sm font-semibold text-foreground">
             Contacto
-          </h4>
+          </h3>
           <ul className="space-y-2 text-sm text-muted">
             <li>
               <a
@@ -140,9 +140,9 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="mb-3 text-sm font-semibold text-foreground">
+          <h3 className="mb-3 text-sm font-semibold text-foreground">
             Legal
-          </h4>
+          </h3>
           <ul className="space-y-2 text-sm text-muted">
             <li>
               <Link href="/privacidad" className="hover:text-brand-700">
@@ -175,7 +175,7 @@ export default function Footer() {
             <Link
               href="/changelog"
               className="inline-flex items-center gap-1 rounded-full border border-border bg-white px-2 py-0.5 font-mono text-[10px] font-semibold text-brand-700 hover:border-brand-200 hover:text-brand-800"
-              aria-label={`Ver novedades — versión ${SITE_VERSION}`}
+              aria-label={`Ver novedades — v${SITE_VERSION}`}
             >
               v{SITE_VERSION}
             </Link>

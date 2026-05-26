@@ -107,7 +107,7 @@ export default function PosDevice({ className = "" }: Props) {
 
         {/* chip card */}
         <rect x="74" y="200" width="212" height="80" rx="12" fill="rgba(255,255,255,0.08)" />
-        <rect x="86" y="216" width="28" height="20" rx="4" fill="#21c1a6" />
+        <rect x="86" y="216" width="28" height="20" rx="4" fill="#0a7b69" />
         <text
           x="86"
           y="262"
@@ -121,7 +121,7 @@ export default function PosDevice({ className = "" }: Props) {
         </text>
 
         {/* botón */}
-        <rect x="74" y="296" width="212" height="44" rx="22" fill="#21c1a6" />
+        <rect x="74" y="296" width="212" height="44" rx="22" fill="#0a7b69" />
         <text
           x="180"
           y="324"

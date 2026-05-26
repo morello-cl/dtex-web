@@ -20,6 +20,28 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.5.1",
+    date: "2026-05-26",
+    summary: "Mejoras de accesibilidad detectadas por Lighthouse.",
+    changes: [
+      {
+        type: "changed",
+        description:
+          "Botones de acción principales con turquesa más oscuro para cumplir el estándar de contraste WCAG AA (texto blanco sobre turquesa).",
+      },
+      {
+        type: "fixed",
+        description:
+          "Jerarquía de encabezados del pie del sitio corregida (las columnas Producto/Contacto/Legal pasaron de h4 a h3).",
+      },
+      {
+        type: "fixed",
+        description:
+          "Descripción accesible del distintivo de versión incluye el texto visible para coincidir con lo que ven los lectores de pantalla.",
+      },
+    ],
+  },
+  {
     version: "0.5.0",
     date: "2026-05-25",
     summary: "Más SEO: datos estructurados de productos y preguntas frecuentes.",
