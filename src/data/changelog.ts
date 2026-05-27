@@ -20,6 +20,18 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.6.2",
+    date: "2026-05-26",
+    summary: "Ajuste visual del botón de envío del formulario.",
+    changes: [
+      {
+        type: "fixed",
+        description:
+          "El botón \"Enviar mensaje\" del formulario de contacto ahora se muestra siempre en una sola línea.",
+      },
+    ],
+  },
+  {
     version: "0.6.1",
     date: "2026-05-26",
     summary: "Acceso más visible al formulario y mejoras de usabilidad.",
