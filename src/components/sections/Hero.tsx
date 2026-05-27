@@ -49,6 +49,16 @@ export default function Hero() {
               Cotizar equipo
             </a>
           </div>
+          <p className="mt-3 text-xs text-muted">
+            ¿Prefieres escribir?{" "}
+            <Link
+              href="/contacto"
+              className="font-semibold text-brand-700 underline decoration-brand-200 underline-offset-2 hover:text-brand-800 hover:decoration-brand-400"
+            >
+              Usa el formulario de contacto
+            </Link>
+            .
+          </p>
 
           <p className="mt-4 text-xs text-muted">
             Al solicitar información aceptas nuestra{" "}

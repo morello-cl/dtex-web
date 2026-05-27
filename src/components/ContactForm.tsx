@@ -1,23 +1,71 @@
 "use client";
 
-import { useActionState } from "react";
-import { sendContactEmail, type ContactState } from "@/lib/contact";
+import { useActionState, useEffect, useRef } from "react";
+import Link from "next/link";
+import {
+  sendContactEmail,
+  type ContactField,
+  type ContactState,
+} from "@/lib/contact";
 
 const initialState: ContactState = { status: "idle" };
 
-const inputBase =
-  "w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-foreground placeholder:text-muted/70 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200";
+const MESSAGE_MAX = 4000;
 
-function FieldError({ msg }: { msg?: string }) {
-  if (!msg) return null;
-  return <p className="mt-1.5 text-xs font-medium text-red-600">{msg}</p>;
+// text-base en mobile (16px) evita el auto-zoom de iOS Safari al enfocar inputs.
+const inputBase =
+  "w-full rounded-xl border border-border bg-white px-4 py-3 text-base text-foreground placeholder:text-muted/70 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200 sm:text-sm";
+
+function RequiredMark() {
+  return (
+    <>
+      <span aria-hidden="true" className="text-red-600">
+        *
+      </span>
+      <span className="sr-only">(obligatorio)</span>
+    </>
+  );
 }
+
+function FieldError({ id, msg }: { id: string; msg?: string }) {
+  if (!msg) return null;
+  return (
+    <p
+      id={id}
+      role="alert"
+      className="mt-1.5 text-xs font-medium text-red-600"
+    >
+      {msg}
+    </p>
+  );
+}
+
+const FIELD_ORDER: ContactField[] = [
+  "nombre",
+  "email",
+  "telefono",
+  "empresa",
+  "ciudad",
+  "mensaje",
+];
 
 export default function ContactForm() {
   const [state, formAction, pending] = useActionState(
     sendContactEmail,
     initialState,
   );
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Mueve el foco al primer campo con error tras un submit fallido.
+  useEffect(() => {
+    if (state.status !== "error" || !state.fieldErrors) return;
+    const firstErrorField = FIELD_ORDER.find((f) => state.fieldErrors?.[f]);
+    if (!firstErrorField) return;
+    const el = formRef.current?.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+      `[name="${firstErrorField}"]`,
+    );
+    el?.focus();
+  }, [state]);
 
   if (state.status === "success") {
     return (
@@ -47,11 +95,21 @@ export default function ContactForm() {
     );
   }
 
-  const fieldErrors =
-    state.status === "error" ? state.fieldErrors ?? {} : {};
+  const fieldErrors = state.status === "error" ? state.fieldErrors ?? {} : {};
+  const values = state.status === "error" ? state.values : undefined;
 
   return (
-    <form action={formAction} noValidate className="space-y-5">
+    <form
+      ref={formRef}
+      action={formAction}
+      noValidate
+      aria-busy={pending}
+      className="space-y-5"
+    >
+      <p className="text-xs text-muted">
+        Los campos marcados con <span aria-hidden="true">*</span> son obligatorios.
+      </p>
+
       {state.status === "error" && !state.fieldErrors && (
         <div
           role="alert"
@@ -67,22 +125,22 @@ export default function ContactForm() {
             htmlFor="nombre"
             className="mb-1.5 block text-sm font-semibold text-foreground"
           >
-            Nombre <span className="text-red-600">*</span>
+            Nombre <RequiredMark />
           </label>
           <input
             id="nombre"
             name="nombre"
             type="text"
             required
+            aria-required="true"
             autoComplete="name"
+            defaultValue={values?.nombre}
             aria-invalid={!!fieldErrors.nombre}
             aria-describedby={fieldErrors.nombre ? "nombre-error" : undefined}
             className={inputBase}
             placeholder="María Pérez"
           />
-          <span id="nombre-error">
-            <FieldError msg={fieldErrors.nombre} />
-          </span>
+          <FieldError id="nombre-error" msg={fieldErrors.nombre} />
         </div>
 
         <div>
@@ -90,22 +148,22 @@ export default function ContactForm() {
             htmlFor="email"
             className="mb-1.5 block text-sm font-semibold text-foreground"
           >
-            Email <span className="text-red-600">*</span>
+            Email <RequiredMark />
           </label>
           <input
             id="email"
             name="email"
             type="email"
             required
+            aria-required="true"
             autoComplete="email"
+            defaultValue={values?.email}
             aria-invalid={!!fieldErrors.email}
             aria-describedby={fieldErrors.email ? "email-error" : undefined}
             className={inputBase}
             placeholder="tu@empresa.cl"
           />
-          <span id="email-error">
-            <FieldError msg={fieldErrors.email} />
-          </span>
+          <FieldError id="email-error" msg={fieldErrors.email} />
         </div>
 
         <div>
@@ -120,6 +178,7 @@ export default function ContactForm() {
             name="telefono"
             type="tel"
             autoComplete="tel"
+            defaultValue={values?.telefono}
             className={inputBase}
             placeholder="+56 9 1234 5678"
           />
@@ -137,6 +196,7 @@ export default function ContactForm() {
             name="empresa"
             type="text"
             autoComplete="organization"
+            defaultValue={values?.empresa}
             className={inputBase}
             placeholder="Mini-market La Esquina"
           />
@@ -154,6 +214,7 @@ export default function ContactForm() {
             name="ciudad"
             type="text"
             autoComplete="address-level2"
+            defaultValue={values?.ciudad}
             className={inputBase}
             placeholder="Villarrica"
           />
@@ -164,26 +225,29 @@ export default function ContactForm() {
             htmlFor="mensaje"
             className="mb-1.5 block text-sm font-semibold text-foreground"
           >
-            ¿En qué te ayudamos? <span className="text-red-600">*</span>
+            ¿En qué te ayudamos? <RequiredMark />
           </label>
           <textarea
             id="mensaje"
             name="mensaje"
             required
+            aria-required="true"
             rows={5}
+            maxLength={MESSAGE_MAX}
+            defaultValue={values?.mensaje}
             aria-invalid={!!fieldErrors.mensaje}
             aria-describedby={fieldErrors.mensaje ? "mensaje-error" : undefined}
             className={`${inputBase} resize-y`}
             placeholder="Cuéntanos sobre tu comercio y qué necesitas (POS, recargas, Sencillito®, etc.)"
           />
-          <span id="mensaje-error">
-            <FieldError msg={fieldErrors.mensaje} />
-          </span>
+          <FieldError id="mensaje-error" msg={fieldErrors.mensaje} />
         </div>
       </div>
 
-      {/* Honeypot anti-spam: invisible para humanos. */}
-      <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+      {/* Honeypot anti-spam: oculto visualmente con sr-only, sigue accesible al
+          DOM para que los bots lo completen. tabIndex=-1 + aria-hidden lo
+          mantienen fuera del flujo para humanos y lectores de pantalla. */}
+      <div className="sr-only" aria-hidden="true">
         <label htmlFor="website">No completar este campo</label>
         <input
           id="website"
@@ -194,51 +258,56 @@ export default function ContactForm() {
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-700 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-brand-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-      >
-        {pending ? (
-          <>
-            <svg
-              className="animate-spin"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="9"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeOpacity="0.25"
-              />
-              <path
-                d="M21 12a9 9 0 0 0-9-9"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-            </svg>
-            Enviando…
-          </>
-        ) : (
-          "Enviar mensaje"
-        )}
-      </button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+        <button
+          type="submit"
+          disabled={pending}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-700 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-brand-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        >
+          {pending ? (
+            <>
+              <svg
+                className="animate-spin"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeOpacity="0.25"
+                />
+                <path
+                  d="M21 12a9 9 0 0 0-9-9"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+              Enviando…
+            </>
+          ) : (
+            "Enviar mensaje"
+          )}
+        </button>
+        <p className="text-xs text-muted">
+          Te respondemos en horario hábil (Lun–Vie 9–18 hrs).
+        </p>
+      </div>
 
       <p className="text-xs text-muted">
         Al enviar aceptas nuestra{" "}
-        <a
+        <Link
           href="/privacidad"
           className="underline decoration-brand-200 underline-offset-2 hover:text-brand-700"
         >
           Política de Privacidad
-        </a>
+        </Link>
         .
       </p>
     </form>

@@ -3,12 +3,25 @@
 import { Resend } from "resend";
 import { site } from "./site";
 
+export type ContactField =
+  | "nombre"
+  | "email"
+  | "telefono"
+  | "empresa"
+  | "ciudad"
+  | "mensaje";
+
+export type ContactValues = Record<ContactField, string>;
+
 export type ContactState =
   | { status: "idle" }
   | { status: "success" }
-  | { status: "error"; message: string; fieldErrors?: Partial<Record<ContactField, string>> };
-
-type ContactField = "nombre" | "email" | "telefono" | "empresa" | "ciudad" | "mensaje";
+  | {
+      status: "error";
+      message: string;
+      fieldErrors?: Partial<Record<ContactField, string>>;
+      values: ContactValues;
+    };
 
 const FROM = process.env.CONTACT_FROM ?? "DTEx® Web <no-reply@mail.dtex.cl>";
 const TO = process.env.CONTACT_TO ?? site.email;
@@ -54,6 +67,7 @@ export async function sendContactEmail(
       status: "error",
       message: "Revisa los campos marcados.",
       fieldErrors,
+      values: data,
     };
   }
 
@@ -64,6 +78,7 @@ export async function sendContactEmail(
       status: "error",
       message:
         "No pudimos enviar tu mensaje. Escríbenos directo a " + site.email + ".",
+      values: data,
     };
   }
 
@@ -117,6 +132,7 @@ export async function sendContactEmail(
           "No pudimos enviar tu mensaje. Inténtalo de nuevo o escríbenos a " +
           site.email +
           ".",
+        values: data,
       };
     }
 
@@ -129,6 +145,7 @@ export async function sendContactEmail(
         "No pudimos enviar tu mensaje. Inténtalo de nuevo o escríbenos a " +
         site.email +
         ".",
+      values: data,
     };
   }
 }

@@ -20,6 +20,38 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.6.1",
+    date: "2026-05-26",
+    summary: "Acceso más visible al formulario y mejoras de usabilidad.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Acceso al formulario de contacto desde el botón principal de inicio y desde el llamado final de la página.",
+      },
+      {
+        type: "changed",
+        description:
+          "El formulario ahora conserva lo que escribiste si hay un error al enviar, no necesitas volver a tipear nada.",
+      },
+      {
+        type: "changed",
+        description:
+          "Inputs del formulario en tamaño más cómodo para evitar el zoom automático al tocarlos en iPhone.",
+      },
+      {
+        type: "changed",
+        description:
+          "Mensajes de error y campos obligatorios mejor anunciados para lectores de pantalla, y el foco salta automáticamente al primer campo con problema.",
+      },
+      {
+        type: "added",
+        description:
+          "Texto que indica el horario de respuesta junto al botón de envío.",
+      },
+    ],
+  },
+  {
     version: "0.6.0",
     date: "2026-05-26",
     summary: "Nueva página de contacto con formulario.",

@@ -15,7 +15,7 @@ export default function CtaFinal() {
             Conversemos hoy. Te ayudamos a elegir el equipo y activar todas las
             funcionalidades en minutos.
           </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
             <a
               href={whatsappLink("info")}
               target="_blank"
@@ -41,6 +41,16 @@ export default function CtaFinal() {
               Activar Punto Sencillito®
             </a>
           </div>
+          <p className="mt-5 text-sm text-muted">
+            ¿Prefieres escribir?{" "}
+            <Link
+              href="/contacto"
+              className="font-semibold text-brand-700 underline decoration-brand-200 underline-offset-2 hover:text-brand-800 hover:decoration-brand-400"
+            >
+              Usa el formulario de contacto
+            </Link>
+            .
+          </p>
           <p className="mt-6 text-xs text-muted">
             Al contactarnos aceptas nuestra{" "}
             <Link
