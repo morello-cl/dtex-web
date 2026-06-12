@@ -20,6 +20,29 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.7.0",
+    date: "2026-06-11",
+    summary:
+      "Nueva página para inscribir comercios y anuncio de soporte multi-idioma.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Nueva página /comercios para inscribir tu negocio en la red DTEx®. Completa los datos de la empresa y del representante legal en dos pasos guiados y te contactamos para coordinar la activación.",
+      },
+      {
+        type: "added",
+        description:
+          "DTEx® ya está disponible en español, portugués e inglés. Soporte para chino próximamente — visible en la sección de beneficios.",
+      },
+      {
+        type: "changed",
+        description:
+          "Por seguridad, la Clave SII y los datos bancarios para abonos ya no se solicitan por formulario web. Los coordinamos contigo por canal seguro durante el onboarding.",
+      },
+    ],
+  },
+  {
     version: "0.6.2",
     date: "2026-05-26",
     summary: "Ajuste visual del botón de envío del formulario.",

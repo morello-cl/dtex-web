@@ -89,8 +89,53 @@ export default function Beneficios() {
             </Reveal>
           ))}
         </ul>
+
+        <Reveal delay={120}>
+          <div className="mt-10 rounded-2xl border border-border bg-surface p-6 sm:p-7">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
+              <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                <IconGlobe />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold tracking-tight">
+                  Disponible en múltiples idiomas
+                </h3>
+                <p className="mt-1.5 text-sm text-muted">
+                  Tu equipo puede operar en español, portugués e inglés.
+                  Soporte para chino (中文) próximamente.
+                </p>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  <LangBadge>Español</LangBadge>
+                  <LangBadge>Português</LangBadge>
+                  <LangBadge>English</LangBadge>
+                  <LangBadge soon>中文 · Próximamente</LangBadge>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </div>
     </section>
+  );
+}
+
+function LangBadge({
+  children,
+  soon = false,
+}: {
+  children: ReactNode;
+  soon?: boolean;
+}) {
+  return (
+    <li
+      className={
+        soon
+          ? "inline-flex items-center rounded-full border border-dashed border-brand-200 px-3 py-1 text-xs font-medium text-brand-700"
+          : "inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700"
+      }
+    >
+      {children}
+    </li>
   );
 }
 
@@ -185,6 +230,15 @@ function IconPos() {
       <rect x="6" y="2.5" width="12" height="16" rx="2" />
       <path d="M9 6h6M9 10h6" />
       <path d="M4 19h16v2H4z" />
+    </IconBase>
+  );
+}
+function IconGlobe() {
+  return (
+    <IconBase>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
     </IconBase>
   );
 }
