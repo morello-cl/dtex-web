@@ -45,7 +45,7 @@ const REDES: Red[] = [
     logoH: 80,
     tipo: "Adquirencia + terminal",
     equipo: "Súper Compraquí",
-    desc: "Cobra y emite la boleta en el mismo equipo, con abono directo a tu cuenta BancoEstado.",
+    desc: "Podrás cobrar y emitir la boleta en el mismo equipo, con abono directo a tu cuenta BancoEstado.",
     alto: "h-9",
   },
   {
@@ -55,7 +55,7 @@ const REDES: Red[] = [
     logoH: 74,
     tipo: "Adquirencia + terminal",
     equipo: "Point Smart",
-    desc: "Cobra con tarjeta y QR, con abono inmediato a tu cuenta de Mercado Pago.",
+    desc: "Podrás cobrar con tarjeta y QR, con abono inmediato a tu cuenta de Mercado Pago.",
     alto: "h-8",
   },
   {
@@ -65,7 +65,7 @@ const REDES: Red[] = [
     logoH: 84,
     tipo: "Adquirencia + terminal",
     equipo: "Nexgo N86 Pro",
-    desc: "Suma cobro presencial y online: tarjetas, QR, transferencias y pagos recurrentes en una sola integración.",
+    desc: "Sumará cobro presencial y online: tarjetas, QR, transferencias y pagos recurrentes en una sola integración.",
     alto: "h-6",
   },
   {

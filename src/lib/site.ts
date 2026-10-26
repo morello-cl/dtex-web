@@ -44,7 +44,7 @@ const WA_MESSAGES: Record<WaIntent, string> = {
   sencillito:
     "Hola DTEx®, quiero activar Punto Sencillito® en mi comercio.",
   redes:
-    "Hola DTEx®, quiero que me avisen cuando estén disponibles las nuevas redes de pago (Compraquí, Mercado Pago, VirtualPos).",
+    "Hola DTEx®, quiero que me avisen cuando estén disponibles las nuevas redes de pago (Compraquí, Mercado Pago, VirtualPos, Kushki).",
 };
 
 export function whatsappLink(intent: WaIntent = "info"): string {

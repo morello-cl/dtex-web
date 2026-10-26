@@ -356,7 +356,9 @@ public class CajaActivity extends AppCompatActivity {
     private final ActivityResultLauncher<Intent> estado = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), r -> {
                 try {
-                    JSONObject s = new JSONObject(r.getData().getStringExtra("response"));
+                    String json = r.getData() == null ? null : r.getData().getStringExtra("response");
+                    if (json == null) { /* Volver a consultar en unos segundos. */ return; }
+                    JSONObject s = new JSONObject(json);
                     switch (s.getString("stage")) {
                         case "completed": procesar(s.getJSONObject("response").toString()); break;
                         case "not_found": /* Seguro reintentar con el mismo requestId. */ break;
@@ -366,13 +368,14 @@ public class CajaActivity extends AppCompatActivity {
                 } catch (JSONException e) { /* ... */ }
             });
 
-    void cobrar(long monto) throws JSONException {
+    void cobrar(long monto, long propina, long vuelto) throws JSONException {
         requestId = UUID.randomUUID().toString();
         JSONObject request = new JSONObject()
                 .put("version", 1)
                 .put("request_id", requestId)
                 .put("amount", monto)
-                .put("tip", 0)
+                .put("tip", propina)
+                .put("cashback", vuelto)
                 .put("currency", "CLP")
                 .put("document", "cl_sii_boleta")
                 .put("print", true);
@@ -471,6 +474,7 @@ class Dtex {
     required String requestId,
     required int amount,
     int tip = 0,
+    int cashback = 0,
     String document = 'cl_sii_boleta',
     bool print = true,
   }) async {
@@ -481,6 +485,7 @@ class Dtex {
         'request_id': requestId,
         'amount': amount,
         'tip': tip,
+        'cashback': cashback,
         'currency': 'CLP',
         'document': document,
         'print': print,
@@ -577,12 +582,13 @@ import { v4 as uuid } from 'uuid';
 const { Dtex } = NativeModules;
 const DTEX = 'dev.mufin.dtex'; // TUU Pro 2: dev.mufin.dtex.tuu_pro2
 
-export async function cobrar(requestId: string, amount: number) {
+export async function cobrar(requestId: string, amount: number, tip = 0, cashback = 0) {
   const raw: string | null = await Dtex.payment(DTEX, JSON.stringify({
     version: 1,
     request_id: requestId,
     amount,
-    tip: 0,
+    tip,
+    cashback,
     currency: 'CLP',
     document: 'cl_sii_boleta',
     print: true,
