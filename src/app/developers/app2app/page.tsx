@@ -595,7 +595,8 @@ export default function App2AppPage() {
                 <>
                   El comercio exige el RUT del receptor en la boleta (esta
                   versión no lo admite), o pediste {c("cashback")} y el equipo no
-                  tiene el vuelto habilitado.
+                  tiene el vuelto habilitado (en DTEx® o en la configuración del
+                  terminal del adquirente).
                 </>,
               ],
               [

@@ -1,6 +1,6 @@
 # App2App: cobrar con tarjeta a través de DTEx®
 
-> Revisión 2026-10-26.2. Versión web: https://www.dtex.cl/developers/app2app
+> Revisión 2026-10-26.3. Versión web: https://www.dtex.cl/developers/app2app
 
 Una app Android instalada en el mismo terminal que DTEx® puede pedirle un **cobro con tarjeta**, y opcionalmente que emita e imprima el documento. DTEx® pasa al frente y abre de inmediato el cobro con el adquirente configurado en el equipo; el cajero confirma o cancela en la pantalla del adquirente. Al terminar, DTEx® devuelve el resultado y la app que llamó vuelve al frente.
 
@@ -110,7 +110,7 @@ DTEx® siempre responde `RESULT_OK` con el extra `response`, un JSON. Solo vas a
 | `MERCHANT_NOT_ACTIVE` | No | El comercio fue dado de baja o su validación fue rechazada; DTEx® muestra el aviso y no emite. Contacta a Mufin. DTEx® revisa el estado del comercio en la sincronización diaria; sin conexión vale el último estado guardado, así que una baja reciente puede tardar hasta la próxima sincronización. |
 | `NO_ACQUIRER` | No | El equipo no tiene cobro con tarjeta habilitado. |
 | `NO_FOLIO` | No | No hay folios para el documento pedido. |
-| `NOT_SUPPORTED` | No | El comercio exige el RUT del receptor en la boleta (esta versión no lo admite), o pediste `cashback` y el equipo no tiene el vuelto habilitado. |
+| `NOT_SUPPORTED` | No | El comercio exige el RUT del receptor en la boleta (esta versión no lo admite), o pediste `cashback` y el equipo no tiene el vuelto habilitado (en DTEx® o en la configuración del terminal del adquirente). |
 | `TERMINAL_NOT_READY` | No | El terminal de pago no está listo para cobrar (configuración del adquirente). |
 | `DECLINED` / `CANCELED` | No | El mensaje trae el detalle y el código del adquirente. |
 | `INCOMPLETE` | **Desconocido** | Ese `request_id` quedó a medias en una ejecución anterior (ver Idempotencia). |
