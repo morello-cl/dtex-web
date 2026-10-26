@@ -357,10 +357,10 @@ export default function App2AppPage() {
                   Vuelto: efectivo que el comercio le entrega al cliente y que se
                   carga a la tarjeta junto con el monto; por defecto {c("0")}.
                   En CLP debe ser un entero no negativo. Igual que la propina,
-                  no lleva impuesto y sí paga la comisión del adquirente. Solo
-                  está disponible en equipos TUU con una versión compatible de
-                  DTEx® y la opción Vuelto habilitada. Si la opción no está
-                  disponible, responde {c("NOT_SUPPORTED")} sin cobrar.
+                  no lleva impuesto y sí paga la comisión del adquirente. Está
+                  disponible con todos los adquirentes; requiere una versión
+                  compatible de DTEx® y la opción Vuelto activa en el equipo. Si
+                  no está activa, responde {c("NOT_SUPPORTED")} sin cobrar.
                 </>,
               ],
               [

@@ -27,7 +27,7 @@ export const CHANGELOG: Release[] = [
       {
         type: "added",
         description:
-          "La documentación App2App explica cómo cobrar con vuelto en equipos TUU compatibles: el cliente recibe efectivo y el monto se carga a su tarjeta junto con la compra.",
+          "La documentación App2App explica cómo cobrar con vuelto: el cliente recibe efectivo y el monto se carga a su tarjeta junto con la compra.",
       },
       {
         type: "changed",
