@@ -484,6 +484,7 @@ export default function App2AppPage() {
     "net_amount": 1260,
     "vat": 240,
     "tip": 0,
+    "cashback": 0,
     "total": 1500,
     "legal_notice": [
       "DOCUMENTO TRIBUTARIO ELECTRÓNICO",
@@ -555,7 +556,10 @@ export default function App2AppPage() {
                   …&rdquo;).
                 </>,
               ],
-              [c("amount"), "Monto del documento, sin propina ni vuelto."],
+              [
+                c("amount"),
+                "Monto del documento, sin propina ni vuelto. Es el único monto tributario.",
+              ],
               [
                 <>
                   {c("net_amount")}, {c("vat")}
@@ -567,11 +571,14 @@ export default function App2AppPage() {
               [c("exempt_amount"), "Solo boleta exenta (41)."],
               [
                 <>
-                  {c("tip")}, {c("total")}
+                  {c("tip")}, {c("cashback")}, {c("total")}
                 </>,
                 <>
-                  Propina y total pagado ({c("amount")} + {c("tip")}). El vuelto
-                  no va en el documento.
+                  Propina, vuelto en efectivo y total cargado a la tarjeta (
+                  {c("amount")} + {c("tip")} + {c("cashback")}). La propina y
+                  el vuelto se imprimen aparte, en líneas propias
+                  (&ldquo;PROPINA&rdquo;, &ldquo;VUELTO EN EFECTIVO&rdquo;),
+                  fuera de los montos tributarios.
                 </>,
               ],
               [
