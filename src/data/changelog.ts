@@ -20,6 +20,28 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.11.0",
+    date: "2026-10-26",
+    summary: "App2App: ticket electrónico y descarga de folios.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "La documentación App2App explica cómo descargar folios de ticket o boleta desde tu app, sin mostrar DTEx® en pantalla.",
+      },
+      {
+        type: "changed",
+        description:
+          "En App2App, el cobro emite un ticket electrónico cuando tu app no indica otro documento. El cajero confirma el pago directamente en la pantalla del adquirente, sin un paso previo en DTEx®.",
+      },
+      {
+        type: "changed",
+        description:
+          "La documentación App2App indica qué responde DTEx® cuando el comercio fue dado de baja.",
+      },
+    ],
+  },
+  {
     version: "0.10.0",
     date: "2026-10-26",
     summary:

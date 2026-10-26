@@ -28,6 +28,7 @@ const TOC = [
   ["estado", "Consulta de estado"],
   ["despertar", "Despertar DTEx®"],
   ["mantener-listo", "Mantener DTEx® listo"],
+  ["folios", "Descargar folios"],
   ["configuracion", "Abrir la Configuración"],
   ["activar", "Activar un equipo en caso de emergencia"],
   ["ejemplos", "Ejemplos"],
@@ -93,6 +94,7 @@ const ACCIONES: [string, string, boolean, string][] = [
   ["STATUS", "Consultar el estado de un cobro.", false, "estado"],
   ["WAKE_UP", "Preparar DTEx® antes de iniciar una venta.", false, "despertar"],
   ["KEEP_ALIVE", "Evitar que Android cierre DTEx® mientras tu app está visible.", false, "mantener-listo"],
+  ["DOWNLOAD_FOLIOS", "Descargar folios de ticket o boleta sin mostrar DTEx®.", true, "folios"],
   ["SETTINGS", "Abrir la configuración de DTEx®.", true, "configuracion"],
   ["ACTIVATE", "Asociar a un comercio un equipo sin activar.", false, "activar"],
 ];
@@ -108,7 +110,7 @@ const FLUJO: { who: string; what: ReactNode }[] = [
   },
   {
     who: "DTEx®",
-    what: "Se abre, solicita la confirmación y procesa el cobro y la boleta.",
+    what: "Abre de inmediato el cobro del adquirente; el cajero confirma ahí. Luego emite la boleta.",
   },
   {
     who: "Tu app",
@@ -246,9 +248,10 @@ export default function App2AppPage() {
           <h2 id="como-funciona">Cómo funciona</h2>
 
           <p>
-            DTEx® se abre en primer plano para que el cajero confirme el monto y
-            procesa el pago con el adquirente configurado en el equipo. Al
-            finalizar, devuelve el resultado y tu app recupera el control.
+            DTEx® pasa a primer plano y abre de inmediato el cobro con el
+            adquirente configurado en el equipo; el cajero confirma o cancela
+            en la pantalla del adquirente. Al finalizar, DTEx® devuelve el
+            resultado y tu app recupera el control.
           </p>
           <p>
             Si tu app se cierra durante la operación, usa la{" "}
@@ -346,7 +349,10 @@ export default function App2AppPage() {
               [
                 c("document"),
                 "string",
-                "Documento que genera DTEx® después del cobro (ver la tabla siguiente).",
+                <>
+                  Qué genera DTEx® después del cobro (ver la tabla siguiente);
+                  por defecto {c("ticket")}.
+                </>,
               ],
               [
                 c("print"),
@@ -372,6 +378,11 @@ export default function App2AppPage() {
                 </>,
               ],
               [
+                c("ticket"),
+                "Ticket electrónico (tipo 0). Valor por defecto.",
+                "Se emite sin imprimir.",
+              ],
+              [
                 c("cl_sii_boleta"),
                 "Boleta electrónica (tipo 39).",
                 "Se emite sin imprimir.",
@@ -384,8 +395,9 @@ export default function App2AppPage() {
             ]}
           />
           <p>
-            Si pides una boleta y el equipo no tiene folios de ese tipo, DTEx®
-            responde {c("NO_FOLIO")} <strong>antes de cobrar</strong>.
+            Si pides un ticket o una boleta y el equipo no tiene folios de ese
+            tipo, DTEx® intenta descargarlos; si no lo logra, responde{" "}
+            {c("NO_FOLIO")} <strong>antes de cobrar</strong>.
           </p>
 
           <h2 id="respuesta">Respuesta y códigos de error</h2>
@@ -437,7 +449,10 @@ export default function App2AppPage() {
               [
                 c("document"),
                 <>
-                  Con {c("APPROVED")}, si se pidió un documento y se generó.
+                  Con {c("APPROVED")}, si se pidió un documento y se generó. Con
+                  un ticket:{" "}
+                  {c('{"type": "ticket", "dte_type": 0, "folio": N, "printed": true|false}')}
+                  .
                 </>,
               ],
               [
@@ -510,11 +525,16 @@ export default function App2AppPage() {
                 "DTEx® no tiene internet ni datos del comercio guardados en el equipo.",
               ],
               [
+                c("MERCHANT_NOT_ACTIVE"),
+                <Cobro key="c" v="no" />,
+                "El comercio fue dado de baja o su validación fue rechazada; DTEx® muestra el aviso y no emite. Contacta a Mufin. DTEx® revisa el estado del comercio en la sincronización diaria; sin conexión usa el último estado guardado, así que una baja reciente puede tardar hasta la próxima sincronización.",
+              ],
+              [
                 c("NO_ACQUIRER"),
                 <Cobro key="c" v="no" />,
                 "El equipo no tiene habilitado el cobro con tarjeta.",
               ],
-              [c("NO_FOLIO"), <Cobro key="c" v="no" />, "No hay folios para la boleta pedida."],
+              [c("NO_FOLIO"), <Cobro key="c" v="no" />, "No hay folios para el documento pedido."],
               [
                 c("NOT_SUPPORTED"),
                 <Cobro key="c" v="no" />,
@@ -550,7 +570,7 @@ export default function App2AppPage() {
                 <Cobro key="c" v="yes">
                   Viene con {c("APPROVED")}
                 </Cobro>,
-                "La boleta no se pudo emitir. No repitas el cobro; emite el documento por tu cuenta.",
+                "El ticket o la boleta no se pudo emitir. No vuelvas a cobrar; emite el documento por tu cuenta.",
               ],
             ]}
           />
@@ -583,8 +603,8 @@ export default function App2AppPage() {
               de usar otro {c("request_id")}.
             </li>
             <li>
-              Si la ejecución se interrumpió mientras esperaba la confirmación
-              del cajero, no se procesó la tarjeta y DTEx® vuelve a intentarlo.
+              Si la ejecución se interrumpió antes de pedir la tarjeta (
+              {c("preparing")}), no hubo cobro y DTEx® la procesa de nuevo.
             </li>
           </ul>
 
@@ -626,8 +646,8 @@ export default function App2AppPage() {
                 <>Es seguro reintentar con el mismo {c("request_id")}.</>,
               ],
               [
-                c("awaiting_confirmation"),
-                "DTEx® muestra la solicitud y espera la confirmación del cajero.",
+                c("preparing"),
+                "DTEx® la recibió y revisa adquirente y folios antes de pedir la tarjeta.",
                 "Esperar y volver a consultar.",
               ],
               [
@@ -665,7 +685,7 @@ export default function App2AppPage() {
             head={["last_stage", "¿Hubo cobro?"]}
             rows={[
               [
-                c("awaiting_confirmation"),
+                c("preparing"),
                 <Cobro key="c" v="no">
                   Puedes reintentar con el mismo {c("request_id")}.
                 </Cobro>,
@@ -717,8 +737,9 @@ export default function App2AppPage() {
               <strong>Respuesta:</strong> {c('{"version": 1, "status": "READY"}')}
               . Si hay un cobro en curso,{" "}
               {c('{"status": "ERROR", "error_code": "BUSY", ...}')}. Si el equipo
-              no puede cobrar, {c("NOT_ACTIVATED")} o {c("NO_CONNECTION")}:
-              DTEx® queda en su pantalla de activación y devuelve el error a tu
+              no puede cobrar, {c("NOT_ACTIVATED")},{" "}
+              {c("MERCHANT_NOT_ACTIVE")} o {c("NO_CONNECTION")}: DTEx® queda en
+              la pantalla que explica el problema y devuelve el error a tu
               app sin dejar la solicitud pendiente.
             </li>
             <li>
@@ -772,8 +793,8 @@ export default function App2AppPage() {
             </li>
             <li>
               <strong>Evita llamadas repetidas:</strong> si {c("WAKE_UP")} no
-              responde {c("READY")} porque el equipo está sin activar o sin
-              conexión, espera una acción del operador antes de volver a llamar.
+              responde {c("READY")} porque el equipo está sin activar, el
+              comercio fue dado de baja o no hay conexión, espera una acción del operador antes de volver a llamar.
             </li>
             <li>
               <strong>No requiere</strong> que tu paquete esté autorizado: no
@@ -791,6 +812,59 @@ export default function App2AppPage() {
             </li>
           </ul>
           <Json title="Kotlin · KEEP_ALIVE">{KEEP_ALIVE_KT}</Json>
+
+          <h2 id="folios">Descargar folios</h2>
+          <p>
+            Tu app puede pedirle a DTEx® que descargue folios de un tipo de
+            documento (ticket electrónico, boleta o boleta exenta), por ejemplo al abrir la caja o cuando quedan pocos. DTEx®
+            descarga en segundo plano, sin pasar al frente, y responde cuántos
+            folios quedan disponibles.
+          </p>
+          <ul>
+            <li>
+              <strong>Llamada:</strong> acción{" "}
+              {c("dev.mufin.dtex.action.DOWNLOAD_FOLIOS")}, con{" "}
+              {c("startActivityForResult")} y el extra {c("request")}.
+            </li>
+            <li>
+              <strong>{c("document")}:</strong> {c("ticket")} (ticket
+              electrónico, tipo 0), {c("cl_sii_boleta")} (tipo 39) o{" "}
+              {c("cl_sii_boleta_exenta")} (tipo 41). Son los mismos nombres del
+              cobro. Cualquier otro valor responde{" "}
+              {c("INVALID_REQUEST")}.
+              <br />
+              {c("ticket")} es el más común, porque es el documento que DTEx®
+              emite por defecto en cada cobro.
+            </li>
+            <li>
+              <strong>{c("available")}:</strong> folios disponibles después de
+              descargar. Si no se entregaron folios nuevos o no hubo conexión,
+              es la cantidad que ya había en el equipo.
+            </li>
+            <li>
+              <strong>Errores:</strong> {c("NOT_AUTHORIZED")} si tu paquete no
+              está autorizado, {c("BUSY")} si DTEx® está emitiendo o cobrando, y{" "}
+              {c("NOT_ACTIVATED")}, {c("MERCHANT_NOT_ACTIVE")} o{" "}
+              {c("NO_CONNECTION")} si el equipo no puede operar.
+            </li>
+            <li>
+              <strong>Si DTEx® no está listo</strong> (cerrado o arrancando),
+              pasa al frente, arranca y descarga al llegar a la pantalla
+              principal. Con <a href="#mantener-listo">Mantener DTEx® listo</a>{" "}
+              esto no ocurre.
+            </li>
+            <li>
+              <strong>Mientras descarga</strong>, tu app sigue visible pero no
+              recibe toques. Suele tardar unos segundos.
+            </li>
+          </ul>
+          <Json title="request · DOWNLOAD_FOLIOS">{`{"version": 1, "document": "ticket"}`}</Json>
+          <Json title="response · DOWNLOAD_FOLIOS">{`{"version": 1, "status": "OK", "document": "ticket", "available": 120}`}</Json>
+          <p>
+            No hace falta llamarla antes de cada boleta: si al cobrar no hay
+            folios, DTEx® los descarga solo y, si aun así no hay, responde{" "}
+            {c("NO_FOLIO")} sin cobrar.
+          </p>
 
           <h2 id="configuracion">Abrir la Configuración de DTEx®</h2>
           <p>
@@ -827,7 +901,8 @@ export default function App2AppPage() {
             <li>
               <strong>Respuesta:</strong> {c('{"version": 1, "status": "OK"}')}.
               Errores posibles: {c("NOT_AUTHORIZED")}, {c("BUSY")} (DTEx® en
-              medio de una venta), {c("NOT_ACTIVATED")} o {c("NO_CONNECTION")}.
+              medio de una venta), {c("NOT_ACTIVATED")},{" "}
+              {c("MERCHANT_NOT_ACTIVE")} o {c("NO_CONNECTION")}.
             </li>
             <li>
               La Configuración conserva la misma protección que cuando se abre
@@ -936,7 +1011,8 @@ export default function App2AppPage() {
 
           <h2 id="autorizacion">Solicitar autorización</h2>
           <p>
-            Para cobrar y abrir la Configuración, el paquete Android debe estar
+            Para cobrar, descargar folios y abrir la Configuración, el paquete
+            Android debe estar
             autorizado y cada equipo debe tener habilitado el modo integración.
             Solicita la habilitación mediante el formulario de contacto e indica:
           </p>
