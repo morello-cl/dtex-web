@@ -20,6 +20,24 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.10.0",
+    date: "2026-10-26",
+    summary:
+      "Nueva sección para desarrolladores con la integración App2App.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Nueva sección Desarrolladores: si tienes un ERP, un sistema de restaurante o un punto de venta, ahora puedes conectarlo con DTEx®. App2App ya está documentado y permite que una app Android instalada en el mismo equipo inicie cobros con tarjeta y emita boletas. Las integraciones vía cloud y por USB están en desarrollo.",
+      },
+      {
+        type: "fixed",
+        description:
+          "La marca DTEx® ahora lleva siempre su símbolo, también en los textos que leen los lectores de pantalla y los buscadores.",
+      },
+    ],
+  },
+  {
     version: "0.9.0",
     date: "2026-10-26",
     summary: "Carga de saldo de servicios con Mercado Pago.",

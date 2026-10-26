@@ -12,7 +12,7 @@ export default function PosDevice({ className = "" }: Props) {
         xmlns="http://www.w3.org/2000/svg"
         className="h-auto w-full drop-shadow-[0_30px_60px_rgba(13,46,114,0.25)]"
         role="img"
-        aria-label="Equipo POS Android DTEx con ticket impreso"
+        aria-label="Equipo POS Android DTEx® con ticket impreso"
       >
         <defs>
           <linearGradient id="pos-body" x1="0" y1="0" x2="0" y2="1">

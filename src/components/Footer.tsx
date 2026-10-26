@@ -51,6 +51,11 @@ export default function Footer() {
                 Novedades
               </Link>
             </li>
+            <li>
+              <Link href="/developers" className="hover:text-brand-700">
+                Desarrolladores
+              </Link>
+            </li>
           </ul>
         </div>
 

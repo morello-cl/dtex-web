@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     "Comercios Chile",
     "POS Villarrica",
     "POS Araucanía",
-    "DTEx",
+    "DTEx®",
     "MUFIN",
     "Sencillito",
   ],

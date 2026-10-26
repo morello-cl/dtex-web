@@ -232,3 +232,153 @@ body {
     animation: none;
   }
 }
+
+/* Documentación técnica (/developers) sobre .legal-prose: código y tablas. */
+.legal-prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  background: var(--surface-2);
+  color: var(--brand-800);
+  overflow-wrap: anywhere;
+}
+.legal-prose pre {
+  margin: 0 0 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  background: var(--brand-900);
+  color: var(--brand-50);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+.legal-prose pre code {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+  overflow-wrap: normal;
+}
+.legal-prose .table-wrap {
+  margin: 0 0 1.25rem;
+  overflow-x: auto;
+}
+.legal-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.legal-prose th,
+.legal-prose td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+.legal-prose th {
+  font-weight: 700;
+  color: var(--brand-800);
+  background: var(--surface);
+}
+/* Primera columna = códigos/campos: nunca partirlos en dos líneas. */
+.legal-prose td:first-child {
+  white-space: nowrap;
+}
+.legal-prose td:first-child code {
+  overflow-wrap: normal;
+}
+
+/* --- Documentación /developers --- */
+:root {
+  --warn-50: #fff6e5;
+  --warn-700: #8a4b00;
+}
+.code-block {
+  margin: 0 0 1.25rem;
+}
+.code-block figcaption {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background: var(--brand-800);
+  color: var(--brand-100);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+}
+.code-block figcaption + pre {
+  border-top-left-radius: 0;
+}
+.code-block pre {
+  margin: 0;
+}
+/* ¿Hubo cobro? — el único uso de color semántico en la página. */
+.cobro {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.cobro-no {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.cobro-unknown {
+  background: var(--warn-50);
+  color: var(--warn-700);
+  box-shadow: inset 0 0 0 1px #f2c983;
+}
+.cobro-yes {
+  background: #e3f6f2;
+  color: var(--accent-600);
+}
+/* Flujo del hero: pasos unidos por una línea vertical. */
+.flow-step {
+  position: relative;
+  padding-left: 2.75rem;
+  padding-bottom: 1.5rem;
+}
+.flow-step:last-child {
+  padding-bottom: 0;
+}
+.flow-step::before {
+  content: "";
+  position: absolute;
+  left: 0.9rem;
+  top: 2rem;
+  bottom: 0.25rem;
+  width: 1px;
+  background: var(--brand-600);
+}
+.flow-step:last-child::before {
+  display: none;
+}
+.flow-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 999px;
+  background: var(--brand-700);
+  color: var(--accent-400);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.flow code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  color: var(--accent-400);
+}
+.docs-toc summary::-webkit-details-marker {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .legal-prose h2 {
+    scroll-margin-top: 6rem;
+  }
+}
