@@ -7,6 +7,7 @@ import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 import CodeTabs from "@/components/CodeTabs";
 import { site } from "@/lib/site";
 import { EXAMPLES, KEEP_ALIVE_KT } from "./examples";
+import { DOC_REVISION } from "./revision";
 
 // Fuente: docs/app2app.md del repo dtex_app2app. La sección interna
 // "Para el equipo de DTEx®" (clases, endpoints del backend) no se publica.
@@ -15,7 +16,10 @@ export const metadata: Metadata = {
   title: "App2App — Integración Android",
   description:
     "Integra una app Android con DTEx® mediante App2App v1 para iniciar cobros con tarjeta, emitir boletas electrónicas y consultar transacciones.",
-  alternates: { canonical: `${site.url}/developers/app2app` },
+  alternates: {
+    canonical: `${site.url}/developers/app2app`,
+    types: { "text/markdown": `${site.url}/developers/app2app.md` },
+  },
 };
 
 const TOC = [
@@ -177,6 +181,12 @@ export default function App2AppPage() {
                   <dd className="font-semibold text-brand-800">Versión 1</dd>
                 </div>
                 <div>
+                  <dt className="text-muted">Revisión</dt>
+                  <dd className="font-mono text-[13px] text-brand-800">
+                    {DOC_REVISION}
+                  </dd>
+                </div>
+                <div>
                   <dt className="text-muted">Paquete</dt>
                   <dd className="font-mono text-[13px] text-brand-800">
                     dev.mufin.dtex
@@ -189,6 +199,16 @@ export default function App2AppPage() {
                   </dd>
                 </div>
               </dl>
+              <p className="mt-4 text-sm text-muted">
+                ¿Usas un asistente de IA?{" "}
+                <a
+                  href="/developers/app2app.md"
+                  className="font-semibold text-brand-700 hover:text-brand-800"
+                >
+                  Abre esta documentación en Markdown
+                </a>{" "}
+                y entrégale el enlace o el archivo.
+              </p>
             </div>
 
             <ol

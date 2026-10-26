@@ -20,6 +20,23 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.13.0",
+    date: "2026-10-26",
+    summary: "Documentación App2App en Markdown para asistentes de IA.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "La documentación App2App también está disponible en Markdown, para entregársela a un asistente de IA. El sitio publica además un índice llms.txt con las páginas para desarrolladores.",
+      },
+      {
+        type: "added",
+        description:
+          "La documentación App2App muestra su número de revisión, para saber si estás leyendo la versión más reciente.",
+      },
+    ],
+  },
+  {
     version: "0.12.0",
     date: "2026-10-26",
     summary: "App2App: documentación del vuelto en el cobro con tarjeta.",
