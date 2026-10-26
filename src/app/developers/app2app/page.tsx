@@ -273,6 +273,11 @@ export default function App2AppPage() {
               {c("dev.mufin.dtex.tuu_pro2")}.
             </li>
             <li>
+              <strong>Versión compatible para usar vuelto.</strong> Antes de
+              enviar {c("cashback")}, confirma con Mufin que el equipo tiene una
+              versión compatible de DTEx® y la opción Vuelto habilitada.
+            </li>
+            <li>
               <strong>
                 Equipo en modo integración y paquete Android autorizado.
               </strong>{" "}
@@ -312,6 +317,7 @@ export default function App2AppPage() {
   "request_id": "4f1c2b9e-6a0d-4a51-9c1e-2a7b0d3e8f11",
   "amount": 1500.00,
   "tip": 0,
+  "cashback": 0,
   "currency": "CLP",
   "document": "cl_sii_boleta",
   "print": true
@@ -338,7 +344,23 @@ export default function App2AppPage() {
                 "number",
                 <>
                   Propina; por defecto {c("0")}. Se suma al monto para calcular
-                  el total del cobro.
+                  el total del cobro. En CLP debe ser un entero no negativo. No
+                  lleva impuesto: el ticket o la boleta se emiten solo por{" "}
+                  {c("amount")}. Sí paga la comisión del adquirente, con el
+                  mismo porcentaje que la venta.
+                </>,
+              ],
+              [
+                c("cashback"),
+                "number",
+                <>
+                  Vuelto: efectivo que el comercio le entrega al cliente y que se
+                  carga a la tarjeta junto con el monto; por defecto {c("0")}.
+                  En CLP debe ser un entero no negativo. Igual que la propina,
+                  no lleva impuesto y sí paga la comisión del adquirente. Solo
+                  está disponible en equipos TUU con una versión compatible de
+                  DTEx® y la opción Vuelto habilitada. Si la opción no está
+                  disponible, responde {c("NOT_SUPPORTED")} sin cobrar.
                 </>,
               ],
               [
@@ -443,7 +465,9 @@ export default function App2AppPage() {
                   adquirente que procesó el cobro: depende del equipo y de las
                   reglas de Mufin. Pueden agregarse nuevos adquirentes sin aviso.
                   Guárdalo para conciliación, pero no lo uses para determinar si
-                  hubo cobro ni lo compares con una lista fija.
+                  hubo cobro ni lo compares con una lista fija.{" "}
+                  {c("amount")} es el total cargado a la tarjeta: {c("amount")} +{" "}
+                  {c("tip")} + {c("cashback")} de la solicitud.
                 </>,
               ],
               [
@@ -494,7 +518,7 @@ export default function App2AppPage() {
               [
                 c("INVALID_AMOUNT"),
                 <Cobro key="c" v="no" />,
-                "Monto fuera de rango, no numérico o con decimales en CLP.",
+                "amount, tip o cashback no son numéricos, tienen decimales en CLP o son negativos; amount también debe estar entre 1 y 1.000.000.",
               ],
               [c("UNSUPPORTED_CURRENCY"), <Cobro key="c" v="no" />, "Moneda distinta de CLP."],
               [
@@ -538,7 +562,11 @@ export default function App2AppPage() {
               [
                 c("NOT_SUPPORTED"),
                 <Cobro key="c" v="no" />,
-                "El comercio exige el RUT del receptor en la boleta; esta versión no lo admite.",
+                <>
+                  El comercio exige el RUT del receptor en la boleta (esta
+                  versión no lo admite), o pediste {c("cashback")} y el equipo no
+                  tiene el vuelto habilitado.
+                </>,
               ],
               [
                 c("TERMINAL_NOT_READY"),
