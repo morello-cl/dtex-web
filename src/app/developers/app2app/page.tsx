@@ -423,15 +423,8 @@ export default function App2AppPage() {
                 <>{c("print")} se ignora.</>,
               ],
               [
-                c("voucher"),
-                "Comprobante del pago, sin valor tributario.",
-                <>
-                  El texto viaja en {c("voucher_text")} para que lo imprimas tú.
-                </>,
-              ],
-              [
                 c("ticket"),
-                "Ticket electrónico (tipo 0). Valor por defecto.",
+                "Ticket electrónico (tipo 0): comprobante del pago, sin valor tributario. Su número es un contador interno de DTEx®, sin validez ante el adquirente ni el SII. Valor por defecto.",
                 "Se emite sin imprimir.",
               ],
               [
@@ -507,12 +500,6 @@ export default function App2AppPage() {
                   un ticket:{" "}
                   {c('{"type": "ticket", "dte_type": 0, "folio": N, "printed": true|false}')}
                   .
-                </>,
-              ],
-              [
-                c("voucher_text"),
-                <>
-                  Con {c("APPROVED")} y {c('"document": "voucher"')}.
                 </>,
               ],
             ]}

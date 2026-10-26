@@ -1,6 +1,6 @@
 # App2App: cobrar con tarjeta a través de DTEx®
 
-> Revisión 2026-10-26.4. Versión web: https://www.dtex.cl/developers/app2app
+> Revisión 2026-10-26.5. Versión web: https://www.dtex.cl/developers/app2app
 
 Una app Android instalada en el mismo terminal que DTEx® puede pedirle un **cobro con tarjeta**, y opcionalmente que emita e imprima el documento. DTEx® pasa al frente y abre de inmediato el cobro con el adquirente configurado en el equipo; el cajero confirma o cancela en la pantalla del adquirente. Al terminar, DTEx® devuelve el resultado y la app que llamó vuelve al frente.
 
@@ -49,8 +49,7 @@ Usa la acción `dev.mufin.dtex.action.PAYMENT` con el paquete de DTEx®. El extr
 | Valor | Qué hace | Con `print: false` |
 |---|---|---|
 | `none` | Solo el cobro. Tu app emite su propio documento. | `print` se ignora. |
-| `voucher` | Comprobante del pago, sin valor tributario. | El texto viaja en `voucher_text` para que lo imprimas tú. |
-| `ticket` | Ticket electrónico (tipo 0). Valor por defecto. | Se emite sin imprimir. |
+| `ticket` | Ticket electrónico (tipo 0): comprobante del pago, sin valor tributario. Su número es un contador interno de DTEx®, sin validez ante el adquirente ni el SII. Valor por defecto. | Se emite sin imprimir. |
 | `cl_sii_boleta` | Boleta electrónica (tipo 39). | Se emite sin imprimir. |
 | `cl_sii_boleta_exenta` | Boleta exenta (tipo 41). | Se emite sin imprimir. |
 
@@ -85,7 +84,6 @@ DTEx® siempre responde `RESULT_OK` con el extra `response`, un JSON. Solo vas a
 | `error_code`, `error_message` | Cuando algo no salió bien. Puede venir junto con `APPROVED` (ver `DTE_FAILED`). |
 | `payment` | Con `APPROVED`. `acquirer` es el adquirente que procesó el cobro: depende del equipo y de las reglas de Mufin, y puede sumar valores nuevos sin aviso. Guárdalo para conciliar, pero no lo uses para decidir si hubo cobro ni lo compares con una lista fija. `amount` es el total cargado a la tarjeta: `amount` + `tip` + `cashback` de la solicitud. |
 | `document` | Con `APPROVED`, si se pidió un documento y se generó. |
-| `voucher_text` | Con `APPROVED` y `document: voucher`. |
 
 **Valores de `status`:**
 
