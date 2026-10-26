@@ -20,6 +20,34 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.8.0",
+    date: "2026-10-26",
+    summary:
+      "Identidad visual actualizada con el brand pack oficial y anuncio de Compraquí de BancoEstado.",
+    changes: [
+      {
+        type: "changed",
+        description:
+          "Logo, ícono e imagen social actualizados al nuevo brand pack oficial de DTEx®.",
+      },
+      {
+        type: "added",
+        description:
+          "Nueva sección \"Redes de pago\": DTEx® está en proceso de certificación con Compraquí de BancoEstado, Mercado Pago, VirtualPos y Kushki, para que puedas elegir con cuál cobrar sin cambiar de sistema.",
+      },
+      {
+        type: "changed",
+        description:
+          "El soporte para chino (中文) ya está disponible: tu equipo opera en español, portugués, inglés y chino.",
+      },
+      {
+        type: "changed",
+        description:
+          "Portada más corta y ordenada: los equipos POS ahora aparecen antes, los casos de comercios se leen como un solo bloque y la lista de funciones se agrupó para que sea más fácil de recorrer.",
+      },
+    ],
+  },
+  {
     version: "0.7.0",
     date: "2026-06-11",
     summary:

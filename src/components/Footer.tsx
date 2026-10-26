@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Logo from "./Logo";
 import SencillitoLogo from "./SencillitoLogo";
+import TechnologyByMufin from "./TechnologyByMufin";
 import { site, whatsappLink } from "@/lib/site";
 import { SITE_VERSION } from "@/data/changelog";
 
@@ -185,11 +186,15 @@ export default function Footer() {
               v{SITE_VERSION}
             </Link>
           </div>
-          <div className="inline-flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-brand-700">
-              Operado por
-            </span>
-            <SencillitoLogo height={18} />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+            <TechnologyByMufin height={20} />
+            <span className="hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
+            <div className="inline-flex items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-brand-700">
+                Operado por
+              </span>
+              <SencillitoLogo height={18} />
+            </div>
           </div>
         </div>
       </div>

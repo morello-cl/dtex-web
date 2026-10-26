@@ -7,6 +7,9 @@ type Benefit = {
   icon: ReactNode;
 };
 
+// 6 tarjetas, no 9: boleta+factura, cuentas+recargas y turnos+reportes son
+// pares que el comercio percibe como una sola cosa. Menos ítems del mismo peso
+// = jerarquía real, que es lo que pide el brief ("minimalista, mucho espacio").
 const BENEFITS: Benefit[] = [
   {
     title: "Pago con tarjeta",
@@ -14,34 +17,19 @@ const BENEFITS: Benefit[] = [
     icon: <IconCard />,
   },
   {
-    title: "Boleta electrónica",
-    desc: "Cumple con el SII desde el mismo equipo.",
+    title: "Boleta y factura electrónica",
+    desc: "Emite y envía documentos al SII desde el mismo equipo.",
     icon: <IconReceipt />,
   },
   {
-    title: "Factura electrónica",
-    desc: "Emite y envía facturas en segundos.",
-    icon: <IconInvoice />,
-  },
-  {
-    title: "Pago de cuentas",
-    desc: "Luz, agua, gas y más, operado por Sencillito®.",
+    title: "Cuentas y recargas",
+    desc: "Luz, agua, gas y recargas móviles, operado por Sencillito®.",
     icon: <IconBill />,
   },
   {
-    title: "Recargas electrónicas",
-    desc: "Todas las compañías móviles desde tu POS.",
-    icon: <IconPhone />,
-  },
-  {
-    title: "Cierre de turnos",
-    desc: "Cuadra cajas y turnos sin papeleo.",
+    title: "Turnos y reportes",
+    desc: "Cuadra cajas, cierra turnos y mira tus ventas del día.",
     icon: <IconShift />,
-  },
-  {
-    title: "Reportes simples",
-    desc: "Mira tus ventas del día desde el equipo.",
-    icon: <IconChart />,
   },
   {
     title: "Múltiples cajas",
@@ -101,14 +89,14 @@ export default function Beneficios() {
                   Disponible en múltiples idiomas
                 </h3>
                 <p className="mt-1.5 text-sm text-muted">
-                  Tu equipo puede operar en español, portugués e inglés.
-                  Soporte para chino (中文) próximamente.
+                  Tu equipo puede operar en español, portugués, inglés y
+                  chino (中文).
                 </p>
                 <ul className="mt-4 flex flex-wrap gap-2">
                   <LangBadge>Español</LangBadge>
                   <LangBadge>Português</LangBadge>
                   <LangBadge>English</LangBadge>
-                  <LangBadge soon>中文 · Próximamente</LangBadge>
+                  <LangBadge>中文</LangBadge>
                 </ul>
               </div>
             </div>
@@ -119,21 +107,9 @@ export default function Beneficios() {
   );
 }
 
-function LangBadge({
-  children,
-  soon = false,
-}: {
-  children: ReactNode;
-  soon?: boolean;
-}) {
+function LangBadge({ children }: { children: ReactNode }) {
   return (
-    <li
-      className={
-        soon
-          ? "inline-flex items-center rounded-full border border-dashed border-brand-200 px-3 py-1 text-xs font-medium text-brand-700"
-          : "inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700"
-      }
-    >
+    <li className="inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
       {children}
     </li>
   );
@@ -173,14 +149,6 @@ function IconReceipt() {
     </IconBase>
   );
 }
-function IconInvoice() {
-  return (
-    <IconBase>
-      <path d="M7 3h8l4 4v14H7Z" />
-      <path d="M14 3v4h4M10 12h6M10 16h6" />
-    </IconBase>
-  );
-}
 function IconBill() {
   return (
     <IconBase>
@@ -190,27 +158,11 @@ function IconBill() {
     </IconBase>
   );
 }
-function IconPhone() {
-  return (
-    <IconBase>
-      <rect x="7" y="2.5" width="10" height="19" rx="2.5" />
-      <path d="M11 18.5h2" />
-    </IconBase>
-  );
-}
 function IconShift() {
   return (
     <IconBase>
       <circle cx="12" cy="12" r="9" />
       <path d="M12 7v5l3 2" />
-    </IconBase>
-  );
-}
-function IconChart() {
-  return (
-    <IconBase>
-      <path d="M4 19h16" />
-      <path d="M7 15v-4M12 15V7M17 15v-2" />
     </IconBase>
   );
 }

@@ -7,8 +7,8 @@ import { whatsappLink } from "@/lib/site";
 
 const NAV_LINKS = [
   { href: "/#beneficios", label: "Beneficios" },
-  { href: "/#sencillito", label: "Punto Sencillito" },
   { href: "/#equipos", label: "Equipos" },
+  { href: "/#sencillito", label: "Punto Sencillito" },
   { href: "/#casos", label: "Casos" },
   { href: "/contacto", label: "Contacto" },
 ];
@@ -33,7 +33,7 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link href="/" aria-label="Inicio DTEx" className="inline-flex">
+        <Link href="/" aria-label="Inicio DTEx®" className="inline-flex">
           <Logo height={40} priority />
         </Link>
 

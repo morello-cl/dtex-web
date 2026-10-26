@@ -7,10 +7,9 @@ type Props = {
   priority?: boolean;
 };
 
-const ASPECT = 1185 / 680;
+const ASPECT = 1959 / 502;
 
-// Wordmark oficial DTEx® (WebP con fondo transparente, generado desde el
-// JPEG entregado por el cliente). Ver public/dtex-wordmark.webp.
+// Wordmark oficial DTEx® del brand pack 2026, optimizado a WebP transparente.
 export default function Logo({
   className = "",
   height = 32,
@@ -20,7 +19,7 @@ export default function Logo({
   return (
     <Image
       src="/dtex-wordmark.webp"
-      alt="DTEx — Boleta Electrónica"
+      alt="DTEx® — Pagos y servicios"
       width={width}
       height={height}
       priority={priority}

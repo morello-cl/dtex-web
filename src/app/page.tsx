@@ -6,6 +6,7 @@ import FaqJsonLd from "@/components/FaqJsonLd";
 import Hero from "@/components/sections/Hero";
 import Beneficios from "@/components/sections/Beneficios";
 import Sencillito from "@/components/sections/Sencillito";
+import Redes from "@/components/sections/Redes";
 import Equipos from "@/components/sections/Equipos";
 import Casos from "@/components/sections/Casos";
 import Clientes from "@/components/sections/Clientes";
@@ -19,12 +20,16 @@ export default function HomePage() {
       <FaqJsonLd />
       <Navbar />
       <main className="flex-1">
+        {/* Orden por prioridad comercial: primero lo que se vende hoy
+            (Equipos, Sencillito), luego la prueba social, y al final lo que
+            todavía está en certificación (las redes de pago). */}
         <Hero />
         <Beneficios />
-        <Sencillito />
         <Equipos />
+        <Sencillito />
         <Casos />
         <Clientes />
+        <Redes />
         <CtaFinal />
       </main>
       <Footer />

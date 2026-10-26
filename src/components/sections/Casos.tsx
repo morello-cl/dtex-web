@@ -45,7 +45,7 @@ const METRICS = [
 
 export default function Casos() {
   return (
-    <section id="casos" className="py-20 sm:py-28">
+    <section id="casos" className="pt-20 sm:pt-28">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">

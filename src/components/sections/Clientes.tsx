@@ -17,8 +17,10 @@ export default function Clientes() {
   const items = [...LOGOS, ...LOGOS]; // duplicado para el marquee infinito
 
   return (
+    // Cola visual de Casos, no una sección propia: ambos son prueba social y
+    // separarlos hacía leer dos bloques donde el visitante percibe uno.
     <section
-      className="border-y border-border bg-white py-16 sm:py-20"
+      className="pb-20 pt-12 sm:pb-28 sm:pt-14"
       aria-labelledby="clientes-heading"
     >
       <div className="mx-auto max-w-6xl px-5 sm:px-8">

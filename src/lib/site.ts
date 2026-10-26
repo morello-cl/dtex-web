@@ -36,13 +36,15 @@ export function formattedMufinAddress(): string {
   return `${a.streetAddress}, ${a.addressLocality}, ${a.addressRegion}, Chile`;
 }
 
-type WaIntent = "info" | "quote" | "sencillito";
+type WaIntent = "info" | "quote" | "sencillito" | "redes";
 
 const WA_MESSAGES: Record<WaIntent, string> = {
   info: "Hola DTEx®, quiero más información sobre la plataforma para mi comercio.",
   quote: "Hola DTEx®, me gustaría cotizar un equipo POS Android.",
   sencillito:
     "Hola DTEx®, quiero activar Punto Sencillito® en mi comercio.",
+  redes:
+    "Hola DTEx®, quiero que me avisen cuando estén disponibles las nuevas redes de pago (Compraquí, Mercado Pago, VirtualPos).",
 };
 
 export function whatsappLink(intent: WaIntent = "info"): string {
