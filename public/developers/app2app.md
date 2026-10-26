@@ -1,6 +1,6 @@
 # App2App: cobrar con tarjeta a través de DTEx®
 
-> Revisión 2026-10-26.7. Versión web: https://www.dtex.cl/developers/app2app
+> Revisión 2026-10-26.8. Versión web: https://www.dtex.cl/developers/app2app
 
 Una app Android instalada en el mismo terminal que DTEx® puede pedirle un **cobro con tarjeta**, y opcionalmente que emita e imprima el documento. DTEx® pasa al frente y abre de inmediato el cobro con el adquirente configurado en el equipo; el cajero confirma o cancela en la pantalla del adquirente. Al terminar, DTEx® devuelve el resultado y la app que llamó vuelve al frente.
 
@@ -10,7 +10,7 @@ Esta es la versión 1 del contrato. Todos los campos JSON van en `snake_case`.
 
 ## Requisitos
 
-- **DTEx® instalado en el mismo equipo.** El paquete es `dev.mufin.dtex`. En terminales TUU Pro 2 es `dev.mufin.dtex.tuu_pro2`.
+- **DTEx® 7.0.0 o superior, instalado en el mismo equipo.** El paquete es `dev.mufin.dtex`. En terminales TUU Pro 2 es `dev.mufin.dtex.tuu_pro2`.
 - **Equipo en modo integración y paquete de tu app autorizado.** Mufin enciende el *modo integración* en cada equipo que trabaja con tu app y autoriza tu paquete (ver [Solicitar autorización](#solicitar-autorización)). Si el equipo no está en modo integración, o tu paquete no está en la lista, DTEx® responde `NOT_AUTHORIZED`.
 - **DTEx® con permiso "Mostrar sobre otras apps"** (`SYSTEM_ALERT_WINDOW`), concedido en el equipo o por MDM. Algunos adquirentes, como Kushki ONE, dejan su pantalla encima al terminar el cobro, y sin este permiso Android no deja que DTEx® devuelva tu app al frente: la respuesta llega igual, pero recién cuando el operador vuelve a tu app.
 - **Llamar con `startActivityForResult`** o `registerForActivityResult`. DTEx® identifica tu app con `getCallingPackage()`, que solo existe cuando se pide un resultado. Una llamada con `startActivity` responde `INVALID_REQUEST`.

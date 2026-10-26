@@ -288,7 +288,7 @@ export default function App2AppPage() {
           <h2 id="requisitos">Requisitos</h2>
           <ul>
             <li>
-              <strong>DTEx® instalado en el mismo equipo.</strong> El paquete es{" "}
+              <strong>DTEx® 7.0.0 o superior, instalado en el mismo equipo.</strong> El paquete es{" "}
               {c("dev.mufin.dtex")}. En terminales TUU Pro 2 es{" "}
               {c("dev.mufin.dtex.tuu_pro2")}.
             </li>
