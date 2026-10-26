@@ -1066,6 +1066,16 @@ export default function App2AppPage() {
             que abre la Activity y devuelve el extra {c("response")}.
           </p>
           <CodeTabs tabs={EXAMPLES} />
+          <p>
+            En{" "}
+            <a href="https://github.com/morello-cl/dtex_app2app_demo">
+              github.com/morello-cl/dtex_app2app_demo
+            </a>{" "}
+            hay una app Android completa, con licencia MIT, para probar la
+            integración en un terminal: cobro, reintento, consulta de estado,{" "}
+            {c("WAKE_UP")}, {c("KEEP_ALIVE")}, activación, descarga de folios y
+            configuración.
+          </p>
 
           <h2 id="autorizacion">Solicitar autorización</h2>
           <p>

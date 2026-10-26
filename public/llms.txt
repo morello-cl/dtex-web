@@ -5,5 +5,6 @@
 ## Desarrolladores
 
 - [App2App](https://www.dtex.cl/developers/app2app.md): contrato v1 para que una app Android instalada en el mismo terminal pida cobros con tarjeta, emita ticket o boleta, consulte estados y descargue folios a través de DTEx®. Markdown completo, con ejemplos en Java, Flutter y React Native.
+- [App de ejemplo App2App](https://github.com/morello-cl/dtex_app2app_demo): app Android en Kotlin, con licencia MIT, que usa todas las acciones del contrato.
 - [Formas de integración](https://www.dtex.cl/developers): App2App (disponible); Cloud y USB (en desarrollo).
 - [Solicitar autorización](https://www.dtex.cl/contacto): para habilitar el paquete Android de tu app y el modo integración en los equipos.

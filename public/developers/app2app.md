@@ -574,6 +574,8 @@ if (r === null) {
 }
 ```
 
+En [github.com/morello-cl/dtex_app2app_demo](https://github.com/morello-cl/dtex_app2app_demo) hay una app Android completa, con licencia MIT, para probar la integración en un terminal: cobro, reintento, consulta de estado, `WAKE_UP`, `KEEP_ALIVE`, activación, descarga de folios y configuración.
+
 ## Solicitar autorización
 
 Para cobrar, descargar folios y abrir la Configuración, el paquete Android debe estar autorizado y cada equipo debe tener habilitado el modo integración. Solicita la habilitación en https://www.dtex.cl/contacto e indica:
