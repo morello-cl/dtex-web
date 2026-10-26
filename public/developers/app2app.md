@@ -1,6 +1,6 @@
 # App2App: cobrar con tarjeta a través de DTEx®
 
-> Revisión 2026-10-26.5. Versión web: https://www.dtex.cl/developers/app2app
+> Revisión 2026-10-26.6. Versión web: https://www.dtex.cl/developers/app2app
 
 Una app Android instalada en el mismo terminal que DTEx® puede pedirle un **cobro con tarjeta**, y opcionalmente que emita e imprima el documento. DTEx® pasa al frente y abre de inmediato el cobro con el adquirente configurado en el equipo; el cajero confirma o cancela en la pantalla del adquirente. Al terminar, DTEx® devuelve el resultado y la app que llamó vuelve al frente.
 
@@ -74,7 +74,32 @@ DTEx® siempre responde `RESULT_OK` con el extra `response`, un JSON. Solo vas a
     "amount": 1500,
     "currency": "CLP"
   },
-  "document": { "type": "cl_sii_boleta", "dte_type": 39, "folio": 4521, "printed": true }
+  "document": {
+    "type": "cl_sii_boleta",
+    "dte_type": 39,
+    "folio": 4521,
+    "printed": false,
+    "issued_at": "2026-10-26T13:53:33",
+    "terminal": "12345678",
+    "issuer": {
+      "rut": "76.123.456-7",
+      "business_name": "COMERCIAL EJEMPLO SPA",
+      "activity": "VENTA AL POR MENOR",
+      "address": "AV. PRINCIPAL 123, SANTIAGO",
+      "sii_office": "SANTIAGO CENTRO"
+    },
+    "amount": 1500,
+    "net_amount": 1260,
+    "vat": 240,
+    "tip": 0,
+    "total": 1500,
+    "legal_notice": [
+      "DOCUMENTO TRIBUTARIO ELECTRÓNICO",
+      "Timbre electrónico eximido en",
+      "representación impresa conforme a",
+      "Res. Ex. SII N°207 del 30.12.2025"
+    ]
+  }
 }
 ```
 
@@ -84,6 +109,21 @@ DTEx® siempre responde `RESULT_OK` con el extra `response`, un JSON. Solo vas a
 | `error_code`, `error_message` | Cuando algo no salió bien. Puede venir junto con `APPROVED` (ver `DTE_FAILED`). |
 | `payment` | Con `APPROVED`. `acquirer` es el adquirente que procesó el cobro: depende del equipo y de las reglas de Mufin, y puede sumar valores nuevos sin aviso. Guárdalo para conciliar, pero no lo uses para decidir si hubo cobro ni lo compares con una lista fija. `amount` es el total cargado a la tarjeta: `amount` + `tip` + `cashback` de la solicitud. |
 | `document` | Con `APPROVED`, si se pidió un documento y se generó. |
+
+**Imprimir la boleta en tu app.** Con `print: false`, `document` trae todo lo que lleva la representación impresa, para que tu app la imprima con su formato:
+
+| Campo de `document` | Qué es |
+|---|---|
+| `type`, `dte_type`, `folio` | Documento emitido. En el recuadro va "BOLETA ELECTRONICA" (39) o "BOLETA NO AFECTA O EXENTA ELECTRONICA" (41), con el RUT del emisor y el folio. |
+| `issued_at`, `terminal` | Fecha y hora de emisión (hora local de Chile) y TID del equipo. |
+| `issuer` | Emisor: `rut`, `business_name` (razón social), `activity` (giro), `address` y, en boletas, `sii_office` (unidad del SII, impresa como "S.I.I. - …"). |
+| `amount` | Monto del documento, sin propina ni vuelto. |
+| `net_amount`, `vat` | Solo boleta (39): neto e IVA incluidos en `amount`. |
+| `exempt_amount` | Solo boleta exenta (41). |
+| `tip`, `total` | Propina y total pagado (`amount` + `tip`). El vuelto no va en el documento. |
+| `legal_notice` | Solo boletas: el pie legal, línea por línea. Imprímelo tal cual: reemplaza al timbre electrónico (Res. Ex. SII N°207/2025). |
+
+Con `ticket` vienen los mismos campos, salvo `sii_office`, `net_amount`, `vat`, `exempt_amount` y `legal_notice`: no es un documento tributario.
 
 **Valores de `status`:**
 

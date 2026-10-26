@@ -466,7 +466,32 @@ export default function App2AppPage() {
     "amount": 1500,
     "currency": "CLP"
   },
-  "document": { "type": "cl_sii_boleta", "dte_type": 39, "folio": 4521, "printed": true }
+  "document": {
+    "type": "cl_sii_boleta",
+    "dte_type": 39,
+    "folio": 4521,
+    "printed": false,
+    "issued_at": "2026-10-26T13:53:33",
+    "terminal": "12345678",
+    "issuer": {
+      "rut": "76.123.456-7",
+      "business_name": "COMERCIAL EJEMPLO SPA",
+      "activity": "VENTA AL POR MENOR",
+      "address": "AV. PRINCIPAL 123, SANTIAGO",
+      "sii_office": "SANTIAGO CENTRO"
+    },
+    "amount": 1500,
+    "net_amount": 1260,
+    "vat": 240,
+    "tip": 0,
+    "total": 1500,
+    "legal_notice": [
+      "DOCUMENTO TRIBUTARIO ELECTRÓNICO",
+      "Timbre electrónico eximido en",
+      "representación impresa conforme a",
+      "Res. Ex. SII N°207 del 30.12.2025"
+    ]
+  }
 }`}</Json>
           <Table
             head={["Campo", "Cuándo viene"]}
@@ -496,14 +521,70 @@ export default function App2AppPage() {
               [
                 c("document"),
                 <>
-                  Con {c("APPROVED")}, si se pidió un documento y se generó. Con
-                  un ticket:{" "}
-                  {c('{"type": "ticket", "dte_type": 0, "folio": N, "printed": true|false}')}
-                  .
+                  Con {c("APPROVED")}, si se pidió un documento y se generó.
                 </>,
               ],
             ]}
           />
+          <h3>Imprimir la boleta en tu app</h3>
+          <p>
+            Con {c("print: false")}, {c("document")} trae todo lo que lleva la
+            representación impresa, para que tu app la imprima con su formato:
+          </p>
+          <Table
+            head={["Campo", "Qué es"]}
+            rows={[
+              [
+                <>
+                  {c("type")}, {c("dte_type")}, {c("folio")}
+                </>,
+                "Documento emitido. En el recuadro va \"BOLETA ELECTRONICA\" (39) o \"BOLETA NO AFECTA O EXENTA ELECTRONICA\" (41), con el RUT del emisor y el folio.",
+              ],
+              [
+                <>
+                  {c("issued_at")}, {c("terminal")}
+                </>,
+                "Fecha y hora de emisión (hora local de Chile) y TID del equipo.",
+              ],
+              [
+                c("issuer"),
+                <>
+                  Emisor: {c("rut")}, {c("business_name")} (razón social),{" "}
+                  {c("activity")} (giro), {c("address")} y, en boletas,{" "}
+                  {c("sii_office")} (unidad del SII, impresa como &ldquo;S.I.I. -
+                  …&rdquo;).
+                </>,
+              ],
+              [c("amount"), "Monto del documento, sin propina ni vuelto."],
+              [
+                <>
+                  {c("net_amount")}, {c("vat")}
+                </>,
+                <>
+                  Solo boleta (39): neto e IVA incluidos en {c("amount")}.
+                </>,
+              ],
+              [c("exempt_amount"), "Solo boleta exenta (41)."],
+              [
+                <>
+                  {c("tip")}, {c("total")}
+                </>,
+                <>
+                  Propina y total pagado ({c("amount")} + {c("tip")}). El vuelto
+                  no va en el documento.
+                </>,
+              ],
+              [
+                c("legal_notice"),
+                "Solo boletas: el pie legal, línea por línea. Imprímelo tal cual: reemplaza al timbre electrónico (Res. Ex. SII N°207/2025).",
+              ],
+            ]}
+          />
+          <p>
+            Con {c("ticket")} vienen los mismos campos, salvo {c("sii_office")},{" "}
+            {c("net_amount")}, {c("vat")}, {c("exempt_amount")} y{" "}
+            {c("legal_notice")}: no es un documento tributario.
+          </p>
           <h3>Valores de {c("status")}</h3>
           <Table
             head={["status", "Significado"]}
