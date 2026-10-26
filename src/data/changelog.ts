@@ -22,12 +22,12 @@ export const CHANGELOG: Release[] = [
   {
     version: "0.12.0",
     date: "2026-10-26",
-    summary: "App2App: vuelto en el cobro con tarjeta.",
+    summary: "App2App: documentación del vuelto en el cobro con tarjeta.",
     changes: [
       {
         type: "added",
         description:
-          "La documentación App2App explica cómo cobrar con vuelto: el cliente recibe efectivo y el monto se carga a su tarjeta junto con la compra.",
+          "La documentación App2App explica cómo cobrar con vuelto en equipos TUU compatibles: el cliente recibe efectivo y el monto se carga a su tarjeta junto con la compra.",
       },
       {
         type: "changed",
