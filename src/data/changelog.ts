@@ -20,6 +20,23 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.9.0",
+    date: "2026-10-26",
+    summary: "Carga de saldo de servicios con Mercado Pago.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Ahora puedes cargar saldo para pagos de cuentas y recargas desde el enlace que te entrega tu equipo DTEx®. Revisas el monto, el costo del servicio y el total, y pagas con Mercado Pago. DTEx® no almacena los datos de tu tarjeta.",
+      },
+      {
+        type: "added",
+        description:
+          "Páginas de resultado del pago que te indican si la carga fue aprobada, si sigue en proceso o si no se realizó, y qué hacer en cada caso.",
+      },
+    ],
+  },
+  {
     version: "0.8.0",
     date: "2026-10-26",
     summary:
