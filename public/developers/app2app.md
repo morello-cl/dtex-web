@@ -82,7 +82,7 @@ DTEx® siempre responde `RESULT_OK` con el extra `response`, un JSON. Solo vas a
     "issued_at": "2026-10-26T13:53:33",
     "terminal": "12345678",
     "issuer": {
-      "rut": "76.123.456-7",
+      "rut": "76.123.456-0",
       "business_name": "COMERCIAL EJEMPLO SPA",
       "activity": "VENTA AL POR MENOR",
       "address": "AV. PRINCIPAL 123, SANTIAGO",
@@ -270,7 +270,7 @@ override fun onStop() {
 
 Para el caso excepcional de un equipo que se instaló sin activar: tu app le indica a DTEx® a qué comercio pertenece y DTEx® lo asocia al instante.
 
-- **Llamada:** acción `dev.mufin.dtex.action.ACTIVATE`, con `startActivityForResult`. Extra `request`: `{"version": 1, "commerce_rut": "77135262-6"}` (RUT con guion y dígito verificador; con o sin puntos).
+- **Llamada:** acción `dev.mufin.dtex.action.ACTIVATE`, con `startActivityForResult`. Extra `request`: `{"version": 1, "commerce_rut": "76123456-0"}` (RUT con guion y dígito verificador; con o sin puntos).
 - **Qué hace DTEx®:** envía al backend el RUT junto con lo que el equipo sabe con certeza (serie, marca, modelo y versión de la app) y el paquete de tu app, que queda registrado. Luego repite el arranque hasta la pantalla principal.
 - **No requiere** lista autorizada ni modo integración: un equipo sin activar todavía no tiene perfil.
 - **Datos del chip:** DTEx® no los envía. Se asignan desde el dashboard.
@@ -278,7 +278,7 @@ Para el caso excepcional de un equipo que se instaló sin activar: tu app le ind
 `ACTIVATED` y `ALREADY_ACTIVE` traen el terminal y la fecha de alta del equipo:
 
 ```json
-{"version": 1, "status": "ACTIVATED", "tid": "30054774", "activated_at": "2026-10-23T13:13:30Z"}
+{"version": 1, "status": "ACTIVATED", "tid": "12345678", "activated_at": "2026-10-23T13:13:30Z"}
 ```
 
 `activated_at` va en ISO 8601 UTC y puede venir `null` si DTEx® aún no la conoce.

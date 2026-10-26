@@ -412,7 +412,7 @@ export default function ComerciosForm() {
           name="empresa_rut"
           label="RUT empresa"
           required
-          placeholder="76.123.456-7"
+          placeholder="76.123.456-0"
           autoComplete="off"
           inputMode="text"
           maxLength={12}

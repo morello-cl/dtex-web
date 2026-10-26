@@ -474,7 +474,7 @@ export default function App2AppPage() {
     "issued_at": "2026-10-26T13:53:33",
     "terminal": "12345678",
     "issuer": {
-      "rut": "76.123.456-7",
+      "rut": "76.123.456-0",
       "business_name": "COMERCIAL EJEMPLO SPA",
       "activity": "VENTA AL POR MENOR",
       "address": "AV. PRINCIPAL 123, SANTIAGO",
@@ -1046,7 +1046,7 @@ export default function App2AppPage() {
               <strong>Llamada:</strong> acción{" "}
               {c("dev.mufin.dtex.action.ACTIVATE")}, con{" "}
               {c("startActivityForResult")}. Extra {c("request")}:{" "}
-              {c('{"version": 1, "commerce_rut": "77135262-6"}')} (RUT con guion
+              {c('{"version": 1, "commerce_rut": "76123456-0"}')} (RUT con guion
               y dígito verificador; con o sin puntos).
             </li>
             <li>
@@ -1068,7 +1068,7 @@ export default function App2AppPage() {
             {c("ACTIVATED")} y {c("ALREADY_ACTIVE")} traen el terminal y la
             fecha de alta del equipo:
           </p>
-          <Json title="response · ACTIVATE">{`{"version": 1, "status": "ACTIVATED", "tid": "30054774", "activated_at": "2026-10-23T13:13:30Z"}`}</Json>
+          <Json title="response · ACTIVATE">{`{"version": 1, "status": "ACTIVATED", "tid": "12345678", "activated_at": "2026-10-23T13:13:30Z"}`}</Json>
           <p>
             {c("activated_at")} va en ISO 8601 UTC y{" "}
             <strong>puede venir {c("null")}</strong> si DTEx® aún no la conoce.
