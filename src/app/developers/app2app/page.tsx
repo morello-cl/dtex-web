@@ -310,6 +310,16 @@ export default function App2AppPage() {
             </li>
             <li>
               <strong>
+                DTEx® con permiso &ldquo;Mostrar sobre otras apps&rdquo;
+              </strong>{" "}
+              ({c("SYSTEM_ALERT_WINDOW")}), concedido en el equipo o por MDM.
+              Algunos adquirentes, como Kushki ONE, dejan su pantalla encima al
+              terminar el cobro, y sin este permiso Android no deja que DTEx®
+              devuelva tu app al frente: la respuesta llega igual, pero recién
+              cuando el operador vuelve a tu app.
+            </li>
+            <li>
+              <strong>
                 Llamar con {c("startActivityForResult")} o{" "}
                 {c("registerForActivityResult")}.
               </strong>{" "}
