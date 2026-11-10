@@ -115,12 +115,15 @@ se agrega cuando se pida.)*
 ## 5. Proyecto 1: Acceso
 
 ### Reglas (decididas por Marco)
-- El usuario del comercio es el **correo de empresa**, `dist_cli.email`
-  normalizado (trim + minúsculas). Es el admin/root del comercio.
+- El usuario del comercio es el **correo de empresa**, `clients.email`
+  normalizado (trim + minúsculas). Es el admin/root del comercio. **No se usa
+  `dist_cli.email`**: se evaluará eliminarlo en el futuro (decisión de Marco).
 - Mientras no valide el correo, el usuario está **inactivo**.
 - Solo pueden tener usuario los comercios de `dist = 1` con un correo **único
   en todos los distribuidores**. Medición del 2026-11-10: 1.009 comercios, 719
-  aptos, 288 con correo compartido y 2 sin correo. Los no aptos **no tienen
+  aptos, 288 con correo compartido y 2 sin correo. (La medición se hizo
+  sobre `dist_cli.email`; solo un comercio difiere de `clients.email`, así que
+  hay que repetirla sobre `clients.email` antes de la carga inicial.) Los no aptos **no tienen
   acceso** hasta que su distribuidor corrija el correo con
   `POST /api/customers/v4/register`.
 - **Si el distribuidor cambia el correo de empresa, el correo anterior pierde
@@ -147,7 +150,7 @@ se agrega cuando se pida.)*
 - **Tokens de enlace:** se guarda solo su hash, son de un solo uso, vencen y
   tienen límite de envío por correo.
 - **Revocación cuando cambia el correo:** cada request con sesión de comercio
-  valida que `usuario.email` siga siendo igual al `dist_cli.email` normalizado
+  valida que `usuario.email` siga siendo igual al `clients.email` normalizado
   actual y que el usuario siga activo. Si no se cumple, responde 401. Esto
   cubre el cambio de correo sin tocar los endpoints de alta existentes.
   *(Decisión de Claude: así no se modifica lo existente. Cuesta una consulta
@@ -350,7 +353,9 @@ desarrolla con datos de prueba ajustados al contrato.
   ya fue notificado del contrato y tiene que migrar su formulario de alta a v4
   y capturar el 409 `EMAIL_IN_USE`. Los otros flujos que escriben el correo
   (`upload/v1/customer`, `uploads`, `comerce/v2`) no validan unicidad.
-- **Un comercio tiene `clients.email` distinto de `dist_cli.email`.**
+- **Un comercio tiene `clients.email` distinto de `dist_cli.email`.** Revisarlo
+  antes de la carga inicial.
+- Evaluar eliminar `dist_cli.email`. El alta v4 valida contra ambos campos.
 - Descuentos por equipo, créditos MUFIN y otros: modelarlos (proyecto 5).
 - Tasa de comisión por venta: recalcularla o poblar `comisiones_trx`
   (proyecto 5).
