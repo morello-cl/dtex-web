@@ -36,6 +36,11 @@ React 19, Tailwind v4 y `node:test` (`npm test`).
   `#0A7B69` y `#8A4B00`. Sin fondos oscuros y en Inter.
 - Copy en español neutro: sin mayúsculas en etiquetas, sin "·" ni "→".
 - No se agregan dependencias.
+- **Los correos se normalizan en el front** (trim + minúsculas) antes de
+  cualquier llamada. Tomahawk recibe siempre el correo en minúsculas.
+- **Tomahawk caído** (fallo de red, respuesta que no es JSON o 5xx): se
+  redirige a `/portal/mantencion`, que dice que el servicio volverá pronto.
+  No se muestra un error en el formulario.
 - Pruebas contra prod con el comercio MUFIN: no hay entorno aislado.
 
 ## Review Focus
@@ -43,11 +48,12 @@ React 19, Tailwind v4 y `node:test` (`npm test`).
 1. **Correo con mayúsculas o espacios** (" Ventas@Mufin.CL "): debe enviarse
    normalizado a tomahawk. Lo prueba la Task 2.
 2. **Enlace vencido o ya usado:** el usuario ve "Este enlace ya se usó o
-   venció. Pide uno nuevo." y un enlace a `/portal/enlace`, nunca un error
-   genérico. Lo prueban la Task 2 (mapeo del 410) y la Task 4 (manual).
-3. **Tomahawk caído o con respuesta que no es JSON:** se muestra un mensaje
-   genérico, sin el cuerpo crudo y sin excepción sin capturar. Lo prueba la
-   Task 2.
+   venció. Pide uno nuevo." y, en la misma pantalla, el formulario para pedir
+   otro enlace. Nunca ve un error genérico. Lo prueban la Task 2 (mapeo del
+   410) y la Task 4 (manual).
+3. **Tomahawk caído o con respuesta que no es JSON:** se va a
+   `/portal/mantencion`, sin mostrar el cuerpo crudo y sin excepción sin
+   capturar. Lo prueba la Task 2 (`isServiceDown`).
 4. **Sesión revocada** (cambió el correo de empresa): `me` responde 401, se
    borra la cookie y se redirige a `/portal/ingresar`. Lo prueban la Task 2
    (`getMe` devuelve `null` con 401) y la Task 4 (manual).
@@ -67,7 +73,8 @@ React 19, Tailwind v4 y `node:test` (`npm test`).
 
 - [ ] **Step 1: Escribir `docs/portal/contratos.md`, sección "1. Acceso", con exactamente este contrato**
 
-Base: `TOMAHAWK_BASE_URL` (default `https://api.dtex.app`). Todas las
+Base: `TOMAHAWK_BASE_URL` (default `https://api.dtex.app`). El portal envía
+`email` siempre en minúsculas y sin espacios. Todas las
 respuestas usan el sobre `{ error, message, data }`; ante un error,
 `message` lleva el código.
 
@@ -140,7 +147,9 @@ Las tasks 2 a 4 no esperan esa respuesta: se prueban con `fetch` simulado.
   - `setPassword(token: string, password: string): Promise<Session>`
   - `getMe(jwt: string): Promise<Me | null>`: devuelve `null` con 401 y lanza
     `PortalApiError` en los demás errores.
-  - `errorMessage(e: unknown): string`: copy para el usuario.
+  - `isServiceDown(e: unknown): boolean`: es `true` si `status` es 0 (fetch
+    lanzó), si la respuesta no es JSON (código `NETWORK`) o si `status >= 500`.
+  - `errorMessage(e: unknown): string`: copy de los errores esperados (4xx).
 
 - [ ] **Step 1: Escribir los tests que fallan**
 
@@ -167,8 +176,8 @@ test("set_password 410 → enlace vencido", ...)
   // "Este enlace ya se usó o venció. Pide uno nuevo."
 test("request_link 429", ...)
   // "Ya te enviamos un enlace hace poco. Espera unos minutos antes de pedir otro."
-test("respuesta no JSON o fetch que lanza → mensaje genérico", ...)
-  // "No pudimos conectarnos. Intenta de nuevo en unos minutos."
+test("fetch que lanza, respuesta no JSON o 503 → isServiceDown", ...)
+  // true en los tres casos; false con 401, 410 y 429
 test("getMe devuelve null con 401 y envía x-token-dtex", ...)
 test("login devuelve { token, expiresIn } desde { token, expires_in }", ...)
 ```
@@ -184,8 +193,8 @@ Esperado: FAIL, porque no se encuentra `./auth.ts`.
   si algo falla, lanzar `PortalApiError(code = body?.message ?? "NETWORK", status)`.
   Si `fetch` lanza, se usa `status 0`.
 - `passwordError` mide `new TextEncoder().encode(pw).length` entre 10 y 72.
-- `errorMessage` mapea por `code`. Cualquier otro valor devuelve el mensaje
-  genérico.
+- `errorMessage` mapea por `code`. Un código 4xx desconocido devuelve "No
+  pudimos completar la operación. Intenta de nuevo."
 
 - [ ] **Step 4: Correr `npm test` y verificar que pasa**
 
@@ -229,6 +238,9 @@ git commit -m "feat(portal): cliente de auth contra tomahawk"
   - `logoutAction(): Promise<void>`: borra la cookie y hace
     `redirect("/portal/ingresar")`.
 
+Todas las actions y `requireMe` hacen `redirect("/portal/mantencion")` cuando
+`isServiceDown(e)`.
+
 Nota para quien implemente: `redirect()` lanza internamente, así que debe
 llamarse **fuera** del `try/catch` que captura `PortalApiError`.
 
@@ -267,6 +279,11 @@ git commit -m "feat(portal): sesión en cookie httpOnly y server actions de acce
 - Create: `src/app/portal/clave/[token]/page.tsx`: `params` es una `Promise`
   y hay que hacerle `await`. Lleva `metadata.referrer = "no-referrer"` para
   que el token no se filtre por el header Referer.
+- Create: `src/app/portal/mantencion/page.tsx`: página pública sin
+  formularios, con el título "Volvemos en unos minutos", el texto "Estamos
+  teniendo un problema para conectar con nuestros servidores. Tus ventas y
+  abonos no se ven afectados." y el enlace "Reintentar", que lleva a
+  `/portal`.
 - Create: `src/components/portal/AuthForms.tsx` (`"use client"`):
   `LoginForm`, `LinkForm` y `PasswordForm({ token })`, con `useActionState`
   como en `src/components/ContactForm.tsx`.
@@ -280,7 +297,10 @@ Copy exacto:
 |---|---|---|---|
 | `/portal/ingresar` | "Ingresa a tu portal DTEx®" | Correo, Contraseña, botón "Ingresar" | "¿Primera vez o no recuerdas tu contraseña?" lleva a `/portal/enlace` |
 | `/portal/enlace` | "Te enviamos un enlace para definir tu contraseña" | Correo de tu empresa, botón "Enviar enlace". Al enviar, el estado `sent` reemplaza el form con: "Si el correo corresponde a un comercio habilitado, te enviamos un enlace. Revisa tu bandeja de entrada y la carpeta de spam." | "Volver a ingresar" |
-| `/portal/clave/[token]` | "Define tu contraseña" | Contraseña, Repite la contraseña, botón "Guardar contraseña". Ayuda bajo el campo: "Entre 10 y 72 caracteres." | Ante el error 410, se muestra el mensaje y un enlace "Pedir un enlace nuevo" a `/portal/enlace` |
+| `/portal/clave/[token]` | "Define tu contraseña" | Contraseña, Repite la contraseña, botón "Guardar contraseña". Ayuda bajo el campo: "Entre 10 y 72 caracteres." | Ante el error 410, el form se reemplaza por el mensaje y un `LinkForm` en la misma pantalla para pedir otro enlace |
+
+Los inputs de correo llevan `type="email"`, `autoCapitalize="none"` y
+`spellCheck={false}`. La normalización real ocurre en la action.
 
 Requisitos de accesibilidad:
 - cada input con su `<label>`;
@@ -300,7 +320,8 @@ Esperado: sin errores. En la salida del build aparecen las rutas `/portal`,
 
 - `/portal` sin cookie redirige a `/portal/ingresar`.
 - En `/portal/enlace`, cualquier correo muestra el mensaje neutro. Con
-  tomahawk caído aparece el mensaje genérico.
+  `TOMAHAWK_BASE_URL=http://localhost:9` (puerto cerrado), ingresar o pedir
+  un enlace lleva a `/portal/mantencion`, y `/portal` también.
 - En `/portal/clave/abc`, poner una contraseña de 9 caracteres muestra el
   error de largo sin llamar a tomahawk. Repetir con una confirmación distinta.
 - `/portal/ingresar` responde 200 con `noindex` en el `<head>`, y
