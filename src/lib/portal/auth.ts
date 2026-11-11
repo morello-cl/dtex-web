@@ -7,12 +7,15 @@ export class PortalApiError extends Error {
   readonly code: string;
   readonly status: number;
   readonly retryAfterSeconds?: number;
+  readonly reason?: string;
 
-  constructor(code: string, status: number, retryAfterSeconds?: number) {
+  constructor(code: string, status: number, data?: unknown) {
     super(code);
     this.code = code;
     this.status = status;
-    this.retryAfterSeconds = retryAfterSeconds;
+    const d = (data ?? {}) as { retry_after_seconds?: unknown; reason?: unknown };
+    if (typeof d.retry_after_seconds === "number") this.retryAfterSeconds = d.retry_after_seconds;
+    if (typeof d.reason === "string") this.reason = d.reason;
   }
 }
 
@@ -61,13 +64,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (!body) throw new PortalApiError("NETWORK", response.status);
 
   if (!response.ok || body.error || body.data === null) {
-    const retry = (body.data as { retry_after_seconds?: unknown } | null)
-      ?.retry_after_seconds;
-    throw new PortalApiError(
-      body.message || "UNKNOWN",
-      response.status,
-      typeof retry === "number" ? retry : undefined,
-    );
+    throw new PortalApiError(body.message || "UNKNOWN", response.status, body.data);
   }
   return body.data;
 }
@@ -119,6 +116,45 @@ export async function getMe(jwt: string): Promise<Me | null> {
     throw malformed();
   }
   return me;
+}
+
+export type LinkStatus = "valid" | "used" | "expired" | "invalid";
+
+export type LinkProblemKind = Exclude<LinkStatus, "valid">;
+
+// Cada causa tiene su explicación y su salida: "pide otro" no basta.
+export const LINK_PROBLEMS: Record<LinkProblemKind, { title: string; body: string }> = {
+  used: {
+    title: "Este enlace ya fue usado",
+    body: "Cada enlace sirve una sola vez, para proteger tu cuenta. Si ya definiste tu contraseña con él, ingresa con tu correo y esa contraseña. Si no recuerdas haberlo usado, pide un enlace nuevo y define otra contraseña.",
+  },
+  expired: {
+    title: "Este enlace venció",
+    body: "Por seguridad, cada enlace dura 30 minutos desde que lo enviamos y este ya pasó ese plazo. Pide uno nuevo con el correo de tu empresa y ábrelo apenas te llegue.",
+  },
+  invalid: {
+    title: "Este enlace no es válido",
+    body: "Puede que esté incompleto: algunos programas de correo cortan la dirección en dos líneas. Abre el enlace directamente desde el correo o pide uno nuevo.",
+  },
+};
+
+
+/** Motivo por el que un enlace no sirve, o null si el error es otro. */
+export function linkProblem(e: unknown): LinkProblemKind | null {
+  if (!(e instanceof PortalApiError) || e.code !== "TOKEN_INVALID") return null;
+  return e.reason === "used" || e.reason === "expired" ? e.reason : "invalid";
+}
+
+/** Revisa el enlace sin consumirlo. Lanza si tomahawk está caído. */
+export async function checkLink(token: string): Promise<LinkStatus> {
+  try {
+    await request(`/api/portal/auth/v1/link/${encodeURIComponent(token)}`);
+    return "valid";
+  } catch (e) {
+    const problem = linkProblem(e);
+    if (problem) return problem;
+    throw e;
+  }
 }
 
 export function isServiceDown(e: unknown): boolean {

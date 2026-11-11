@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 import {
   errorMessage,
   isServiceDown,
+  linkProblem,
   login,
+  type LinkProblemKind,
   normalizeEmail,
   passwordError,
   requestLink,
@@ -16,7 +18,12 @@ import { clearSessionCookie, setSessionCookie } from "./session";
 export type FormState =
   | { status: "idle" }
   | { status: "sent" }
-  | { status: "error"; message: string; email?: string; expired?: boolean };
+  | {
+      status: "error";
+      message: string;
+      email?: string;
+      link?: LinkProblemKind;
+    };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -78,7 +85,7 @@ export async function setPasswordAction(_prev: FormState, fd: FormData): Promise
     return {
       status: "error",
       message: errorMessage(e),
-      expired: (e as { code?: string }).code === "TOKEN_INVALID",
+      link: linkProblem(e) ?? undefined,
     };
   }
   await setSessionCookie(session);

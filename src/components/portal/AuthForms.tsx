@@ -8,6 +8,7 @@ import {
   setPasswordAction,
   type FormState,
 } from "@/lib/portal/actions";
+import { LINK_PROBLEMS, type LinkProblemKind } from "@/lib/portal/auth";
 
 const idle: FormState = { status: "idle" };
 
@@ -17,6 +18,8 @@ const input =
 const label = "mb-1.5 block text-sm font-medium text-mufin-900";
 const button =
   "w-full rounded-xl bg-mufin-900 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700 disabled:opacity-60";
+const buttonSecondary =
+  "w-full rounded-xl border border-mufin-border bg-white px-4 py-3 text-sm font-semibold text-mufin-900 transition-colors hover:border-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700 disabled:opacity-60";
 const link =
   "font-medium text-mufin-700 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-mufin-700";
 
@@ -81,7 +84,7 @@ export function LoginForm() {
   );
 }
 
-export function LinkForm() {
+export function LinkForm({ secondary = false }: { secondary?: boolean }) {
   const [state, action, pending] = useActionState(requestLinkAction, idle);
   if (state.status === "sent") {
     return (
@@ -107,7 +110,7 @@ export function LinkForm() {
         aria-hidden="true"
         className="hidden"
       />
-      <button type="submit" disabled={pending} className={button}>
+      <button type="submit" disabled={pending} className={secondary ? buttonSecondary : button}>
         Enviar enlace
       </button>
     </form>
@@ -116,13 +119,9 @@ export function LinkForm() {
 
 export function PasswordForm({ token }: { token: string }) {
   const [state, action, pending] = useActionState(setPasswordAction, idle);
-  if (state.status === "error" && state.expired) {
-    return (
-      <div className="space-y-4">
-        <ErrorBox state={state} />
-        <LinkForm />
-      </div>
-    );
+  if (state.status === "error" && state.link) {
+    // Caso raro: el enlace venció mientras escribía la contraseña.
+    return <LinkProblem problem={state.link} showTitle />;
   }
   return (
     <form action={action} className="space-y-4">
@@ -172,6 +171,33 @@ export function AuthCard({ title, children }: { title: string; children: React.R
         <h1 className="mb-6 text-2xl font-bold tracking-tight text-mufin-900">{title}</h1>
         {children}
       </section>
+    </div>
+  );
+}
+
+export function LinkProblem({ problem, showTitle = false }: { problem: LinkProblemKind; showTitle?: boolean }) {
+  return (
+    <div className="space-y-6">
+      {showTitle && (
+        <h2 role="alert" className="text-lg font-semibold text-mufin-900">
+          {LINK_PROBLEMS[problem].title}
+        </h2>
+      )}
+      <p className="text-sm leading-relaxed text-muted">{LINK_PROBLEMS[problem].body}</p>
+      {problem === "used" && (
+        <Link
+          href="/portal/ingresar"
+          className="block w-full rounded-xl bg-mufin-900 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700"
+        >
+          Ingresar con mi contraseña
+        </Link>
+      )}
+      <div className={problem === "used" ? "border-t border-mufin-border pt-6" : ""}>
+        {problem === "used" && (
+          <p className="mb-4 text-sm font-medium text-mufin-900">¿Necesitas otro enlace?</p>
+        )}
+        <LinkForm secondary={problem === "used"} />
+      </div>
     </div>
   );
 }

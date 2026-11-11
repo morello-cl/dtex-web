@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  checkLink,
   errorMessage,
+  linkProblem,
   getMe,
   isServiceDown,
   login,
@@ -118,4 +120,34 @@ test("éxito con forma inválida → isServiceDown (no cookie undefined ni 500)"
 
   t.mock.method(globalThis, "fetch", reply(200, { user: {} }));
   assert.equal(isServiceDown(await caught(getMe("jwt"))), true);
+});
+
+test("checkLink: 200 → valid, sin consumir el enlace (GET)", async (t) => {
+  const f = t.mock.method(globalThis, "fetch", reply(200, { valid: true }));
+  assert.equal(await checkLink("a b"), "valid");
+  const [url, init] = f.mock.calls[0].arguments as [URL, RequestInit];
+  assert.equal(url.pathname, "/api/portal/auth/v1/link/a%20b");
+  assert.equal(init.method, undefined);
+});
+
+test("checkLink: 410 con reason → used / expired; sin reason → invalid", async (t) => {
+  t.mock.method(globalThis, "fetch", reply(410, { reason: "used" }, "TOKEN_INVALID"));
+  assert.equal(await checkLink("x"), "used");
+  t.mock.restoreAll();
+  t.mock.method(globalThis, "fetch", reply(410, { reason: "expired" }, "TOKEN_INVALID"));
+  assert.equal(await checkLink("x"), "expired");
+  t.mock.restoreAll();
+  t.mock.method(globalThis, "fetch", reply(410, null, "TOKEN_INVALID"));
+  assert.equal(await checkLink("x"), "invalid");
+});
+
+test("checkLink: tomahawk caído → lanza (para ir a mantención)", async (t) => {
+  t.mock.method(globalThis, "fetch", reply(503, null, "DOWN"));
+  assert.equal(isServiceDown(await caught(checkLink("x"))), true);
+});
+
+test("set_password 410 expone el motivo con linkProblem", async (t) => {
+  t.mock.method(globalThis, "fetch", reply(410, { reason: "expired" }, "TOKEN_INVALID"));
+  assert.equal(linkProblem(await caught(setPassword("x", "1234567890"))), "expired");
+  assert.equal(linkProblem(new Error("x")), null);
 });
