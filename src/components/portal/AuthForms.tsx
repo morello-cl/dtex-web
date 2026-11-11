@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import PosSketch from "./PosSketch";
 import {
   loginAction,
   requestLinkAction,
@@ -166,11 +167,15 @@ export function PasswordForm({ token }: { token: string }) {
 
 export function AuthCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-1 items-start justify-center px-4 py-12 sm:items-center">
-      <section className="w-full max-w-md rounded-3xl border border-mufin-border bg-white p-6 sm:p-8">
-        <h1 className="mb-6 text-2xl font-bold tracking-tight text-mufin-900">{title}</h1>
-        {children}
-      </section>
+    <div className="bg-mufin-dots relative flex flex-1 overflow-hidden">
+      <div className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 px-4 py-12 sm:px-6 lg:grid-cols-2">
+        <section className="relative z-10 w-full max-w-md justify-self-center rounded-3xl border border-mufin-border bg-white p-6 sm:p-8 lg:justify-self-start">
+          <h1 className="mb-6 text-2xl font-bold tracking-tight text-mufin-900">{title}</h1>
+          {children}
+        </section>
+        {/* En mobile el dibujo queda tenue detrás de la tarjeta; en desktop, a la derecha. */}
+        <PosSketch className="pointer-events-none absolute -right-16 bottom-0 h-[70%] opacity-15 lg:static lg:h-[min(72vh,620px)] lg:justify-self-center lg:opacity-100" />
+      </div>
     </div>
   );
 }

@@ -150,6 +150,31 @@ body {
   background-size: 20px 20px;
 }
 
+/* Portal: grilla de puntos lavanda y boleta que sale de la impresora (una vez). */
+.bg-mufin-dots {
+  background-image: radial-gradient(rgba(70, 31, 182, 0.12) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.pos-ticket {
+  animation: pos-print 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+
+@keyframes pos-print {
+  from {
+    transform: translateY(96px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pos-ticket {
+    animation: none;
+  }
+}
+
 /* Legal prose — tipografía para páginas largas (Privacidad, T&C, etc.) */
 .legal-prose {
   color: var(--foreground);
