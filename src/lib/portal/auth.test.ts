@@ -110,3 +110,12 @@ test("login devuelve { token, expiresIn } desde { token, expires_in }", async (t
     expiresIn: 43200,
   });
 });
+
+test("éxito con forma inválida → isServiceDown (no cookie undefined ni 500)", async (t) => {
+  t.mock.method(globalThis, "fetch", reply(200, {}));
+  assert.equal(isServiceDown(await caught(login("a@b.cl", "1234567890"))), true);
+  t.mock.restoreAll();
+
+  t.mock.method(globalThis, "fetch", reply(200, { user: {} }));
+  assert.equal(isServiceDown(await caught(getMe("jwt"))), true);
+});

@@ -76,7 +76,15 @@ function post<T>(path: string, payload: unknown): Promise<T> {
   return request<T>(path, { method: "POST", body: JSON.stringify(payload) });
 }
 
-function toSession(d: { token: string; expires_in: number }): Session {
+// Un 200 con forma inesperada es un tomahawk roto: se trata como servicio caído.
+function malformed(): PortalApiError {
+  return new PortalApiError("NETWORK", 502);
+}
+
+function toSession(d: { token?: unknown; expires_in?: unknown }): Session {
+  if (typeof d.token !== "string" || !d.token || typeof d.expires_in !== "number") {
+    throw malformed();
+  }
   return { token: d.token, expiresIn: d.expires_in };
 }
 
@@ -98,14 +106,19 @@ export async function setPassword(token: string, password: string): Promise<Sess
 }
 
 export async function getMe(jwt: string): Promise<Me | null> {
+  let me: Me;
   try {
-    return await request<Me>("/api/portal/v1/me", {
+    me = await request<Me>("/api/portal/v1/me", {
       headers: { "x-token-dtex": jwt },
     });
   } catch (e) {
     if (e instanceof PortalApiError && e.status === 401) return null;
     throw e;
   }
+  if (typeof me.merchant?.name !== "string" || typeof me.user?.email !== "string") {
+    throw malformed();
+  }
+  return me;
 }
 
 export function isServiceDown(e: unknown): boolean {
