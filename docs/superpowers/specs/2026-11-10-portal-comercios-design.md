@@ -94,7 +94,7 @@ Son cinco proyectos, en este orden. Cada uno se entrega usable por sí mismo.
 | 1 | Acceso | usuarios de comercio, auth y correos | login, activación, recuperación, sesión | — |
 | 2 | Inicio | endpoint de agregados de ventas | pantalla de 7 días y comparativos | — |
 | 3 | Mi comercio | lectura con auth de comercio de datos, logo y cuenta | pantalla de datos, logo y cuenta (solo lectura) | — |
-| 4 | Abonos v1 | registro del resultado del pago y lectura de `pagos_comercio` | pantalla de abonos | pantalla MUFIN para registrar pagos y rechazos |
+| 4 | Abonos v1 | registro del pago efectuado y lectura de `pagos_comercio` | pantalla de abonos | pantalla MUFIN para registrar pagos efectuados |
 | 5 | Abonos v2 | modelo de descuentos y tasa por venta | desglose ampliado | lo que corresponda |
 
 El proyecto 5 se diseñará por separado cuando llegue su turno.
@@ -292,12 +292,16 @@ Desglose de cada abono, cada concepto en su propia línea:
 | Estado | Origen | Qué ve el comercio |
 |---|---|---|
 | En proceso | la fila existe, sin resultado de pago | "Tu abono está en proceso" y la fecha estimada de llegada, rotulada como estimada |
+| Pagado | registro de pago de MUFIN | "Pagado el {fecha}" |
 
 **Fecha estimada:** el abono se paga al día siguiente antes de las 10:00,
 incluidos fines de semana y feriados (dato de Marco). No hace falta un
 calendario de días hábiles.
-| Pagado | registro de pago de MUFIN | "Pagado el {fecha}" |
-| Rechazado | registro de rechazo de MUFIN | el motivo (por ejemplo, el límite mensual de la CuentaRUT) y qué hacer: cambiar la cuenta de abono con su distribuidor |
+
+**Rechazados: fuera de esta etapa.** Se guardarán en otra tabla, todavía no
+diseñada, porque no generan documentos sino un registro contable: cada rechazo
+tiene un costo (decisión de Marco). Mientras tanto, un abono rechazado sigue
+como "En proceso" hasta que se pague.
 
 Información secundaria de cada abono:
 - **Monto estimado o conciliado**: `metodo` y `conciliado_en`.
@@ -309,21 +313,16 @@ Información secundaria de cada abono:
   transferidos. Son pocos, porque Kushki parte en septiembre u octubre de 2026.
 - Hoy no queda registro de que el banco ejecutó la nómina. **El resultado se
   registra en dtex_dashboard, solo desde la cuenta MUFIN** (decisión de Marco).
-- Tomahawk, en una tabla nueva (no se modifica `pagos_comercio`), registra:
-  - por abono, el resultado (`paid`/`rejected`), la fecha de pago, el motivo
-    del rechazo, quién lo registró y cuándo;
-  - pensado para marcar una nómina completa como pagada y luego marcar los
-    rechazos uno por uno. *(Suposición de Claude.)*
-- **Rechazo:** el monto rechazado vuelve a quedar pendiente y entra en una
-  nómina posterior. El portal lo muestra vinculado al abono original. La forma
-  en que el job `kushki_payment` recoge los rechazados y el vínculo exacto se
-  definen en el contrato del proyecto 4, antes de construir la pantalla.
+- Tomahawk, en una tabla nueva (no se modifica `pagos_comercio`), registra
+  por abono la fecha de pago, quién la registró y cuándo. Está pensado para
+  marcar una nómina completa como pagada y dejar sin marcar los abonos que el
+  banco rechazó. *(Suposición de Claude.)*
 
 ### Endpoints
 - Tomahawk: lectura de abonos con auth de comercio (lista por rango de fechas
-  y detalle), y escritura del resultado del pago con auth MUFIN (`ROOT_ROLE`,
+  y detalle), y escritura del pago efectuado con auth MUFIN (`ROOT_ROLE`,
   `dist = 1`).
-- dtex_dashboard: la pantalla de registro de pagos y rechazos.
+- dtex_dashboard: la pantalla de registro de pagos efectuados.
 
 ## 9. Lo que se recicla de dtex_customers
 - El patrón BFF: el navegador nunca ve el JWT de tomahawk y el `client_id`
@@ -360,4 +359,6 @@ desarrolla con datos de prueba ajustados al contrato.
 - Tasa de comisión por venta: recalcularla o poblar `comisiones_trx`
   (proyecto 5).
 - Roles admin/user/view y creación de usuarios por el admin.
+- Rechazos de abonos: diseñar la tabla contable (cada rechazo tiene un costo),
+  su reintento y cómo los ve el comercio.
 - Agregar `.superpowers/` a `.gitignore`.
