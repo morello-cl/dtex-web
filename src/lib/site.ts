@@ -36,7 +36,7 @@ export function formattedMufinAddress(): string {
   return `${a.streetAddress}, ${a.addressLocality}, ${a.addressRegion}, Chile`;
 }
 
-type WaIntent = "info" | "quote" | "sencillito" | "redes";
+type WaIntent = "info" | "quote" | "sencillito" | "redes" | "portal";
 
 const WA_MESSAGES: Record<WaIntent, string> = {
   info: "Hola DTEx®, quiero más información sobre la plataforma para mi comercio.",
@@ -45,6 +45,7 @@ const WA_MESSAGES: Record<WaIntent, string> = {
     "Hola DTEx®, quiero activar Punto Sencillito® en mi comercio.",
   redes:
     "Hola DTEx®, quiero que me avisen cuando estén disponibles las nuevas redes de pago (Compraquí, Mercado Pago, VirtualPos, Kushki).",
+  portal: "Hola DTEx®, necesito ayuda para ingresar al portal de comercios.",
 };
 
 export function whatsappLink(intent: WaIntent = "info"): string {
