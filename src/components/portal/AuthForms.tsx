@@ -2,6 +2,8 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import Logo from "@/components/Logo";
+import MufinEndorsement from "@/components/MufinEndorsement";
 import MufinLogo from "./MufinLogo";
 import PortalFooter from "./PortalFooter";
 import {
@@ -263,15 +265,24 @@ export function AuthCard({
             Tus ventas y tus abonos, claros y al día.
           </h2>
           <p className="mt-3 text-base leading-relaxed text-white/75">
-            Revisa lo que vendes con la app DTEx® y cuándo llega cada abono a tu cuenta.
+            Revisa lo que vendes con la app DTEx® y cuándo llega cada abono a tu
+            cuenta.
           </p>
         </div>
         <PortalPreview />
-        <span />
+        {/* Placa blanca: el wordmark DTEx® tiene letras oscuras y no se altera. */}
+        <span className="inline-flex items-center gap-3 self-start rounded-2xl bg-white px-4 py-3 text-sm">
+          <Logo height={22} />
+          <MufinEndorsement height={15} />
+        </span>
       </aside>
 
       <div className="flex flex-col px-6 py-8 sm:px-12">
-        <Link href="/portal" aria-label="Portal de pagos MUFIN" className="self-start">
+        <Link
+          href="/portal"
+          aria-label="Portal de pagos MUFIN"
+          className="self-start"
+        >
           <MufinLogo height={30} />
         </Link>
         <section className="my-auto w-full max-w-sm self-center py-12">

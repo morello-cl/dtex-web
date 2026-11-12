@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Logo from "./Logo";
+import MufinEndorsement from "./MufinEndorsement";
 import SencillitoLogo from "./SencillitoLogo";
 import TechnologyByMufin from "./TechnologyByMufin";
 import { site, whatsappLink } from "@/lib/site";
@@ -11,13 +12,16 @@ export default function Footer() {
     <footer className="mt-24 border-t border-border bg-surface">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:px-8 md:grid-cols-5">
         <div className="md:col-span-2">
-          <Logo height={56} />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <Logo height={56} />
+            <MufinEndorsement height={18} className="text-sm" />
+          </div>
           <p className="mt-4 max-w-sm text-sm text-muted">
             Convierte tu negocio en un punto de pagos y servicios. Operado por
             Sencillito®.
           </p>
           <p className="mt-3 text-xs text-muted">
-            DTEx® es una marca de {site.legalName}.
+            DTEx® es una marca registrada de {site.legalName}.
           </p>
         </div>
 
@@ -85,10 +89,7 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a
-                href={`mailto:${site.email}`}
-                className="hover:text-brand-700"
-              >
+              <a href={`mailto:${site.email}`} className="hover:text-brand-700">
                 {site.email}
               </a>
             </li>
@@ -156,9 +157,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-semibold text-foreground">
-            Legal
-          </h3>
+          <h3 className="mb-3 text-sm font-semibold text-foreground">Legal</h3>
           <ul className="space-y-2 text-sm text-muted">
             <li>
               <Link href="/privacidad" className="hover:text-brand-700">
@@ -187,7 +186,9 @@ export default function Footer() {
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-start gap-3 px-5 py-5 text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <p>© {year} {site.legalName}. Todos los derechos reservados.</p>
+            <p>
+              © {year} {site.legalName}. Todos los derechos reservados.
+            </p>
             <Link
               href="/changelog"
               className="inline-flex items-center gap-1 rounded-full border border-border bg-white px-2 py-0.5 font-mono text-[10px] font-semibold text-brand-700 hover:border-brand-200 hover:text-brand-800"
@@ -198,7 +199,10 @@ export default function Footer() {
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
             <TechnologyByMufin height={20} />
-            <span className="hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
+            <span
+              className="hidden h-5 w-px bg-border sm:block"
+              aria-hidden="true"
+            />
             <div className="inline-flex items-center gap-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-brand-700">
                 Operado por

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
+import Logo from "@/components/Logo";
+import MufinEndorsement from "@/components/MufinEndorsement";
 import { formattedMufinAddress, site, whatsappLink } from "@/lib/site";
 
 const link =
@@ -36,14 +37,8 @@ export default function PortalFooter() {
 
       <div className="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
         <span className="inline-flex items-center gap-2">
-          Desarrollado con tecnología
-          <Image
-            src="/mufin-logo.png"
-            alt="MUFIN"
-            width={67}
-            height={16}
-            style={{ height: 16, width: "auto" }}
-          />
+          <Logo height={18} />
+          <MufinEndorsement height={14} />
         </span>
         <nav aria-label="Legal" className="flex gap-5">
           <Link href="/terminos" className={link}>

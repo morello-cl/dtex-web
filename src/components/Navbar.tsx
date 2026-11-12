@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import MufinEndorsement from "./MufinEndorsement";
 import Logo from "./Logo";
 import { whatsappLink } from "@/lib/site";
 
@@ -33,8 +34,14 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link href="/" aria-label="Inicio DTEx®" className="inline-flex">
-          <Logo height={40} priority />
+        {/* Sello bajo el wordmark, como "compraquí de BancoEstado": no quita ancho al menú. */}
+        <Link
+          href="/"
+          aria-label="Inicio DTEx®, una aplicación MUFIN"
+          className="flex flex-col items-start gap-0.5"
+        >
+          <Logo height={34} priority />
+          <MufinEndorsement height={11} className="text-[11px] leading-none" />
         </Link>
 
         <ul className="hidden items-center gap-8 md:flex">
@@ -75,7 +82,13 @@ export default function Navbar() {
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
             {open ? (
               <path
                 d="M6 6l12 12M18 6L6 18"
