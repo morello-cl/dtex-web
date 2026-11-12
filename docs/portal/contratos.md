@@ -111,7 +111,7 @@ con el header `x-token-dtex`.
     "equipment": { "uuid", "tid" }, "subsidiary": { "uuid", "name" } }],
   "next_cursor": "…" | null,
   "rejections": [{ "kind": "rejected" | "cancelled", "occurred_at", "time", "amount", "payment_method": "card", "provider",
-    "reason", "message", "card", "equipment" }] }
+    "reason", "message", "provider_message", "card", "equipment" }] }
 ```
 
 ### Reglas
@@ -125,7 +125,12 @@ con el header `x-token-dtex`.
 - **Rechazos:** no suman ni restan. `kind` separa el rechazo (banco o
   procesador) de la cancelación del cliente, que incluye el `errorCode 10` de
   TUU; tomahawk normaliza. La UI los muestra en grupos separados. Cada campo
-  de `card` puede venir null por separado. Hoy `rejections` es `[]`: la App no informa
+  de `card` puede venir null por separado.
+- **`message`** es el texto en español para el comercio, armado por tomahawk
+  según el motivo normalizado («Fondos insuficientes», «El cliente canceló el
+  pago»; si es `unknown`, «El pago no se completó»). Nunca viene null.
+  `provider_message` es el texto crudo del adquirente, o null: el portal no lo
+  muestra ni decide nada con él. `reason` es un código interno. Hoy `rejections` es `[]`: la App no informa
   los pagos rechazados (pedido a tomahawk y dtex_app).
 - `sales` va ordenado por hora descendente. `limit` vale 200 por omisión, con
   un máximo de 500.
