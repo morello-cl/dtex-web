@@ -177,3 +177,32 @@ test("getSalesSummary envía el JWT y rechaza una forma inválida", async (t) =>
   );
   await assert.rejects(getSalesSummary("jwt-1"), (e) => e instanceof PortalApiError && e.code === "NETWORK");
 });
+
+test("período previo negativo (notas de crédito) → delta null, no signo invertido", () => {
+  const s = summary();
+  s.windows.week_1.days[0].amount = -5000000;
+  s.windows.week_1.days[6].amount = -1000;
+  const d = buildDashboard(s, "week_1");
+  assert.equal(d.delta, null);
+  assert.equal(d.today, "Hoy llevas $412.600.");
+});
+
+test("regla: empates no cuentan como superados y todo en 0 no dice 'más'", () => {
+  const z = summary();
+  for (const k of Object.keys(z.windows) as (keyof typeof z.windows)[]) z.windows[k] = win(z.windows[k].to, Array(7).fill(0));
+  assert.equal(buildDashboard(z, "week_1").rulerReading, "No registras ventas en estos períodos.");
+
+  const tie = summary();
+  tie.windows.week_8 = win("2026-09-17", CURRENT);
+  tie.windows.week_4 = win("2026-10-15", Array(7).fill(100));
+  assert.equal(buildDashboard(tie, "week_1").rulerReading, "Vendiste más que en 3 de 4 períodos.");
+});
+
+test("getSalesSummary rechaza montos que no son números", async (t) => {
+  const bad = summary();
+  (bad.windows.current.days[0] as unknown as { amount: string }).amount = "612000";
+  t.mock.method(globalThis, "fetch", async () =>
+    new Response(JSON.stringify({ error: false, message: null, data: bad }), { status: 200 }),
+  );
+  await assert.rejects(getSalesSummary("jwt-1"), (e) => e instanceof PortalApiError && e.code === "NETWORK");
+});

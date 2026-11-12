@@ -35,10 +35,25 @@ export async function getSalesSummary(jwt: string): Promise<SalesSummary> {
   const s = await portalRequest<SalesSummary>("/api/portal/v1/sales/summary", {
     headers: { "x-token-dtex": jwt },
   });
+  const num = (v: unknown) => typeof v === "number" && Number.isFinite(v);
   const ok =
     typeof s.as_of === "string" &&
+    (s.first_sale_date === null || typeof s.first_sale_date === "string") &&
     Array.isArray(s.hourly) &&
-    WINDOW_KEYS.every((k) => s.windows?.[k]?.days?.length === 7);
+    s.hourly.every((h) => num(h.hour) && num(h.amount)) &&
+    WINDOW_KEYS.every((k) => {
+      const w = s.windows?.[k];
+      return (
+        typeof w?.from === "string" &&
+        typeof w.to === "string" &&
+        w.days?.length === 7 &&
+        w.days.every(
+          (d) =>
+            typeof d.date === "string" &&
+            [d.amount, d.count, d.card_amount, d.tip_amount, d.cashback_amount].every(num),
+        )
+      );
+    });
   // Un 200 con forma inesperada es un tomahawk roto: se trata como servicio caído.
   if (!ok) throw new PortalApiError("NETWORK", 502);
   return s;
@@ -110,7 +125,8 @@ function dayName(iso: string): string {
 }
 
 const sum = (days: SalesDay[], f: (d: SalesDay) => number) => days.reduce((a, d) => a + f(d), 0);
-const pct = (cur: number, prev: number | null) => (prev ? ((cur - prev) / prev) * 100 : null);
+// Con un previo en 0 o negativo (notas de crédito) el % no tiene sentido: "—".
+const pct = (cur: number, prev: number | null) => (prev !== null && prev > 0 ? ((cur - prev) / prev) * 100 : null);
 const scale = (n: number, max: number) => (max > 0 ? Math.max(0, (n / max) * 100) : 0);
 
 // Frase para "hace 1 mes" / "la semana anterior" dentro de una oración.
@@ -165,12 +181,15 @@ export function buildDashboard(s: SalesSummary, vs: CompareKey): Dashboard {
   const rulerMax = Math.max(total, ...ruler.map((r) => r.total ?? 0));
   const withData = ruler.filter((r) => r.total !== null);
   const above = withData.filter((r) => r.total! > total);
+  const below = withData.filter((r) => r.total! < total);
   let rulerReading: string;
   if (withData.length === 0) rulerReading = "Aún no hay períodos anteriores para comparar.";
-  else if (above.length === 0) rulerReading = "Vendiste más que en todos los períodos anteriores.";
+  else if (total <= 0 && above.length === 0) rulerReading = "No registras ventas en estos períodos.";
+  else if (below.length === withData.length) rulerReading = "Vendiste más que en todos los períodos anteriores.";
   else if (above.length === withData.length) rulerReading = "Vendiste menos que en todos los períodos anteriores.";
-  else if (above.length === 1) rulerReading = `Solo ${inSentence(above[0].key)} vendiste más que ahora.`;
-  else rulerReading = `Vendiste más que en ${withData.length - above.length} de ${withData.length} períodos.`;
+  else if (above.length === 1 && below.length === withData.length - 1)
+    rulerReading = `Solo ${inSentence(above[0].key)} vendiste más que ahora.`;
+  else rulerReading = `Vendiste más que en ${below.length} de ${withData.length} períodos.`;
 
   const count = sum(cur, (d) => d.count);
   const ticket = count ? Math.round(total / count) : 0;
