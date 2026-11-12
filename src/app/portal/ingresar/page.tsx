@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Ingresar" };
 
 export default function IngresarPage() {
   return (
-    <AuthCard title="Ingresa a tu portal DTEx®">
+    <AuthCard title="Ingresa a tu portal de comercios">
       <LoginForm />
     </AuthCard>
   );

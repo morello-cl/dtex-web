@@ -1,4 +1,5 @@
 import Logo from "@/components/Logo";
+import PortalFooter from "@/components/portal/PortalFooter";
 import { logoutAction } from "@/lib/portal/actions";
 import { requireMe } from "@/lib/portal/session";
 
@@ -27,6 +28,9 @@ export default async function PortalPage() {
             Cerrar sesión
           </button>
         </form>
+      </div>
+      <div className="mx-auto mt-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
+        <PortalFooter />
       </div>
     </div>
   );

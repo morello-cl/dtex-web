@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
-import { whatsappLink } from "@/lib/site";
+import PortalFooter from "./PortalFooter";
 import {
   loginAction,
   requestLinkAction,
@@ -262,9 +262,7 @@ export function AuthCard({
           Tus ventas y tus abonos, claros y al día.
         </h2>
         <PortalPreview />
-        <p className="text-sm text-white/60">
-          Portal de comercios DTEx®, una plataforma de MUFIN.
-        </p>
+        <span />
       </aside>
 
       <div className="flex flex-col px-6 py-8 sm:px-12">
@@ -277,17 +275,7 @@ export function AuthCard({
           </h1>
           {children}
         </section>
-        <p className="text-center text-sm text-muted">
-          ¿Problemas para ingresar?{" "}
-          <a
-            href={whatsappLink("portal")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-mufin-700 underline-offset-4 hover:underline"
-          >
-            Escríbenos por WhatsApp
-          </a>
-        </p>
+        <PortalFooter />
       </div>
     </div>
   );
