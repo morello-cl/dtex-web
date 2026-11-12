@@ -38,7 +38,7 @@ export function passwordError(pw: string): string | null {
     : "La contraseña debe tener entre 10 y 72 caracteres.";
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function portalRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
   const base = process.env.TOMAHAWK_BASE_URL ?? "https://api.dtex.app";
   let response: Response;
   try {
@@ -70,7 +70,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 function post<T>(path: string, payload: unknown): Promise<T> {
-  return request<T>(path, { method: "POST", body: JSON.stringify(payload) });
+  return portalRequest<T>(path, { method: "POST", body: JSON.stringify(payload) });
 }
 
 // Un 200 con forma inesperada es un tomahawk roto: se trata como servicio caído.
@@ -105,7 +105,7 @@ export async function setPassword(token: string, password: string): Promise<Sess
 export async function getMe(jwt: string): Promise<Me | null> {
   let me: Me;
   try {
-    me = await request<Me>("/api/portal/v1/me", {
+    me = await portalRequest<Me>("/api/portal/v1/me", {
       headers: { "x-token-dtex": jwt },
     });
   } catch (e) {
@@ -148,7 +148,7 @@ export function linkProblem(e: unknown): LinkProblemKind | null {
 /** Revisa el enlace sin consumirlo. Lanza si tomahawk está caído. */
 export async function checkLink(token: string): Promise<LinkStatus> {
   try {
-    await request(`/api/portal/auth/v1/link/${encodeURIComponent(token)}`);
+    await portalRequest(`/api/portal/auth/v1/link/${encodeURIComponent(token)}`);
     return "valid";
   } catch (e) {
     const problem = linkProblem(e);
