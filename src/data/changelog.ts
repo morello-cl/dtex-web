@@ -20,6 +20,33 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.14.0",
+    date: "2026-11-11",
+    summary: "Portal de pagos MUFIN para comercios.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Portal de pagos MUFIN: ingresa con el correo de tu empresa para revisar tus ventas y tus abonos. La primera vez te enviamos un enlace para activar tu cuenta y definir tu contraseña; con el mismo enlace la recuperas si la olvidas.",
+      },
+      {
+        type: "added",
+        description:
+          "Si abres un enlace que ya usaste, que venció o que llegó incompleto, el portal te explica qué pasó y te deja pedir otro en la misma pantalla.",
+      },
+      {
+        type: "added",
+        description:
+          "Acceso directo al Portal de pagos desde el menú y el pie de página del sitio.",
+      },
+      {
+        type: "changed",
+        description:
+          "DTEx® se presenta como una aplicación MUFIN en el encabezado y el pie de página del sitio.",
+      },
+    ],
+  },
+  {
     version: "0.13.0",
     date: "2026-10-26",
     summary: "Documentación App2App en Markdown para asistentes de IA.",
