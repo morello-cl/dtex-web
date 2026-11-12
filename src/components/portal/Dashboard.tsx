@@ -192,7 +192,8 @@ export default function Dashboard({ d, vs }: { d: Data; vs: CompareKey }) {
   }
   const k = d.kpis;
   const parts = [`Ventas ${formatClp(k.sale)}`, `propinas ${formatClp(k.tip)}`];
-  if (k.cashback) parts.push(`cashback ${formatClp(k.cashback)}`);
+  // Cashback: extra cobrado con tarjeta y entregado en efectivo. El vuelto en efectivo no entra.
+  if (k.cashback) parts.push(`efectivo entregado con tarjeta ${formatClp(k.cashback)}`);
   return (
     <div className="space-y-6">
       <header>
