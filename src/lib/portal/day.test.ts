@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { PortalApiError } from "./auth.ts";
-import { buildDay, chileToday, getSalesDay, parseDate, parseMethod, type SalesDayData } from "./day.ts";
+import { badRequestTarget, buildDay, chileToday, getSalesDay, parseDate, parseMethod, type SalesDayData } from "./day.ts";
 
 const card = (type: "credit" | "debit" | null, last_four: string | null = "1234") => ({ brand: "Visa", type, last_four });
 const sale = (over: Partial<SalesDayData["sales"][number]> = {}): SalesDayData["sales"][number] => ({
@@ -198,4 +198,36 @@ test("rechazos y cancelaciones del cliente van separados; tarjeta parcial", () =
   assert.equal(d.rejected[0].method, "Tarjeta débito");
   assert.equal(d.cancelled.length, 1);
   assert.equal(d.cancelled[0].method, "Tarjeta");
+});
+
+test("getSalesDay rechaza campos que romperían el render", async (t) => {
+  const cases: [string, (d: SalesDayData) => void][] = [
+    ["sucursal null", (d) => ((d.sales[0] as unknown as { subsidiary: null }).subsidiary = null)],
+    ["equipo sin tid", (d) => ((d.sales[0].equipment as unknown as { tid: number }).tid = 1)],
+    ["hora numérica", (d) => ((d.sales[0] as unknown as { time: number }).time = 1432)],
+    ["voided ausente", (d) => delete (d.sales[0] as Partial<SalesDayData["sales"][number]>).voided],
+    ["tipo de tarjeta desconocido", (d) => ((d.totals.by_payment_method[1].by_card_type![0] as unknown as { type: string }).type = "prepaid")],
+    ["fecha mal formada", (d) => (d.date = "12-11-2026")],
+    ["as_of ausente", (d) => delete (d as Partial<SalesDayData>).as_of],
+    ["rechazo sin kind", (d) => d.rejections.push({ occurred_at: "x", time: null, amount: 1, payment_method: 5 } as never)],
+  ];
+  const f = t.mock.method(globalThis, "fetch", async () => new Response("{}"));
+  for (const [name, mutate] of cases) {
+    const bad = data();
+    mutate(bad);
+    f.mock.mockImplementation(async () => new Response(JSON.stringify({ error: false, message: null, data: bad }), { status: 200 }));
+    await assert.rejects(getSalesDay("jwt-1", "2026-11-12", null, null), (e) => e instanceof PortalApiError && e.code === "NETWORK", name);
+  }
+});
+
+test("badRequestTarget: sin cursor, luego sin fecha, luego mantención", () => {
+  assert.equal(badRequestTarget({ fecha: "2026-11-10", cursor: "x" }, "card"), "/portal/ventas?fecha=2026-11-10&medio=card");
+  assert.equal(badRequestTarget({ fecha: "2026-11-10" }, null), "/portal/ventas");
+  assert.equal(badRequestTarget({}, "cash"), null);
+});
+
+test("tira cerca del límite de 2 años no ofrece días fuera de rango", () => {
+  const d = buildDay(data({ date: "2024-11-13" }), null, "2026-11-12");
+  assert.equal(d.strip[0].date, "2024-11-12");
+  assert.ok(d.strip.some((s) => s.selected));
 });

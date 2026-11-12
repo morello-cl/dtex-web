@@ -5,7 +5,7 @@ import PortalFooter from "@/components/portal/PortalFooter";
 import PortalHeader from "@/components/portal/PortalHeader";
 import SalesDay from "@/components/portal/SalesDay";
 import { PortalApiError } from "@/lib/portal/auth";
-import { buildDay, chileToday, getSalesDay, minDate, parseDate, parseMethod, type SalesDayData } from "@/lib/portal/day";
+import { badRequestTarget, buildDay, chileToday, getSalesDay, minDate, parseDate, parseMethod, type SalesDayData } from "@/lib/portal/day";
 import { requireMe, SESSION_COOKIE } from "@/lib/portal/session";
 
 export const metadata: Metadata = { title: "Ventas" };
@@ -22,14 +22,16 @@ export default async function VentasPage({ searchParams }: { searchParams: Promi
   const jwt = (await cookies()).get(SESSION_COOKIE)?.value ?? "";
 
   let data: SalesDayData | null = null;
-  let unauthorized = false;
+  let status = 0;
   try {
     data = await getSalesDay(jwt, date, method, cursor);
   } catch (e) {
     // Cualquier otro error (caído, 5xx, forma inválida) lleva a mantención.
-    unauthorized = e instanceof PortalApiError && e.status === 401;
+    status = e instanceof PortalApiError ? e.status : 0;
   }
-  if (unauthorized) redirect("/portal/ingresar");
+  if (status === 401) redirect("/portal/ingresar");
+  const retry = status === 400 ? badRequestTarget(p, method) : null;
+  if (retry) redirect(retry);
   if (!data) redirect("/portal/mantencion");
 
   return (
@@ -37,7 +39,7 @@ export default async function VentasPage({ searchParams }: { searchParams: Promi
       <PortalHeader merchant={me.merchant.name} current="/portal/ventas" />
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
         <p className="mb-6 truncate text-sm font-medium text-mufin-900 md:hidden">{me.merchant.name}</p>
-        <SalesDay d={buildDay(data, method, today)} today={today} min={minDate(today)} />
+        <SalesDay d={buildDay(data, method, today)} today={today} min={minDate(today)} paged={cursor !== null} />
       </main>
       <div className="mx-auto mt-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
         <PortalFooter />

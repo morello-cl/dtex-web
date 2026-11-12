@@ -70,23 +70,39 @@ export async function getSalesDay(
     headers: { "x-token-dtex": jwt },
   });
   const t = d.totals;
+  const str = (v: unknown) => typeof v === "string";
+  const time = (v: unknown) => v === null || str(v);
+  const cardType = (v: unknown) => v === null || v === "credit" || v === "debit";
+  const card = (c: Card | null) => c === null || (typeof c === "object" && cardType(c.type));
   const ok =
-    typeof d.date === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(d.date) &&
+    str(d.as_of) &&
     [t?.amount, t?.count, t?.tip_amount, t?.cashback_amount].every(num) &&
     Array.isArray(t.by_payment_method) &&
-    t.by_payment_method.every((m) => typeof m.payment_method === "string" && [m.amount, m.count].every(num)) &&
+    t.by_payment_method.every(
+      (m) =>
+        str(m.payment_method) &&
+        [m.amount, m.count].every(num) &&
+        (m.by_card_type === undefined ||
+          (Array.isArray(m.by_card_type) && m.by_card_type.every((c) => cardType(c.type) && [c.amount, c.count].every(num)))),
+    ) &&
     Array.isArray(t.by_document) &&
-    t.by_document.every((x) => typeof x.dte_type_name === "string" && [x.amount, x.count].every(num)) &&
+    t.by_document.every((x) => str(x.dte_type_name) && [x.dte_type, x.amount, x.count].every(num)) &&
     Array.isArray(d.sales) &&
     d.sales.every(
       (s) =>
-        typeof s.dte_type_name === "string" &&
-        typeof s.payment_method === "string" &&
-        [s.amount, s.tip_amount, s.cashback_amount].every(num),
+        str(s.dte_type_name) &&
+        str(s.payment_method) &&
+        time(s.time) &&
+        typeof s.voided === "boolean" &&
+        str(s.subsidiary?.name) &&
+        str(s.equipment?.tid) &&
+        card(s.card) &&
+        [s.folio, s.dte_type, s.amount, s.tip_amount, s.cashback_amount].every(num),
     ) &&
-    (d.next_cursor === null || typeof d.next_cursor === "string") &&
+    (d.next_cursor === null || str(d.next_cursor)) &&
     Array.isArray(d.rejections) &&
-    d.rejections.every((r) => num(r.amount));
+    d.rejections.every((r) => str(r.kind) && str(r.payment_method) && time(r.time) && card(r.card) && num(r.amount));
   // Un 200 con forma inesperada es un tomahawk roto: se trata como servicio caído.
   if (!ok) throw new PortalApiError("NETWORK", 502);
   return d;
@@ -103,8 +119,20 @@ function addDays(iso: string, n: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-/** Primer día consultable: hace 2 años. */
-export const minDate = (today: string) => `${Number(today.slice(0, 4)) - 2}${today.slice(4)}`;
+/** Primer día consultable: hace 2 años (el 29 de febrero pasa al 1 de marzo). */
+export const minDate = (today: string) => addDays(`${Number(today.slice(0, 4)) - 2}${today.slice(4, 8)}01`, Number(today.slice(8)) - 1);
+
+/**
+ * Ante un 400 (cursor vencido o fecha que tomahawk no acepta): primero se
+ * descarta el cursor, después la fecha. null = ya no queda qué descartar.
+ */
+export function badRequestTarget(p: { fecha?: unknown; cursor?: unknown }, method: Method | null): string | null {
+  if (!p.cursor && !p.fecha) return null;
+  const q = new URLSearchParams();
+  if (p.cursor && typeof p.fecha === "string") q.set("fecha", p.fecha);
+  if (method) q.set("medio", method);
+  return `/portal/ventas${q.size ? `?${q}` : ""}`;
+}
 
 /** Fecha pedida si es real y está entre hace 2 años y hoy; si no, hoy. */
 export function parseDate(raw: string | string[] | undefined, today: string): string {
@@ -155,7 +183,9 @@ export function buildDay(d: SalesDayData, method: Method | null, today: string) 
   const isToday = d.date === today;
 
   // La tira termina hoy; si el día pedido ya no cabe, termina 6 días después de él.
-  const end = d.date > addDays(today, -14) ? today : addDays(d.date, 6);
+  // Sin pasar de hoy ni de 2 años atrás.
+  const floor = addDays(minDate(today), 13);
+  const end = d.date > addDays(today, -14) ? today : addDays(d.date, 6) < floor ? floor : addDays(d.date, 6);
   const strip = Array.from({ length: 14 }, (_, i) => {
     const date = addDays(end, i - 13);
     return {

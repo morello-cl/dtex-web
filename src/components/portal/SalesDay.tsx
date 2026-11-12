@@ -137,10 +137,10 @@ const FILTERS: { key: Method | null; label: string }[] = [
   { key: "card", label: "Tarjeta" },
 ];
 
-function SalesList({ d }: { d: DayView }) {
+function SalesList({ d, paged }: { d: DayView; paged: boolean }) {
   const empty = d.method === "cash" ? "No hay ventas en efectivo este día." : d.method === "card" ? "No hay ventas con tarjeta este día." : "No registras ventas este día.";
   return (
-    <section className={`${box} p-5 sm:p-6`}>
+    <section id="ventas" className={`${box} scroll-mt-4 p-5 sm:p-6`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-semibold text-mufin-900">Ventas</h2>
         <nav aria-label="Filtrar por medio de pago" className="flex gap-2">
@@ -167,17 +167,17 @@ function SalesList({ d }: { d: DayView }) {
       ) : (
         <ul className="mt-4 divide-y divide-mufin-border text-sm">
           {d.rows.map((r) => (
-            <li key={r.key} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 py-3 lg:grid-cols-[3.5rem_1.2fr_1.2fr_1.4fr_8rem] lg:items-center">
+            <li key={r.key} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-0.5 py-3 lg:grid-cols-[3.5rem_1.2fr_1.2fr_1.4fr_8rem] lg:items-center">
               <span className="order-2 text-muted tabular-nums lg:order-none">{r.time}</span>
-              <span className={`order-1 font-medium lg:order-none ${r.voided ? "text-muted line-through" : "text-mufin-900"}`}>
-                {r.document}
-                {r.voided && <span className="ml-2 rounded-full bg-mufin-bg px-2 py-0.5 text-xs font-normal text-muted no-underline">Anulada</span>}
+              <span className="order-1 font-medium lg:order-none">
+                <span className={r.voided ? "text-muted line-through" : "text-mufin-900"}>{r.document}</span>
+                {r.voided && <span className="ml-2 rounded-full bg-mufin-bg px-2 py-0.5 text-xs font-normal text-muted">Anulada</span>}
               </span>
               <span className="order-4 col-span-2 flex items-center gap-2 text-muted lg:order-none lg:col-span-1">
                 <MethodDot card={r.isCard} />
                 {r.method}
               </span>
-              <span className="order-5 col-span-2 text-muted lg:order-none lg:col-span-1">{r.place}</span>
+              <span className="order-5 col-span-2 break-words text-muted lg:order-none lg:col-span-1">{r.place}</span>
               <span className="order-1 row-span-2 text-right lg:order-none lg:row-span-1">
                 <span
                   className={`block font-semibold tabular-nums ${r.voided ? "text-muted line-through" : r.negative ? "text-warn-700" : "text-mufin-900"}`}
@@ -193,10 +193,20 @@ function SalesList({ d }: { d: DayView }) {
           ))}
         </ul>
       )}
-      {d.nextCursor && (
-        <Link href={href(d.date, d.method, d.nextCursor)} className={`mt-4 inline-block font-medium text-mufin-700 hover:underline ${focus}`}>
-          Ver más ventas
-        </Link>
+      {/* ponytail: cada página reemplaza a la anterior; acumular exige JS. */}
+      {(d.nextCursor || paged) && (
+        <p className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+          {d.nextCursor && (
+            <Link href={`${href(d.date, d.method, d.nextCursor)}#ventas`} className={`font-medium text-mufin-700 hover:underline ${focus}`}>
+              Ver más ventas
+            </Link>
+          )}
+          {paged && (
+            <Link href={`${href(d.date, d.method)}#ventas`} className={`font-medium text-mufin-700 hover:underline ${focus}`}>
+              Volver a las más recientes
+            </Link>
+          )}
+        </p>
       )}
     </section>
   );
@@ -239,7 +249,7 @@ function Rejections({ d }: { d: DayView }) {
   );
 }
 
-export default function SalesDay({ d, today, min }: { d: DayView; today: string; min: string }) {
+export default function SalesDay({ d, today, min, paged }: { d: DayView; today: string; min: string; paged: boolean }) {
   return (
     <div className="space-y-6">
       <header>
@@ -248,7 +258,7 @@ export default function SalesDay({ d, today, min }: { d: DayView; today: string;
       </header>
       <DayPicker d={d} today={today} min={min} />
       <Summary d={d} />
-      <SalesList d={d} />
+      <SalesList d={d} paged={paged} />
       <Rejections d={d} />
     </div>
   );
