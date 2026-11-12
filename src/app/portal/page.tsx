@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Dashboard from "@/components/portal/Dashboard";
-import MufinLogo from "@/components/portal/MufinLogo";
+import PortalHeader from "@/components/portal/PortalHeader";
 import PortalFooter from "@/components/portal/PortalFooter";
-import { logoutAction } from "@/lib/portal/actions";
 import { PortalApiError } from "@/lib/portal/auth";
 import { buildDashboard, getSalesSummary, parseCompare, type SalesSummary } from "@/lib/portal/sales";
 import { requireMe, SESSION_COOKIE } from "@/lib/portal/session";
@@ -36,24 +35,9 @@ export default async function PortalPage({
 
   return (
     <div className="flex flex-1 flex-col bg-mufin-bg">
-      <header className="border-b border-mufin-border bg-white">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <MufinLogo height={28} />
-          <div className="flex min-w-0 items-center gap-4">
-            <span className="hidden truncate text-sm font-medium text-mufin-900 sm:block">{me.merchant.name}</span>
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="rounded-xl border border-mufin-border bg-white px-3.5 py-2 text-sm font-medium text-mufin-900 hover:border-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700"
-              >
-                Cerrar sesión
-              </button>
-            </form>
-          </div>
-        </div>
-      </header>
+      <PortalHeader merchant={me.merchant.name} current="/portal" />
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-        <p className="mb-6 truncate text-sm font-medium text-mufin-900 sm:hidden">{me.merchant.name}</p>
+        <p className="mb-6 truncate text-sm font-medium text-mufin-900 md:hidden">{me.merchant.name}</p>
         <Dashboard d={buildDashboard(summary, vs)} vs={vs} />
       </main>
       <div className="mx-auto mt-auto w-full max-w-6xl px-4 pb-8 sm:px-6">

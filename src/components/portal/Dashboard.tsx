@@ -84,13 +84,18 @@ function DayBars({ d }: { d: Data }) {
           );
         })}
       </svg>
-      <div className="mt-2 grid grid-cols-7 text-center text-xs" aria-hidden="true">
-        {d.days.map((x, i) => (
-          <span key={i} className={x.isToday ? "font-bold text-mufin-900" : "text-muted"}>
+      <nav aria-label="Ver ventas del día" className="mt-2 grid grid-cols-7 text-center text-xs">
+        {d.days.map((x) => (
+          <Link
+            key={x.iso}
+            href={`/portal/ventas?fecha=${x.iso}`}
+            aria-label={`Ver ventas del ${x.date}`}
+            className={`rounded-md py-1 hover:bg-mufin-bg hover:underline focus-visible:outline-2 focus-visible:outline-mufin-700 ${x.isToday ? "font-bold text-mufin-900" : "text-muted"}`}
+          >
             {x.isToday ? "hoy" : x.label}
-          </span>
+          </Link>
         ))}
-      </div>
+      </nav>
       <p className="mt-4 border-t border-mufin-border pt-4 text-sm text-mufin-900">{d.today}</p>
     </section>
   );

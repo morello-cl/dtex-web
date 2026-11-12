@@ -206,3 +206,8 @@ test("getSalesSummary rechaza montos que no son números", async (t) => {
   );
   await assert.rejects(getSalesSummary("jwt-1"), (e) => e instanceof PortalApiError && e.code === "NETWORK");
 });
+
+test("formatClp: negativo con el signo antes del $", () => {
+  assert.equal(formatClp(-21200), "-$21.200");
+  assert.equal(formatClp(0), "$0");
+});

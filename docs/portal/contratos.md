@@ -87,3 +87,47 @@ de la App se alinea a él (pedido a dtex_app).
   pero no en el corte ni en `hourly`.
 - Los montos van en CLP enteros. Ante un JWT inválido responde 401, igual que
   `me`.
+
+## 3. Ventas del día
+
+Propuesto por tomahawk y aprobado por Marco (2026-11-12), con los agregados
+`payment_method`, `voided`, `by_document` y `by_card_type`. Pendiente de que
+tomahawk lo implemente.
+
+`GET /api/portal/v1/sales/day?date=YYYY-MM-DD&payment_method=cash|card&limit=200&cursor=<opaco>`,
+con el header `x-token-dtex`.
+
+```jsonc
+{ "date": "2026-11-12", "as_of": "2026-11-12T15:04:00-03:00",
+  "totals": { "amount", "count", "tip_amount", "cashback_amount",
+    "by_payment_method": [{ "payment_method": "cash" | "card" | "...", "amount", "count",
+      "tip_amount", "cashback_amount",
+      "by_card_type": [{ "type": "credit" | "debit" | null, "amount", "count" }] }], // solo en card
+    "by_document": [{ "dte_type": 39, "dte_type_name": "Boleta", "amount", "count" }] },
+  "sales": [{ "uuid": "…" | null, "time": "14:32:05" | null, "folio": 1234, "dte_type": 39,
+    "dte_type_name": "Boleta", "amount", "tip_amount", "cashback_amount",
+    "payment_method": "card", "voided": false,
+    "card": { "brand": "Visa" | null, "type": "debit" | "credit" | null, "last_four": "1234" | null } | null,
+    "equipment": { "uuid", "tid" }, "subsidiary": { "uuid", "name" } }],
+  "next_cursor": "…" | null,
+  "rejections": [{ "kind": "rejected" | "cancelled", "occurred_at", "time", "amount", "payment_method": "card", "provider",
+    "reason", "message", "card", "equipment" }] }
+```
+
+### Reglas
+
+- Montos con las reglas del §2. Las notas de crédito (61) vienen en negativo.
+- **`totals` es siempre el día completo**: no lo filtra `payment_method`. Solo
+  `sales` y `next_cursor` se filtran.
+- **`voided`**: una venta anulada se lista pero no suma en `totals`,
+  `by_payment_method` ni `by_document`. Hoy `dtes` no tiene de dónde sacarlo:
+  viene siempre `false` hasta definir la fuente (pendiente con Marco).
+- **Rechazos:** no suman ni restan. `kind` separa el rechazo (banco o
+  procesador) de la cancelación del cliente, que incluye el `errorCode 10` de
+  TUU; tomahawk normaliza. La UI los muestra en grupos separados. Cada campo
+  de `card` puede venir null por separado. Hoy `rejections` es `[]`: la App no informa
+  los pagos rechazados (pedido a tomahawk y dtex_app).
+- `sales` va ordenado por hora descendente. `limit` vale 200 por omisión, con
+  un máximo de 500.
+- Una fecha futura, una anterior a 2 años o una mal formada responde 400
+  `INVALID_DATE`.

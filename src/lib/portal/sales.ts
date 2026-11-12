@@ -71,7 +71,8 @@ const clp = new Intl.NumberFormat("es-CL", {
 });
 
 export function formatClp(n: number): string {
-  return clp.format(n).replace(/\s/g, "");
+  // es-CL escribe "$-21.200"; en Chile se lee "-$21.200".
+  return (n < 0 ? "-" : "") + clp.format(Math.abs(n)).replace(/\s/g, "");
 }
 
 export function formatDelta(pct: number | null): string {
@@ -90,6 +91,7 @@ export type Dashboard = {
   days: {
     label: string;
     date: string;
+    iso: string;
     current: number;
     previous: number;
     isToday: boolean;
@@ -120,7 +122,7 @@ const DAY_SHORT = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 function weekday(iso: string): number {
   return new Date(`${iso}T00:00:00Z`).getUTCDay();
 }
-function dayName(iso: string): string {
+export function dayName(iso: string): string {
   return `${DAY_NAMES[weekday(iso)]} ${Number(iso.slice(8, 10))}`;
 }
 
@@ -149,6 +151,7 @@ export function buildDashboard(s: SalesSummary, vs: CompareKey): Dashboard {
   const days = series.map(({ d, prev }, i) => ({
     label: DAY_SHORT[weekday(d.date)],
     date: dayName(d.date),
+    iso: d.date,
     current: d.amount,
     previous: prev,
     isToday: i === cur.length - 1,
