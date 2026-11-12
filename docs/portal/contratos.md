@@ -151,7 +151,7 @@ fila de `pagos_comercio`, que existe recién cuando se genera la nómina.
 ```jsonc
 // Lista: abonos con sale_date entre from y to, más recientes primero.
 { "as_of": "2026-11-12T15:04:00-03:00",
-  "available": A | null,     // ventas Kushki aún sin nómina (hoy, o ayer antes de las 00:30)
+  "available": [A],          // días cerrados con ventas Kushki aún sin nómina; el día en curso no entra
   "next": P | null,          // el abono in_process más antiguo, para el Inicio
   "payouts": [P] }
 
@@ -171,13 +171,15 @@ fila de `pagos_comercio`, que existe recién cuando se genera la nómina.
   "method": "estimated" | "reconciled", "reconciled_at": "…" | null,
   "pending_difference": 0 }
 
-// Detalle: P + los movimientos (ventas Kushki) que lo componen
+// Detalle: P + los movimientos que lo componen
 { ...P,
-  "movements": [{ "sale_uuid": "…", "time": "14:32", "folio": 1234, "dte_type_name": "Boleta",
-    "amount": 10000,                          // con propina, como en gross_amount
-    "card": { "brand", "type", "last_four" } | null,
-    "commission": 180, "commission_tax": 34,  // de este movimiento
-    "difference": 0 }] }                      // exacto − cobrado al conciliar; 0 si no hay
+  "movements": [
+    { "kind": "sale", "sale_uuid": "…" | null, "time": "14:32", "folio": 1234, "dte_type_name": "Boleta",
+      "amount": 10000,                          // con propina, como en gross_amount
+      "card": { "brand", "type", "last_four" } | null,
+      "commission": 180 | null, "commission_tax": 34 | null,  // cobrado en esta venta
+      "difference": 0 | null },                 // exacto − cobrado al conciliar
+    { "kind": "adjustment", "origin_sale_date": "2026-11-03", "amount": 1200 } ] }  // diferencia absorbida
 ```
 
 ### Reglas
@@ -196,6 +198,17 @@ fila de `pagos_comercio`, que existe recién cuando se genera la nómina.
 - **El abono muestra el monto que se va a pagar**, no una cuadratura contra
   las ventas. Las diferencias se ven en el detalle de cada movimiento, porque
   apuntan a ventas o pagos concretos.
+- **`available`** usa el mismo cálculo que la nómina (tomahawk lo extrae del
+  job `kushki_payment` a un service compartido), para que el disponible y lo
+  pagado coincidan. El día en curso no entra: el job tampoco lo paga.
+- **Movimientos:** `commission`, `commission_tax` y `difference` por venta
+  existen solo desde que `kushki_payment` guarde el detalle por venta (tabla
+  nueva en tomahawk). En los abonos anteriores vienen null y el portal
+  muestra solo la venta. La suma por venta puede diferir en $1 o $2 de la del
+  abono, porque el abono redondea el total. `sale_uuid` puede venir null
+  mientras no se complete el backfill de `dtes.uuid`. Cada diferencia de un
+  abono anterior que se absorbe aparece como un movimiento `adjustment` con su
+  `origin_sale_date`, y la suma de esos movimientos es `adjustment`.
 - **`sale_date`** es el día calendario de Chile (`dtes.date`), de 00:00 a
   23:59. No se usa el corte de Kushki.
 - **`gross_amount`** suma `COALESCE(monto_original, total)` de las ventas con
