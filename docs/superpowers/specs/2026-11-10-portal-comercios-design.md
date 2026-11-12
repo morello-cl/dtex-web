@@ -361,4 +361,13 @@ desarrolla con datos de prueba ajustados al contrato.
 - Roles admin/user/view y creación de usuarios por el admin.
 - Rechazos de abonos: diseñar la tabla contable (cada rechazo tiene un costo),
   su reintento y cómo los ve el comercio.
-- Agregar `.superpowers/` a `.gitignore`.
+- **Etapa 2: ordenar el portal hacia MUFIN.** Desde el 2026-11-11 el portal
+  se presenta como "Portal de pagos MUFIN" y DTEx® como la app de cobro, pero
+  sigue publicado en `dtex.cl/portal`, y los correos salen de `mail.dtex.cl`.
+  Evaluar un dominio propio (por ejemplo `pagos.mufin.cl`), un dominio de envío
+  de mufin.cl verificado en Resend, el enlace del contrato con tomahawk y una
+  redirección desde `dtex.cl/portal`.
+- Publicar el enlace "Portal de pagos" del navbar y del footer de dtex.cl
+  recién cuando tomahawk tenga el contrato en producción.
+- Límite por IP real para los POST a `/portal/*` (firewall de Vercel) antes de
+  abrir el portal a los 719 comercios.

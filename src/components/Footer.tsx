@@ -70,6 +70,11 @@ export default function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/portal" className="hover:text-brand-700">
+                Portal de pagos para comercios
+              </Link>
+            </li>
+            <li>
               <a
                 href={whatsappLink("info")}
                 target="_blank"

@@ -50,7 +50,14 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-3 md:flex">
+          {/* Acceso de comercios, como el "Ingreso comercios" de otras redes. */}
+          <Link
+            href="/portal"
+            className="inline-flex items-center rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-brand-700 transition-colors hover:border-brand-400"
+          >
+            Portal de pagos
+          </Link>
           <a
             href={whatsappLink("info")}
             target="_blank"
@@ -102,6 +109,15 @@ export default function Navbar() {
                 </a>
               </li>
             ))}
+            <li>
+              <Link
+                href="/portal"
+                className="block py-3 text-base font-medium text-brand-700"
+                onClick={() => setOpen(false)}
+              >
+                Portal de pagos
+              </Link>
+            </li>
             <li className="pt-2">
               <a
                 href={whatsappLink("info")}
