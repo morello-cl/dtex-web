@@ -50,8 +50,9 @@ Cada proyecto acuerda aquí su contrato antes de construirse.
 
 ## 2. Inicio
 
-Confirmado por tomahawk (2026-11-12). La fórmula de cashback queda pendiente
-de confirmar con App2App.
+Confirmado por tomahawk (2026-11-12). Marco decidió que la App y el portal
+calculen igual monto, propina y vuelto: este contrato no cambia y el reporte
+de la App se alinea a él (pedido a dtex_app).
 
 `GET /api/portal/v1/sales/summary`, con el header `x-token-dtex`. El
 `client_uuid` sale del JWT.
