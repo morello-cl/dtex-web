@@ -47,3 +47,42 @@ Cada proyecto acuerda aquí su contrato antes de construirse.
 - **JWT:** propio del portal, distinto del de distribuidor. Lleva `user_uuid`
   y `client_uuid`.
 - **`dist_cli.email` no se usa.**
+
+## 2. Inicio
+
+Confirmado por tomahawk (2026-11-12). La fórmula de cashback queda pendiente
+de confirmar con App2App.
+
+`GET /api/portal/v1/sales/summary`, con el header `x-token-dtex`. El
+`client_uuid` sale del JWT.
+
+```jsonc
+{ "as_of": "2026-11-12T15:04:00-03:00",        // hora Chile, calculada en Node
+  "first_sale_date": "2026-03-14" | null,
+  "windows": { "current": W, "week_1": W, "week_2": W, "week_4": W, "week_8": W, "week_52": W },
+  "hourly": [{ "hour": 0, "amount": 0 }, ...] }  // 24 filas, solo de current
+// W = { "from", "to", "days": [Day x7, en orden, con 0 los días sin ventas] }
+// Day = { "date", "amount", "count", "card_amount", "tip_amount", "cashback_amount" }
+```
+
+### Reglas
+
+- **`amount`** es todo lo cobrado: venta + propina + cashback con tarjeta. Es
+  lo que llega en el abono (decisión de Marco). Base:
+  `COALESCE(monto_original, total)`, que es venta + propina, más el `vuelto`
+  de las ventas con `pago_con_tarjeta = 1`.
+- **`tip_amount`** es `monto_original - total`, o 0 si no hay
+  `monto_original`.
+- **`cashback_amount`** es el `vuelto` de las ventas con tarjeta. El vuelto en
+  efectivo no se suma, porque es el cambio que se devuelve al cliente.
+- **`card_amount`** es la suma de las ventas con `pago_con_tarjeta = 1`,
+  cashback incluido.
+- **Ventas que cuentan:** todas las filas de `dtes` del comercio, sea cual sea
+  su `status`, que indica el envío al SII y no el estado de la venta.
+  - Se excluyen los equipos con `es_pruebas = 1`.
+  - Las notas de crédito (61) restan.
+- **Corte de hoy:** el último día de cada ventana se corta en
+  `LEFT(time, 4) <= HHMM` de `as_of`. Las filas sin hora cuentan en el día,
+  pero no en el corte ni en `hourly`.
+- Los montos van en CLP enteros. Ante un JWT inválido responde 401, igual que
+  `me`.

@@ -31,8 +31,10 @@ Tailwind v4, `Intl.NumberFormat("es-CL")` y `node:test`.
   - `week_52`: "Hace 1 año"
 
   Todos se alinean por día de semana.
-- **Monto:** incluye todo lo involucrado en el pago, es decir venta, propina
-  y cashback. Tomahawk define la suma; el front solo usa `amount`.
+- **Monto:** es todo lo cobrado (venta + propina + cashback con tarjeta),
+  porque eso llega en el abono. **La propina y el cashback se muestran
+  desglosados** (decisión de Marco del 2026-11-12). Tomahawk entrega
+  `tip_amount` y `cashback_amount` por día.
 - **Período sin datos:** cuando el período termina antes de
   `first_sale_date`, se muestra "Aún no vendías con DTEx®" y **nunca 0%**.
 - **Paleta:**
@@ -78,9 +80,9 @@ Tailwind v4, `Intl.NumberFormat("es-CL")` y `node:test`.
 **Interfaces:**
 - Produces: la forma de `SalesSummary` que consume la Task 2.
 
-- [ ] **Step 1: Escribir la sección 2 con exactamente este contrato.** Marcarla
-  "pendiente de confirmación de tomahawk" hasta que tomahawk_8 responda las
-  preguntas de columnas y estados.
+- [ ] **Step 1: Hecho.** La sección 2 de `docs/portal/contratos.md` ya está
+  escrita con lo que confirmó tomahawk_8. Es la fuente de verdad del contrato;
+  si difiere del bloque de abajo, manda la sección 2.
 
 `GET /api/portal/v1/sales/summary`, con el header `x-token-dtex`:
 
@@ -89,7 +91,7 @@ Tailwind v4, `Intl.NumberFormat("es-CL")` y `node:test`.
   "windows": { "current": W, "week_1": W, "week_2": W, "week_4": W, "week_8": W, "week_52": W },
   "hourly": [{ "hour": 0, "amount": 0 }, ...] }   // 24 filas, solo de current
 // W = { "from": "YYYY-MM-DD", "to": "YYYY-MM-DD",
-//       "days": [{ "date", "amount", "count", "card_amount" }] }  // siempre 7, en orden
+//       "days": [{ "date", "amount", "count", "card_amount", "tip_amount", "cashback_amount" }] }  // siempre 7, en orden
 ```
 
 Reglas:
@@ -147,7 +149,8 @@ type Dashboard = {
   rulerCurrentAt: number;               // 0..100: posición de la línea "esta semana"
   rulerReading: string;
   kpis: { count: number; countDelta: number | null; ticket: number; ticketDelta: number | null;
-          cardShare: number; peakHour: string | null };
+          cardShare: number; peakHour: string | null;
+          sale: number; tip: number; cashback: number };   // sale = total - tip - cashback
 };
 ```
 
@@ -186,6 +189,8 @@ test("lectura de la regla", ...)
 test("KPIs: ticket, % tarjeta y hora de más venta", ...)
   // ticket = round(total / count), cardShare = round(100 * card / total),
   // peakHour "12 a 13 h"; con hourly todo en 0 → null
+test("desglose: venta + propina + cashback = total", ...)
+  // tip y cashback suman los 7 días de current; sale + tip + cashback === total
 ```
 
 - [ ] **Step 2: Correr `npm test` y verificar que falla**
@@ -258,6 +263,8 @@ Diseño, según el mockup v3:
 - **Franja de KPIs:** una sola caja blanca con divisores, que muestra
   Ventas (con variación), Ticket promedio (con variación), Con tarjeta (con
   una barra de proporción) y Hora de más venta (o "—").
+- **Desglose bajo la cifra principal**, en una línea: "Ventas $X, propinas
+  $Y, cashback $Z". Si el cashback es 0, se omite su parte.
 - Cada gráfico SVG lleva `role="img"` y un `aria-label` con los números en
   texto. Por ejemplo: "Últimos 7 días contra semana anterior: jueves
   $612.000 contra $580.000, …".
