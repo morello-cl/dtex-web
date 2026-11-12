@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import Logo from "@/components/Logo";
+import MufinLogo from "./MufinLogo";
 import PortalFooter from "./PortalFooter";
 import {
   loginAction,
@@ -258,19 +258,24 @@ export function AuthCard({
   return (
     <div className="grid flex-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
       <aside className="portal-panel relative hidden flex-col justify-between overflow-hidden p-12 text-white lg:flex">
-        <h2 className="max-w-sm text-3xl font-bold leading-tight tracking-tight">
-          Tus ventas y tus abonos, claros y al día.
-        </h2>
+        <div className="max-w-sm">
+          <h2 className="text-3xl font-bold leading-tight tracking-tight">
+            Tus ventas y tus abonos, claros y al día.
+          </h2>
+          <p className="mt-3 text-base leading-relaxed text-white/75">
+            Revisa lo que vendes con la app DTEx® y cuándo llega cada abono a tu cuenta.
+          </p>
+        </div>
         <PortalPreview />
         <span />
       </aside>
 
       <div className="flex flex-col px-6 py-8 sm:px-12">
-        <Link href="/portal" aria-label="Portal DTEx®" className="self-start">
-          <Logo height={30} />
+        <Link href="/portal" aria-label="Portal de pagos MUFIN" className="self-start">
+          <MufinLogo height={30} />
         </Link>
         <section className="my-auto w-full max-w-sm self-center py-12">
-          <h1 className="mb-8 text-3xl font-bold tracking-tight text-mufin-900">
+          <h1 className="mb-8 text-balance text-3xl font-bold tracking-tight text-mufin-900">
             {title}
           </h1>
           {children}

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: { default: "Portal de comercios", template: "%s | Portal DTEx®" },
+  title: { default: "Portal de pagos MUFIN", template: "%s | Portal de pagos MUFIN" },
   robots: { index: false, follow: false },
 };
 

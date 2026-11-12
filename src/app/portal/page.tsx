@@ -1,4 +1,4 @@
-import Logo from "@/components/Logo";
+import MufinLogo from "@/components/portal/MufinLogo";
 import PortalFooter from "@/components/portal/PortalFooter";
 import { logoutAction } from "@/lib/portal/actions";
 import { requireMe } from "@/lib/portal/session";
@@ -10,7 +10,7 @@ export default async function PortalPage() {
     <div className="flex flex-1 flex-col bg-mufin-bg">
       <header className="border-b border-mufin-border bg-white">
         <div className="mx-auto flex h-16 max-w-6xl items-center px-4 sm:px-6">
-          <Logo height={28} />
+          <MufinLogo height={28} />
         </div>
       </header>
       <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">

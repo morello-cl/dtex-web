@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Ingresar" };
 
 export default function IngresarPage() {
   return (
-    <AuthCard title="Ingresa a tu portal de comercios">
+    <AuthCard title="Ingresa a tu portal de pagos">
       <LoginForm />
     </AuthCard>
   );
