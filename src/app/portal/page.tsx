@@ -1,39 +1,60 @@
+import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import Dashboard from "@/components/portal/Dashboard";
 import MufinLogo from "@/components/portal/MufinLogo";
 import PortalFooter from "@/components/portal/PortalFooter";
 import { logoutAction } from "@/lib/portal/actions";
-import type { Metadata } from "next";
-import { requireMe } from "@/lib/portal/session";
+import { PortalApiError } from "@/lib/portal/auth";
+import { buildDashboard, getSalesSummary, parseCompare, type SalesSummary } from "@/lib/portal/sales";
+import { requireMe, SESSION_COOKIE } from "@/lib/portal/session";
 
 // La plantilla de portal/layout no aplica a la página de su mismo segmento.
 export const metadata: Metadata = {
   title: { absolute: "Inicio | Portal de pagos MUFIN" },
 };
 
-// ponytail: portada provisoria; el proyecto 2 la reemplaza por el panel de 7 días.
-export default async function PortalPage() {
+export default async function PortalPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ vs?: string | string[] }>;
+}) {
   const me = await requireMe();
+  const vs = parseCompare((await searchParams).vs);
+  const jwt = (await cookies()).get(SESSION_COOKIE)?.value ?? "";
+
+  let summary: SalesSummary | null = null;
+  let unauthorized = false;
+  try {
+    summary = await getSalesSummary(jwt);
+  } catch (e) {
+    // Cualquier otro error (caído, 5xx, forma inválida) lleva a mantención.
+    unauthorized = e instanceof PortalApiError && e.status === 401;
+  }
+  if (unauthorized) redirect("/portal/ingresar");
+  if (!summary) redirect("/portal/mantencion");
+
   return (
     <div className="flex flex-1 flex-col bg-mufin-bg">
       <header className="border-b border-mufin-border bg-white">
-        <div className="mx-auto flex h-16 max-w-6xl items-center px-4 sm:px-6">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <MufinLogo height={28} />
+          <div className="flex min-w-0 items-center gap-4">
+            <span className="hidden truncate text-sm font-medium text-mufin-900 sm:block">{me.merchant.name}</span>
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                className="rounded-xl border border-mufin-border bg-white px-3.5 py-2 text-sm font-medium text-mufin-900 hover:border-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700"
+              >
+                Cerrar sesión
+              </button>
+            </form>
+          </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
-        <h1 className="text-3xl font-bold tracking-tight text-mufin-900">
-          Hola, {me.merchant.name}
-        </h1>
-        <p className="mt-2 text-sm text-muted">
-          Ingresaste como {me.user.email}.
-        </p>
-        <form action={logoutAction} className="mt-8">
-          <button
-            type="submit"
-            className="rounded-xl border border-mufin-border bg-white px-4 py-2.5 text-sm font-medium text-mufin-900 hover:border-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700"
-          >
-            Cerrar sesión
-          </button>
-        </form>
+      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+        <p className="mb-6 truncate text-sm font-medium text-mufin-900 sm:hidden">{me.merchant.name}</p>
+        <Dashboard d={buildDashboard(summary, vs)} vs={vs} />
       </main>
       <div className="mx-auto mt-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
         <PortalFooter />
