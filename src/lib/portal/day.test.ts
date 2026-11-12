@@ -152,6 +152,19 @@ test("tarjeta sin datos → 'Tarjeta'", () => {
   assert.equal(rows[1].method, "Tarjeta");
 });
 
+test("sin sucursal: solo el equipo; hora de 4 dígitos", () => {
+  const row = buildDay(data({ sales: [sale({ subsidiary: null, time: "14:32" })] }), null, "2026-11-12").rows[0];
+  assert.equal(row.place, "Equipo TID01");
+  assert.equal(row.time, "14:32");
+});
+
+test("getSalesDay acepta subsidiary null", async (t) => {
+  t.mock.method(globalThis, "fetch", async () =>
+    new Response(JSON.stringify({ error: false, message: null, data: data({ sales: [sale({ subsidiary: null })] }) }), { status: 200 }),
+  );
+  await getSalesDay("jwt-1", "2026-11-12", null, null);
+});
+
 test("sin hora → '—'", () => {
   assert.equal(buildDay(data({ sales: [sale({ time: null })] }), null, "2026-11-12").rows[0].time, "—");
 });
@@ -202,7 +215,7 @@ test("rechazos y cancelaciones del cliente van separados; tarjeta parcial", () =
 
 test("getSalesDay rechaza campos que romperían el render", async (t) => {
   const cases: [string, (d: SalesDayData) => void][] = [
-    ["sucursal null", (d) => ((d.sales[0] as unknown as { subsidiary: null }).subsidiary = null)],
+    ["sucursal sin nombre", (d) => ((d.sales[0].subsidiary as unknown as { name: null }).name = null)],
     ["equipo sin tid", (d) => ((d.sales[0].equipment as unknown as { tid: number }).tid = 1)],
     ["hora numérica", (d) => ((d.sales[0] as unknown as { time: number }).time = 1432)],
     ["voided ausente", (d) => delete (d.sales[0] as Partial<SalesDayData["sales"][number]>).voided],

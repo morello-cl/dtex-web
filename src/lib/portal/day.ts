@@ -38,7 +38,7 @@ export type SalesDayData = {
     voided: boolean;
     card: Card | null;
     equipment: { uuid: string; tid: string };
-    subsidiary: { uuid: string; name: string };
+    subsidiary: { uuid: string; name: string } | null;
   }[];
   next_cursor: string | null;
   rejections: {
@@ -95,7 +95,7 @@ export async function getSalesDay(
         str(s.payment_method) &&
         time(s.time) &&
         typeof s.voided === "boolean" &&
-        str(s.subsidiary?.name) &&
+        (s.subsidiary === null || str(s.subsidiary?.name)) &&
         str(s.equipment?.tid) &&
         card(s.card) &&
         [s.folio, s.dte_type, s.amount, s.tip_amount, s.cashback_amount].every(num),
@@ -227,7 +227,7 @@ export function buildDay(d: SalesDayData, method: Method | null, today: string) 
       document: `${s.dte_type_name} N° ${s.folio}`,
       isCard: s.payment_method === "card",
       method: s.payment_method === "card" ? cardLabel(s.card) : methodLabel(s.payment_method),
-      place: `${s.subsidiary.name}, equipo ${s.equipment.tid}`,
+      place: s.subsidiary ? `${s.subsidiary.name}, equipo ${s.equipment.tid}` : `Equipo ${s.equipment.tid}`,
       amount: s.amount,
       tip: s.tip_amount,
       cashback: s.cashback_amount,
