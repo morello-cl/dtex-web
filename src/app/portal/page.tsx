@@ -1,7 +1,13 @@
 import MufinLogo from "@/components/portal/MufinLogo";
 import PortalFooter from "@/components/portal/PortalFooter";
 import { logoutAction } from "@/lib/portal/actions";
+import type { Metadata } from "next";
 import { requireMe } from "@/lib/portal/session";
+
+// La plantilla de portal/layout no aplica a la página de su mismo segmento.
+export const metadata: Metadata = {
+  title: { absolute: "Inicio | Portal de pagos MUFIN" },
+};
 
 // ponytail: portada provisoria; el proyecto 2 la reemplaza por el panel de 7 días.
 export default async function PortalPage() {
@@ -13,7 +19,7 @@ export default async function PortalPage() {
           <MufinLogo height={28} />
         </div>
       </header>
-      <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
+      <main className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         <h1 className="text-3xl font-bold tracking-tight text-mufin-900">
           Hola, {me.merchant.name}
         </h1>
@@ -28,7 +34,7 @@ export default async function PortalPage() {
             Cerrar sesión
           </button>
         </form>
-      </div>
+      </main>
       <div className="mx-auto mt-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
         <PortalFooter />
       </div>

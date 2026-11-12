@@ -285,12 +285,12 @@ export function AuthCard({
         >
           <MufinLogo height={30} />
         </Link>
-        <section className="my-auto w-full max-w-sm self-center py-12">
+        <main className="my-auto w-full max-w-sm self-center py-12">
           <h1 className="mb-8 text-balance text-3xl font-bold tracking-tight text-mufin-900">
             {title}
           </h1>
           {children}
-        </section>
+        </main>
         <PortalFooter />
       </div>
     </div>
