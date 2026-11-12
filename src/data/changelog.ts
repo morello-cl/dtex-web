@@ -20,6 +20,28 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.15.0",
+    date: "2026-11-12",
+    summary: "Inicio y ventas del día en el Portal de pagos MUFIN.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Inicio del portal: lo vendido en los últimos 7 días, día por día, comparado con la semana anterior, hace 2 semanas, hace 1 mes, hace 2 meses o hace 1 año. Incluye cantidad de ventas, ticket promedio, porcentaje con tarjeta y hora de más venta.",
+      },
+      {
+        type: "added",
+        description:
+          "Ventas del día: elige un día y revisa el total en efectivo y con tarjeta (crédito y débito), las propinas, los documentos emitidos y cada venta con su hora, documento, medio de pago y equipo. Puedes filtrar la lista por efectivo o tarjeta.",
+      },
+      {
+        type: "added",
+        description:
+          "Los pagos rechazados y los cancelados por el cliente se muestran aparte y no suman ni restan a tus totales.",
+      },
+    ],
+  },
+  {
     version: "0.14.0",
     date: "2026-11-11",
     summary: "Portal de pagos MUFIN para comercios.",
