@@ -108,7 +108,7 @@ con el header `x-token-dtex`.
     "dte_type_name": "Boleta", "amount", "tip_amount", "cashback_amount",
     "payment_method": "card", "voided": false,
     "card": { "brand": "Visa" | null, "type": "debit" | "credit" | null, "last_four": "1234" | null } | null,
-    "equipment": { "uuid", "tid" }, "subsidiary": { "uuid", "name" } }],
+    "equipment": { "uuid", "tid" }, "subsidiary": { "uuid", "name" } | null }],
   "next_cursor": "…" | null,
   "rejections": [{ "kind": "rejected" | "cancelled", "occurred_at", "time", "amount", "payment_method": "card", "provider",
     "reason", "message", "provider_message", "card", "equipment" }] }
@@ -132,7 +132,86 @@ con el header `x-token-dtex`.
   `provider_message` es el texto crudo del adquirente, o null: el portal no lo
   muestra ni decide nada con él. `reason` es un código interno. Hoy `rejections` es `[]`: la App no informa
   los pagos rechazados (pedido a tomahawk y dtex_app).
-- `sales` va ordenado por hora descendente. `limit` vale 200 por omisión, con
+- `time` viene como "HH:MM" o "HH:MM:SS", según lo que grabó el equipo.
+  `sales` va ordenado por hora descendente. `limit` vale 200 por omisión, con
   un máximo de 500.
 - Una fecha futura, una anterior a 2 años o una mal formada responde 400
   `INVALID_DATE`.
+
+## 4. Abonos
+
+Borrador del portal con las respuestas de tomahawk, medidas sobre los 119
+abonos reales (2026-11-12). Pendiente de que Marco lo apruebe. Solo Kushki
+(`liquida_mufin = 1`), datos desde el 2026-10-01. Un abono es una fila de
+`pagos_comercio`, y esa fila existe recién cuando se genera la nómina.
+
+`GET /api/portal/v1/payouts?from=YYYY-MM-DD&to=YYYY-MM-DD` y
+`GET /api/portal/v1/payouts/{uuid}`, con el header `x-token-dtex`.
+
+```jsonc
+// Lista: abonos con sale_date entre from y to, más recientes primero.
+{ "as_of": "2026-11-12T15:04:00-03:00",
+  "next": P | null,          // el abono in_process más antiguo, para el Inicio
+  "payouts": [P] }
+
+// P (abono)
+{ "uuid": "…", "sale_date": "2026-11-11",
+  "gross_amount": 540000, "sales_count": 42,  // bruto Kushki del día, con propina
+  "commission": 9000, "commission_tax": 1710, "adjustment": 4408,
+  "amount": 533698,                           // pagado: lo que se deposita
+  "status": "in_process" | "paid" | "rejected",
+  "paid_on": "2026-11-12" | null,             // fecha de pago de la nómina según el banco
+  "rejection_reason": "…" | null,             // texto del banco
+  "sent_on": "2026-11-12",                    // día (Chile) en que se generó la nómina
+  "method": "estimated" | "reconciled", "reconciled_at": "…" | null,
+  "pending_difference": 0 }
+
+// Detalle: P + cuadratura contra las ventas con tarjeta del día (§2, card_amount)
+{ ...P,
+  "reconciliation": {
+    "card_sales_amount": 572900, "card_sales_count": 45,
+    "items": [{ "kind": "other_acquirer", "label": "Ventas con tarjeta de otro procesador", "amount": -32900, "count": 3 }],
+    "unexplained": 0 } }   // card_sales_amount + Σ items.amount - gross_amount
+```
+
+### Reglas
+
+- **`sale_date`** es el día calendario de Chile (`dtes.date`), de 00:00 a
+  23:59. No se usa el corte de Kushki: si Kushki liquida una venta otro día,
+  se corrige vía diferencia.
+- **`gross_amount`** suma `COALESCE(monto_original, total)` de las ventas con
+  `dte_payment` Kushki del día: incluye la propina; no incluye cashback, notas
+  de crédito ni equipos de prueba.
+- **Montos** en CLP enteros. `commission` y `commission_tax` van en positivo y
+  restan; `adjustment` lleva su signo y se suma:
+  `gross_amount - commission - commission_tax + adjustment = amount`.
+- **`adjustment`** es la suma, con su signo, de las diferencias de abonos
+  anteriores que se incluyeron en esta transferencia. La diferencia de un
+  abono es exacto − pagado, y aparece cuando se concilia contra el archivo de
+  Kushki con el tipo de tarjeta real.
+- **`method`**: `reconciled` si ya se concilió (`metodo = exact`);
+  `estimated` si no. **`pending_difference`** = `diferencia` si es ≠ 0 y
+  `regularizada_en` es null; si no, 0.
+- **`sent_on`** suele ser `sale_date + 1`, pero puede ser de 2 a 28 días
+  después cuando hay pendientes.
+- **Un día vendido sin nómina no aparece** en `payouts`, y `next` solo
+  considera abonos ya enviados al banco.
+- **Estado:** sale de la fila más reciente por `paid_on` en
+  `bank_payout_results` con `payout_uuid = uuid`. Sin fila, `in_process`.
+  Cómo se muestra `rejected` lo decide Marco; mientras tanto el portal lo
+  muestra como «En proceso». Los abonos cuya rendición de Bci no se ha
+  cargado salen `in_process` aunque se hayan pagado.
+- **Cuadratura:** `items` explica la diferencia entre las ventas con tarjeta
+  del día (§2) y el bruto. Las partidas en 0 se omiten; `label` viene en
+  español.
+  - `other_acquirer` (negativa): ventas con tarjeta de otro procesador
+    (Haulmer/TUU) ese día.
+  - `cashback` (negativa): está en §2, no en el bruto.
+  - `credit_notes` (positiva): §2 las resta y el bruto no las toca.
+  - `card_without_acquirer` (negativa): ventas con tarjeta sin procesador.
+  - Los equipos de prueba no son partida, porque se excluyen en ambos lados.
+  - Lo que no se explica queda en `unexplained`.
+- **Rango:** `from ≥ 2026-10-01`, `to ≤ hoy`, a lo más 93 días. Si no, 400
+  `INVALID_RANGE`.
+- El `uuid` es `BIN_TO_UUID(uuid, 1)`. Uno que no es del comercio responde
+  404, igual que uno que no existe.
