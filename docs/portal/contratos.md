@@ -34,7 +34,7 @@ Cada proyecto acuerda aquí su contrato antes de construirse.
 - **Enlace:** `https://www.dtex.cl/portal/clave/{token}`. El token es de un
   solo uso y solo se guarda su hash. La vigencia y los límites de envío los
   define tomahawk.
-- **Envío del correo:** por Resend desde `no-reply@mail.dtex.cl`.
+- **Envío del correo:** por Resend desde «DTEx® <soporte@dtex.cl>» (tomahawk v8.4.2).
 - **`link`:** el portal lo llama al abrir el enlace, antes de pedir la
   contraseña, para explicar de inmediato si el enlace ya se usó, venció o no
   existe. Por eso un token usado no se borra: se marca como usado.
