@@ -20,6 +20,28 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.16.0",
+    date: "2026-11-12",
+    summary: "Abonos en el Portal de pagos MUFIN.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Abonos: revisa mes a mes lo que te depositamos por tus ventas con tarjeta, con el bruto vendido, la comisión, el IVA de la comisión, la regularización y el monto final, y si está pendiente o pagado y en qué fecha.",
+      },
+      {
+        type: "added",
+        description:
+          "Abono disponible: el monto estimado de tus ventas con tarjeta que todavía no se envían al banco.",
+      },
+      {
+        type: "added",
+        description:
+          "Detalle de cada abono con las ventas que lo componen, su comisión y las diferencias de días anteriores. El Inicio muestra tu próximo abono.",
+      },
+    ],
+  },
+  {
     version: "0.15.0",
     date: "2026-11-12",
     summary: "Inicio y ventas del día en el Portal de pagos MUFIN.",
