@@ -5,6 +5,7 @@ import { logoutAction } from "@/lib/portal/actions";
 const NAV = [
   { href: "/portal", label: "Inicio" },
   { href: "/portal/ventas", label: "Ventas" },
+  { href: "/portal/abonos", label: "Abonos" },
 ] as const;
 
 export default function PortalHeader({ merchant, current }: { merchant: string; current: (typeof NAV)[number]["href"] }) {

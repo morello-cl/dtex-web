@@ -147,7 +147,7 @@ export function parseMethod(raw: string | string[] | undefined): Method | null {
   return v === "cash" || v === "card" ? v : null;
 }
 
-const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+export const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const DAY_SHORT = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 const METHOD_LABELS: Record<string, string> = { cash: "Efectivo", card: "Tarjeta" };
 const CARD_TYPES: Record<string, string> = { credit: "crédito", debit: "débito" };
@@ -155,7 +155,7 @@ const CARD_TYPES: Record<string, string> = { credit: "crédito", debit: "débito
 // Un medio nuevo se muestra con su nombre hasta que tenga etiqueta propia.
 const methodLabel = (m: string) => METHOD_LABELS[m] ?? m.charAt(0).toUpperCase() + m.slice(1);
 
-function cardLabel(c: Card | null): string {
+export function cardLabel(c: Card | null): string {
   if (!c) return "Tarjeta";
   const parts = [c.brand ?? "Tarjeta"];
   if (c.type) parts.push(CARD_TYPES[c.type]);
