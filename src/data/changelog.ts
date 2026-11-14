@@ -20,6 +20,16 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.16.1",
+    date: "2026-11-14",
+    changes: [
+      {
+        type: "changed",
+        description: "En las ventas con tarjeta se indica primero si fue débito o crédito.",
+      },
+    ],
+  },
+  {
     version: "0.16.0",
     date: "2026-11-12",
     summary: "Abonos en el Portal de pagos MUFIN.",
