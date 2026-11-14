@@ -150,15 +150,16 @@ export function parseMethod(raw: string | string[] | undefined): Method | null {
 export const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const DAY_SHORT = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 const METHOD_LABELS: Record<string, string> = { cash: "Efectivo", card: "Tarjeta" };
-const CARD_TYPES: Record<string, string> = { credit: "crédito", debit: "débito" };
+const CARD_TYPES: Record<string, string> = { credit: "Crédito", debit: "Débito" };
 
 // Un medio nuevo se muestra con su nombre hasta que tenga etiqueta propia.
 const methodLabel = (m: string) => METHOD_LABELS[m] ?? m.charAt(0).toUpperCase() + m.slice(1);
 
+// El tipo va primero: es lo que el comercio busca (débito y crédito tienen distinta comisión).
 export function cardLabel(c: Card | null): string {
   if (!c) return "Tarjeta";
-  const parts = [c.brand ?? "Tarjeta"];
-  if (c.type) parts.push(CARD_TYPES[c.type]);
+  const parts = [c.type ? CARD_TYPES[c.type] : "Tarjeta"];
+  if (c.brand) parts.push(c.brand);
   if (c.last_four) parts.push(`••${c.last_four}`);
   return parts.join(" ");
 }
@@ -215,7 +216,7 @@ export function buildDay(d: SalesDayData, method: Method | null, today: string) 
       amount: m.amount,
       count: m.count,
       sub: (m.by_card_type ?? []).map((c) => ({
-        label: c.type ? CARD_TYPES[c.type].replace(/^./, (x) => x.toUpperCase()) : "Otras",
+        label: c.type ? CARD_TYPES[c.type] : "Otras",
         amount: c.amount,
         count: c.count,
       })),

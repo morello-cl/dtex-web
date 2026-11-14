@@ -132,7 +132,7 @@ test("detalle: estado, método, diferencia pendiente, movimientos y ajustes", ()
   const [s, adj] = v.movements;
   assert.equal(s.kind, "sale");
   assert.equal(s.kind === "sale" && s.document, "Boleta N° 9");
-  assert.equal(s.kind === "sale" && s.method, "Visa débito");
+  assert.equal(s.kind === "sale" && s.method, "Débito Visa");
   assert.equal(s.kind === "sale" && s.fee, -452);
   assert.equal(adj.kind === "adjustment" && adj.label, "Diferencia de las ventas del martes 3 de noviembre");
   assert.equal(adj.amount, 4408);

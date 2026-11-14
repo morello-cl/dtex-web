@@ -134,7 +134,7 @@ test("filas: hora, documento, medio, sucursal, nota de crédito y anulada", () =
   const [a, b, c] = buildDay(data(), null, "2026-11-12").rows;
   assert.equal(a.time, "15:01");
   assert.equal(a.document, "Boleta N° 9");
-  assert.equal(a.method, "Visa débito ••1234");
+  assert.equal(a.method, "Débito Visa ••1234");
   assert.equal(a.place, "Casa matriz, equipo TID01");
   assert.equal(a.tip, 1000);
   assert.equal(b.negative, true);
@@ -208,7 +208,7 @@ test("rechazos y cancelaciones del cliente van separados; tarjeta parcial", () =
   );
   assert.equal(d.rejected.length, 1);
   assert.equal(d.rejected[0].reason, "Fondos insuficientes");
-  assert.equal(d.rejected[0].method, "Tarjeta débito");
+  assert.equal(d.rejected[0].method, "Débito");
   assert.equal(d.cancelled.length, 1);
   assert.equal(d.cancelled[0].method, "Tarjeta");
 });
