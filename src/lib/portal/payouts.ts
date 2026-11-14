@@ -4,7 +4,7 @@ import { PortalApiError, portalRequest } from "./auth.ts";
 import { cardLabel, MONTHS } from "./day.ts";
 import { dayName } from "./sales.ts";
 
-type Card = { brand: string | null; type: "credit" | "debit" | null; last_four: string | null };
+type Card = { brand: string | null; type: "credit" | "debit" | "prepaid" | null; last_four: string | null };
 type Amounts = { gross_amount: number; sales_count: number; commission: number; commission_tax: number; adjustment: number; amount: number };
 
 export type Available = Amounts & { sale_date: string; as_of: string };

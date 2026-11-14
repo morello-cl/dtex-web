@@ -4,7 +4,7 @@ import { PortalApiError, portalRequest } from "./auth.ts";
 import { dayName } from "./sales.ts";
 
 export type Method = "cash" | "card";
-type CardType = "credit" | "debit" | null;
+type CardType = "credit" | "debit" | "prepaid" | null;
 type Card = { brand: string | null; type: CardType; last_four: string | null };
 
 export type SalesDayData = {
@@ -72,7 +72,7 @@ export async function getSalesDay(
   const t = d.totals;
   const str = (v: unknown) => typeof v === "string";
   const time = (v: unknown) => v === null || str(v);
-  const cardType = (v: unknown) => v === null || v === "credit" || v === "debit";
+  const cardType = (v: unknown) => v === null || v === "credit" || v === "debit" || v === "prepaid";
   const card = (c: Card | null) => c === null || (typeof c === "object" && cardType(c.type));
   const ok =
     /^\d{4}-\d{2}-\d{2}$/.test(d.date) &&
@@ -150,7 +150,7 @@ export function parseMethod(raw: string | string[] | undefined): Method | null {
 export const MONTHS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const DAY_SHORT = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 const METHOD_LABELS: Record<string, string> = { cash: "Efectivo", card: "Tarjeta" };
-const CARD_TYPES: Record<string, string> = { credit: "Crédito", debit: "Débito" };
+const CARD_TYPES: Record<string, string> = { credit: "Crédito", debit: "Débito", prepaid: "Prepago" };
 
 // Un medio nuevo se muestra con su nombre hasta que tenga etiqueta propia.
 const methodLabel = (m: string) => METHOD_LABELS[m] ?? m.charAt(0).toUpperCase() + m.slice(1);

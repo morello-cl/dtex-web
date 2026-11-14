@@ -102,12 +102,12 @@ con el header `x-token-dtex`.
   "totals": { "amount", "count", "tip_amount", "cashback_amount",
     "by_payment_method": [{ "payment_method": "cash" | "card" | "...", "amount", "count",
       "tip_amount", "cashback_amount",
-      "by_card_type": [{ "type": "credit" | "debit" | null, "amount", "count" }] }], // solo en card
+      "by_card_type": [{ "type": "credit" | "debit" | "prepaid" | null, "amount", "count" }] }], // solo en card
     "by_document": [{ "dte_type": 39, "dte_type_name": "Boleta", "amount", "count" }] },
   "sales": [{ "uuid": "…" | null, "time": "14:32:05" | null, "folio": 1234, "dte_type": 39,
     "dte_type_name": "Boleta", "amount", "tip_amount", "cashback_amount",
     "payment_method": "card", "voided": false,
-    "card": { "brand": "Visa" | null, "type": "debit" | "credit" | null, "last_four": "1234" | null } | null,
+    "card": { "brand": "Visa" | null, "type": "debit" | "credit" | "prepaid" | null, "last_four": "1234" | null } | null,
     "equipment": { "uuid", "tid" }, "subsidiary": { "uuid", "name" } | null }],
   "next_cursor": "…" | null,
   "rejections": [{ "kind": "rejected" | "cancelled", "occurred_at", "time", "amount", "payment_method": "card", "provider",

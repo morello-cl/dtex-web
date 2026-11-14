@@ -142,6 +142,13 @@ test("filas: hora, documento, medio, sucursal, nota de crédito y anulada", () =
   assert.equal(c.voided, true);
 });
 
+test("prepago se acepta y se muestra primero", async (t) => {
+  const d = data({ sales: [sale({ payment_method: "card", card: { brand: "Visa", type: "prepaid", last_four: "9876" } })] });
+  t.mock.method(globalThis, "fetch", async () => new Response(JSON.stringify({ error: false, message: null, data: d }), { status: 200 }));
+  await getSalesDay("jwt-1", "2026-11-12", null, null);
+  assert.equal(buildDay(d, null, "2026-11-12").rows[0].method, "Prepago Visa ••9876");
+});
+
 test("tarjeta sin datos → 'Tarjeta'", () => {
   const rows = buildDay(
     data({ sales: [sale({ payment_method: "card", card: { brand: null, type: null, last_four: null } }), sale({ payment_method: "card", card: null })] }),
@@ -219,7 +226,7 @@ test("getSalesDay rechaza campos que romperían el render", async (t) => {
     ["equipo sin tid", (d) => ((d.sales[0].equipment as unknown as { tid: number }).tid = 1)],
     ["hora numérica", (d) => ((d.sales[0] as unknown as { time: number }).time = 1432)],
     ["voided ausente", (d) => delete (d.sales[0] as Partial<SalesDayData["sales"][number]>).voided],
-    ["tipo de tarjeta desconocido", (d) => ((d.totals.by_payment_method[1].by_card_type![0] as unknown as { type: string }).type = "prepaid")],
+    ["tipo de tarjeta desconocido", (d) => ((d.totals.by_payment_method[1].by_card_type![0] as unknown as { type: string }).type = "gift")],
     ["fecha mal formada", (d) => (d.date = "12-11-2026")],
     ["as_of ausente", (d) => delete (d as Partial<SalesDayData>).as_of],
     ["rechazo sin kind", (d) => d.rejections.push({ occurred_at: "x", time: null, amount: 1, payment_method: 5 } as never)],
