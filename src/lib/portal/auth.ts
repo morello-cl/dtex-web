@@ -39,7 +39,8 @@ export function passwordError(pw: string): string | null {
 }
 
 export async function portalRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const base = process.env.TOMAHAWK_BASE_URL ?? "https://api.dtex.app";
+  // ponytail: variable propia del portal para apuntarlo a dev sin mover la página de pagos; se borra cuando tomahawk publique el portal en producción.
+  const base = process.env.PORTAL_TOMAHAWK_URL ?? process.env.TOMAHAWK_BASE_URL ?? "https://api.dtex.app";
   let response: Response;
   try {
     response = await fetch(new URL(path, base), {
