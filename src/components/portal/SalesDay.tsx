@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { DayView, Method } from "@/lib/portal/day";
 import { formatClp } from "@/lib/portal/sales";
+import SalesTable from "./SalesTable";
 
 const box = "rounded-2xl border border-mufin-border bg-white";
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700";
@@ -165,33 +166,7 @@ function SalesList({ d, paged }: { d: DayView; paged: boolean }) {
       {d.rows.length === 0 ? (
         <p className="mt-6 text-sm text-muted">{empty}</p>
       ) : (
-        <ul className="mt-4 divide-y divide-mufin-border text-sm">
-          {d.rows.map((r) => (
-            <li key={r.key} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-0.5 py-3 lg:grid-cols-[3.5rem_1.2fr_1.2fr_1.4fr_8rem] lg:items-center">
-              <span className="order-2 text-muted tabular-nums lg:order-none">{r.time}</span>
-              <span className="order-1 font-medium lg:order-none">
-                <span className={r.voided ? "text-muted line-through" : "text-mufin-900"}>{r.document}</span>
-                {r.voided && <span className="ml-2 rounded-full bg-mufin-bg px-2 py-0.5 text-xs font-normal text-muted">Anulada</span>}
-              </span>
-              <span className="order-4 col-span-2 flex items-center gap-2 text-muted lg:order-none lg:col-span-1">
-                <MethodDot card={r.isCard} />
-                {r.method}
-              </span>
-              <span className="order-5 col-span-2 break-words text-muted lg:order-none lg:col-span-1">{r.place}</span>
-              <span className="order-1 row-span-2 text-right lg:order-none lg:row-span-1">
-                <span
-                  className={`block font-semibold tabular-nums ${r.voided ? "text-muted line-through" : r.negative ? "text-warn-700" : "text-mufin-900"}`}
-                >
-                  {formatClp(r.amount)}
-                </span>
-                {r.tip > 0 && <span className="block text-xs text-muted tabular-nums">propina {formatClp(r.tip)}</span>}
-                {r.cashback > 0 && (
-                  <span className="block text-xs text-muted tabular-nums">efectivo entregado {formatClp(r.cashback)}</span>
-                )}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <SalesTable rows={d.rows} />
       )}
       {/* ponytail: cada página reemplaza a la anterior; acumular exige JS. */}
       {(d.nextCursor || paged) && (
