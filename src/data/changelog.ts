@@ -20,6 +20,20 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.17.0",
+    date: "2026-11-15",
+    changes: [
+      {
+        type: "changed",
+        description: "El detalle de ventas del portal se muestra como tabla y se puede ordenar por hora, documento, medio de pago o monto.",
+      },
+      {
+        type: "fixed",
+        description: "Las ventas con tarjeta prepago se muestran correctamente en el portal.",
+      },
+    ],
+  },
+  {
     version: "0.16.1",
     date: "2026-11-14",
     changes: [
