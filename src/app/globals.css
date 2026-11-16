@@ -410,3 +410,20 @@ body {
     scroll-margin-top: 6rem;
   }
 }
+
+/* Calendario del portal (react-day-picker). Fuera de @layer y con más especificidad que su style.css, que carga después. */
+.rdp-root.rdp-root {
+  --rdp-accent-color: var(--mufin-700);
+  --rdp-accent-background-color: var(--mufin-bg);
+  --rdp-day_button-border-radius: 10px;
+  --rdp-selected-border: 0;
+  --rdp-today-color: var(--mufin-700);
+}
+.rdp-root .rdp-selected .rdp-day_button {
+  background: var(--mufin-700);
+  color: #fff;
+}
+.rdp-root .rdp-day_button:focus-visible {
+  outline: 2px solid var(--mufin-700);
+  outline-offset: 2px;
+}

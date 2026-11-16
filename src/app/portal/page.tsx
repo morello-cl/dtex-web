@@ -6,7 +6,8 @@ import PortalHeader from "@/components/portal/PortalHeader";
 import PortalFooter from "@/components/portal/PortalFooter";
 import { NextPayout } from "@/components/portal/Payouts";
 import { PortalApiError } from "@/lib/portal/auth";
-import { chileToday } from "@/lib/portal/day";
+import { buildCards, buildTips, getSalesCards } from "@/lib/portal/cards";
+import { addDays, chileToday } from "@/lib/portal/day";
 import { getPayouts, nextPayout } from "@/lib/portal/payouts";
 import { buildDashboard, getSalesSummary, parseCompare, type SalesSummary } from "@/lib/portal/sales";
 import { requireMe, SESSION_COOKIE } from "@/lib/portal/session";
@@ -28,6 +29,8 @@ export default async function PortalPage({
   const today = chileToday();
   // El próximo abono es secundario: si falla, el Inicio se muestra igual sin él.
   const payouts = getPayouts(jwt, today, today).catch(() => null);
+  // ponytail: tarjetas también secundario; mientras tomahawk no publique §5 responde 404 y el bloque no aparece.
+  const cards = getSalesCards(jwt, addDays(today, -6), today).catch(() => null);
   let summary: SalesSummary | null = null;
   let unauthorized = false;
   try {
@@ -40,6 +43,9 @@ export default async function PortalPage({
   if (!summary) redirect("/portal/mantencion");
   const p = await payouts;
   const next = p && nextPayout(p, today);
+  const c = await cards;
+  const cv = c && buildCards(c);
+  const d = buildDashboard(summary, vs);
 
   return (
     <div className="flex flex-1 flex-col bg-mufin-bg">
@@ -47,7 +53,7 @@ export default async function PortalPage({
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
         <p className="mb-6 truncate text-sm font-medium text-mufin-900 md:hidden">{me.merchant.name}</p>
         {next && <NextPayout n={next} />}
-        <Dashboard d={buildDashboard(summary, vs)} vs={vs} />
+        <Dashboard d={d} vs={vs} cards={cv} tips={buildTips(d, cv)} />
       </main>
       <div className="mx-auto mt-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
         <PortalFooter />

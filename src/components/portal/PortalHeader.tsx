@@ -33,7 +33,7 @@ export default function PortalHeader({ merchant, current }: { merchant: string; 
           <form action={logoutAction}>
             <button
               type="submit"
-              className="whitespace-nowrap rounded-xl border border-mufin-border bg-white px-3.5 py-2 text-sm font-medium text-mufin-900 hover:border-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700"
+              className="inline-flex h-11 items-center whitespace-nowrap rounded-xl border border-mufin-border bg-white px-4 text-sm font-semibold text-mufin-900 hover:border-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700"
             >
               Cerrar sesión
             </button>

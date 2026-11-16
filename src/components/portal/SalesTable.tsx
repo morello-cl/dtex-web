@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, useReactTable, type SortingState } from "@tanstack/react-table";
 import type { DayView } from "@/lib/portal/day";
 import { formatClp } from "@/lib/portal/sales";
@@ -13,10 +14,17 @@ function MethodDot({ card }: { card: boolean }) {
   return <span aria-hidden="true" className={`h-2.5 w-2.5 shrink-0 rounded-full ${card ? "bg-mufin-700" : "bg-accent-500"}`} />;
 }
 
-function Document({ r }: { r: Row }) {
+function Document({ r, detail }: { r: Row; detail: string }) {
+  const text = <span className={r.voided ? "text-muted line-through" : "text-mufin-900"}>{r.document}</span>;
   return (
     <span className="font-medium">
-      <span className={r.voided ? "text-muted line-through" : "text-mufin-900"}>{r.document}</span>
+      {r.uuid ? (
+        <Link href={`${detail}&venta=${encodeURIComponent(r.uuid)}`} scroll={false} className={`rounded underline decoration-mufin-300 underline-offset-4 hover:decoration-mufin-700 ${focus}`}>
+          {text}
+        </Link>
+      ) : (
+        text
+      )}
       {r.voided && <span className="ml-2 rounded-full bg-mufin-bg px-2 py-0.5 text-xs font-normal text-muted">Anulada</span>}
     </span>
   );
@@ -35,9 +43,9 @@ function Amount({ r }: { r: Row }) {
 }
 
 const col = createColumnHelper<Row>();
-const columns = [
+const makeColumns = (detail: string) => [
   col.accessor("time", { header: "Hora", cell: (c) => <span className="text-muted tabular-nums">{c.getValue()}</span> }),
-  col.accessor("document", { header: "Documento", cell: (c) => <Document r={c.row.original} /> }),
+  col.accessor("document", { header: "Documento", cell: (c) => <Document r={c.row.original} detail={detail} /> }),
   col.accessor("method", {
     header: "Medio de pago",
     cell: (c) => (
@@ -54,8 +62,10 @@ const columns = [
 const ARROW: Record<string, string> = { asc: " ▲", desc: " ▼" };
 
 // ponytail: ordena solo la página cargada (tomahawk pagina con cursor); ordenar el día completo exige que tomahawk ordene.
-export default function SalesTable({ rows }: { rows: Row[] }) {
+// `detail`: la URL actual del día; la fila le agrega &venta= para abrir el panel.
+export default function SalesTable({ rows, detail }: { rows: Row[]; detail: string }) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [columns] = useState(() => makeColumns(detail));
   const table = useReactTable({
     data: rows,
     columns,
@@ -113,7 +123,7 @@ export default function SalesTable({ rows }: { rows: Row[] }) {
       <ul className="mt-4 divide-y divide-mufin-border text-sm lg:hidden">
         {sorted.map(({ original: r }) => (
           <li key={r.key} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-0.5 py-3">
-            <Document r={r} />
+            <Document r={r} detail={detail} />
             <span className="row-span-2">
               <Amount r={r} />
             </span>

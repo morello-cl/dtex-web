@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { DayView, Method } from "@/lib/portal/day";
 import { formatClp } from "@/lib/portal/sales";
+import DateField from "./DateField";
 import SalesTable from "./SalesTable";
 
 const box = "rounded-2xl border border-mufin-border bg-white";
@@ -41,26 +42,7 @@ function DayPicker({ d, today, min }: { d: DayView; today: string; min: string }
           ))}
         </ol>
       </nav>
-      {/* Sin JS: el calendario nativo envía la fecha por GET. */}
-      <form action="/portal/ventas" className="flex flex-wrap items-center gap-2 text-sm">
-        <label htmlFor="fecha" className="text-muted">
-          Otro día
-        </label>
-        <input
-          id="fecha"
-          name="fecha"
-          type="date"
-          required
-          min={min}
-          max={today}
-          defaultValue={d.date}
-          className={`rounded-xl border border-mufin-border bg-white px-3 py-1.5 text-mufin-900 ${focus}`}
-        />
-        {d.method && <input type="hidden" name="medio" value={d.method} />}
-        <button type="submit" className={`rounded-xl bg-mufin-700 px-3.5 py-1.5 font-medium text-white hover:bg-mufin-900 ${focus}`}>
-          Ver día
-        </button>
-      </form>
+      <DateField date={d.date} min={min} max={today} medio={d.method} />
     </div>
   );
 }
@@ -138,7 +120,7 @@ const FILTERS: { key: Method | null; label: string }[] = [
   { key: "card", label: "Tarjeta" },
 ];
 
-function SalesList({ d, paged }: { d: DayView; paged: boolean }) {
+function SalesList({ d, paged, detail }: { d: DayView; paged: boolean; detail: string }) {
   const empty = d.method === "cash" ? "No hay ventas en efectivo este día." : d.method === "card" ? "No hay ventas con tarjeta este día." : "No registras ventas este día.";
   return (
     <section id="ventas" className={`${box} scroll-mt-4 p-5 sm:p-6`}>
@@ -153,7 +135,7 @@ function SalesList({ d, paged }: { d: DayView; paged: boolean }) {
                 href={href(d.date, f.key)}
                 scroll={false}
                 aria-current={on ? "true" : undefined}
-                className={`rounded-full px-3.5 py-1.5 text-sm font-medium ${focus} ${
+                className={`inline-flex h-[38px] items-center rounded-[10px] px-3.5 text-sm font-semibold ${focus} ${
                   on ? "bg-mufin-700 text-white" : "border border-mufin-border bg-white text-mufin-900 hover:border-mufin-700"
                 }`}
               >
@@ -166,7 +148,7 @@ function SalesList({ d, paged }: { d: DayView; paged: boolean }) {
       {d.rows.length === 0 ? (
         <p className="mt-6 text-sm text-muted">{empty}</p>
       ) : (
-        <SalesTable rows={d.rows} />
+        <SalesTable rows={d.rows} detail={detail} />
       )}
       {/* ponytail: cada página reemplaza a la anterior; acumular exige JS. */}
       {(d.nextCursor || paged) && (
@@ -224,7 +206,7 @@ function Rejections({ d }: { d: DayView }) {
   );
 }
 
-export default function SalesDay({ d, today, min, paged }: { d: DayView; today: string; min: string; paged: boolean }) {
+export default function SalesDay({ d, today, min, paged, self }: { d: DayView; today: string; min: string; paged: boolean; self: string }) {
   return (
     <div className="space-y-6">
       <header>
@@ -233,7 +215,7 @@ export default function SalesDay({ d, today, min, paged }: { d: DayView; today: 
       </header>
       <DayPicker d={d} today={today} min={min} />
       <Summary d={d} />
-      <SalesList d={d} paged={paged} />
+      <SalesList d={d} paged={paged} detail={self} />
       <Rejections d={d} />
     </div>
   );

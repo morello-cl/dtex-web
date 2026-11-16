@@ -33,11 +33,11 @@ function State({ state, label }: { state: "paid" | "pending"; label: string }) {
 function MonthNav({ v }: { v: PayoutsView }) {
   const link = (month: string | null, label: string) =>
     month ? (
-      <Link href={`/portal/abonos?mes=${month}`} className={`rounded-xl border border-mufin-border bg-white px-3.5 py-1.5 font-medium text-mufin-900 hover:border-mufin-700 ${focus}`}>
+      <Link href={`/portal/abonos?mes=${month}`} className={`inline-flex h-11 items-center rounded-xl border border-mufin-border bg-white px-4 font-semibold text-mufin-900 hover:border-mufin-700 ${focus}`}>
         {label}
       </Link>
     ) : (
-      <span className="rounded-xl border border-transparent px-3.5 py-1.5 text-muted/60">{label}</span>
+      <span className="inline-flex h-11 items-center rounded-xl border border-transparent px-4 text-muted/60">{label}</span>
     );
   return (
     <nav aria-label="Elegir mes" className="flex items-center gap-2 text-sm">

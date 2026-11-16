@@ -113,7 +113,7 @@ export function chileToday(now = new Date()): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Santiago" }).format(now);
 }
 
-function addDays(iso: string, n: number): string {
+export function addDays(iso: string, n: number): string {
   const d = new Date(`${iso}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + n);
   return d.toISOString().slice(0, 10);
@@ -224,6 +224,7 @@ export function buildDay(d: SalesDayData, method: Method | null, today: string) 
     documents: d.totals.by_document,
     rows: d.sales.map((s) => ({
       key: s.uuid ?? `${s.dte_type}-${s.folio}`,
+      uuid: s.uuid,
       time: s.time ? s.time.slice(0, 5) : "—",
       document: `${s.dte_type_name} N° ${s.folio}`,
       isCard: s.payment_method === "card",
