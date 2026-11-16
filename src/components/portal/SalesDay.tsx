@@ -216,7 +216,8 @@ export default function SalesDay({ d, today, min, paged, self }: { d: DayView; t
       <DayPicker d={d} today={today} min={min} />
       <Summary d={d} />
       <SalesList d={d} paged={paged} detail={self} />
-      <Rejections d={d} />
+      {/* tomahawk manda los rechazos solo en la primera página; en las siguientes vendrían vacíos. */}
+      {!paged && <Rejections d={d} />}
     </div>
   );
 }
