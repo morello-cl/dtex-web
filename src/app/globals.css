@@ -31,7 +31,7 @@
 
   /* Portal de comercios: morado corporativo MUFIN como eje. */
   --mufin-900: #2d0d54;
-  --mufin-700: #461fb6;
+  --mufin-700: #7c25c4; /* MColors.mufinPurple de dtex_app: el morado de marca va idéntico al de la app */
   --mufin-300: #c9bfe6;
   --mufin-bg: #f8f7fb;
   --mufin-border: #e4dff0;
