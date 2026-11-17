@@ -232,7 +232,8 @@ export function buildDay(d: SalesDayData, method: Method | null, today: string) 
       folio: s.folio,
       medio: s.payment_method === "card" ? (s.card?.type ? CARD_TYPES[s.card.type] : "Tarjeta") : methodLabel(s.payment_method),
       last4: s.payment_method === "card" && s.card?.last_four ? `••${s.card.last_four}` : null,
-      subsidiary: s.subsidiary?.name ?? null,
+      // La columna ya se llama «Sucursal»: «Sucursal Providencia» queda «Providencia».
+      subsidiary: s.subsidiary ? s.subsidiary.name.replace(/^sucursal\s+/i, "") : null,
       tid: s.equipment.tid,
       isCard: s.payment_method === "card",
       brand: s.payment_method === "card" ? (s.card?.brand ?? null) : null,

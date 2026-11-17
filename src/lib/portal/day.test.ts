@@ -138,6 +138,8 @@ test("filas: hora, documento, medio, sucursal, nota de crédito y anulada", () =
   assert.equal(a.place, "Casa matriz, equipo TID01");
   assert.deepEqual([a.docType, a.folio, a.medio, a.brand, a.last4, a.subsidiary, a.tid], ["Boleta", 9, "Débito", "Visa", "••1234", "Casa matriz", "TID01"]);
   assert.deepEqual([b.medio, b.brand, b.last4], ["Efectivo", null, null]);
+  const named = buildDay(data({ sales: [sale({ subsidiary: { uuid: "b2", name: "Sucursal Providencia" } })] }), null, "2026-11-12").rows[0];
+  assert.equal(named.subsidiary, "Providencia");
   assert.equal(a.tip, 1000);
   assert.equal(b.negative, true);
   assert.equal(b.method, "Efectivo");
