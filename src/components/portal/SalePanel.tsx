@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { SaleView } from "@/lib/portal/sale";
 import BrandMark, { hasBrand } from "./BrandMark";
+import MufinLogo from "./MufinLogo";
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700";
 
@@ -152,6 +153,12 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
                   <div className="mt-2">
                     <Rows rows={v.payment} />
                   </div>
+                  {/* Solo los pagos con tarjeta pasan por MUFIN; el efectivo lo recibe el comercio. */}
+                  {v.methodNoBrand && (
+                    <p className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-mufin-bg px-3 py-2.5 text-sm font-medium text-mufin-ink">
+                      Gestionado por <MufinLogo height={18} />
+                    </p>
+                  )}
                 </section>
               )}
               <p className="text-xs text-muted">{v.place}</p>
