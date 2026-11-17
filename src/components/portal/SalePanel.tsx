@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { SaleView } from "@/lib/portal/sale";
-import BrandMark from "./BrandMark";
+import BrandMark, { hasBrand } from "./BrandMark";
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700";
 
@@ -100,8 +100,15 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
                 <p className="text-3xl font-extrabold tracking-tight text-mufin-ink tabular-nums">{v.total}</p>
                 {v.payment[0] && (
                   <p className="mt-2 flex items-center gap-2 text-sm text-mufin-ink">
-                    <BrandMark name={v.brand} size="h-5 w-5" />
-                    {v.payment[0].value}
+                    {hasBrand(v.brand) && v.methodNoBrand ? (
+                      <>
+                        <BrandMark name={v.brand} size="h-8 w-8" />
+                        <span className="sr-only">{v.brand}</span>
+                        {v.methodNoBrand}
+                      </>
+                    ) : (
+                      v.payment[0].value
+                    )}
                   </p>
                 )}
               </section>

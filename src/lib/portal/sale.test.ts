@@ -52,6 +52,7 @@ test("SII: estado, track ID y fecha de envío; sin dato no se muestra", () => {
   assert.equal(v.sii?.trackId, "0234567890");
   assert.equal(v.total, "$11.000");
   assert.equal(v.brand, "Visa");
+  assert.equal(v.methodNoBrand, "Débito ••1234");
   assert.equal(buildSale(sale()).sii, null);
 });
 

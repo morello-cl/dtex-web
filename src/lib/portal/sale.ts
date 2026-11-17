@@ -118,6 +118,8 @@ export function buildSale(s: SaleDetail) {
     sii,
     total: formatClp(a.total + a.tip),
     brand: c?.brand ?? null,
+    // Para mostrar junto al logo de la marca, sin repetir su nombre.
+    methodNoBrand: p?.method === "card" ? cardLabel(c && { type: c.type, brand: null, last_four: c.last4 }) : null,
     title: `${d.type_name} N° ${d.folio}`,
     issued: dateTime.format(new Date(d.issued_at)),
     receiver: d.receiver,

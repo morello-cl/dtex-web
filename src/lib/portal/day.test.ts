@@ -136,6 +136,8 @@ test("filas: hora, documento, medio, sucursal, nota de crédito y anulada", () =
   assert.equal(a.document, "Boleta N° 9");
   assert.equal(a.method, "Débito Visa ••1234");
   assert.equal(a.place, "Casa matriz, equipo TID01");
+  assert.deepEqual([a.docType, a.folio, a.medio, a.brand, a.last4, a.subsidiary, a.tid], ["Boleta", 9, "Débito", "Visa", "••1234", "Casa matriz", "TID01"]);
+  assert.deepEqual([b.medio, b.brand, b.last4], ["Efectivo", null, null]);
   assert.equal(a.tip, 1000);
   assert.equal(b.negative, true);
   assert.equal(b.method, "Efectivo");
