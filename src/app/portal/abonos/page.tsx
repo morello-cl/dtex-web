@@ -35,7 +35,7 @@ export default async function AbonosPage({ searchParams }: { searchParams: Promi
     <div className="flex flex-1 flex-col bg-mufin-bg">
       <PortalHeader merchant={me.merchant.name} current="/portal/abonos" />
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-        <p className="mb-6 truncate text-sm font-medium text-mufin-900 md:hidden">{me.merchant.name}</p>
+        <p className="mb-6 truncate text-sm font-medium text-mufin-ink md:hidden">{me.merchant.name}</p>
         <PayoutList v={buildPayouts(data, month, today)} />
       </main>
       <div className="mx-auto mt-auto w-full max-w-6xl px-4 pb-8 sm:px-6">

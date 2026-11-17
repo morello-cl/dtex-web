@@ -33,7 +33,7 @@ function CompareChips({ vs }: { vs: CompareKey }) {
             scroll={false}
             aria-current={on ? "true" : undefined}
             className={`inline-flex h-[38px] items-center rounded-[10px] px-3.5 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700 ${
-              on ? "bg-mufin-700 text-white" : "border border-mufin-border bg-white text-mufin-900 hover:border-mufin-700"
+              on ? "bg-mufin-700 text-white" : "border border-mufin-border bg-white text-mufin-ink hover:border-mufin-700"
             }`}
           >
             {COMPARE_LABELS[k]}
@@ -54,7 +54,7 @@ function DayBars({ d }: { d: Data }) {
     <section className={`${box} p-5 sm:p-6 lg:col-span-3`}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
-          <h2 className="font-semibold text-mufin-900">Día por día</h2>
+          <h2 className="font-semibold text-mufin-ink">Día por día</h2>
           <p className={hint}>Lo cobrado cada día, junto al mismo día de la semana del período que comparas.</p>
         </div>
         <p className="flex items-center gap-4 text-xs text-muted">
@@ -95,13 +95,13 @@ function DayBars({ d }: { d: Data }) {
             key={x.iso}
             href={`/portal/ventas?fecha=${x.iso}`}
             aria-label={`Ver ventas del ${x.date}`}
-            className={`rounded-md py-1 hover:bg-mufin-bg hover:underline focus-visible:outline-2 focus-visible:outline-mufin-700 ${x.isToday ? "font-bold text-mufin-900" : "text-muted"}`}
+            className={`rounded-md py-1 hover:bg-mufin-bg hover:underline focus-visible:outline-2 focus-visible:outline-mufin-700 ${x.isToday ? "font-bold text-mufin-ink" : "text-muted"}`}
           >
             {x.isToday ? "hoy" : x.label}
           </Link>
         ))}
       </nav>
-      <p className="mt-4 border-t border-mufin-border pt-4 text-sm text-mufin-900">{d.today}</p>
+      <p className="mt-4 border-t border-mufin-border pt-4 text-sm text-mufin-ink">{d.today}</p>
     </section>
   );
 }
@@ -109,13 +109,13 @@ function DayBars({ d }: { d: Data }) {
 function CompareRuler({ d, vs }: { d: Data; vs: CompareKey }) {
   return (
     <section className={`${box} p-5 sm:p-6 lg:col-span-2`}>
-      <h2 className="font-semibold text-mufin-900">Contra otros períodos</h2>
+      <h2 className="font-semibold text-mufin-ink">Contra otros períodos</h2>
       <p className={hint}>Cada barra es lo vendido en 7 días de ese período; la línea marca lo que llevas esta semana.</p>
       <div className="mt-5 grid grid-cols-[auto_1fr_auto] items-center gap-x-3 text-sm">
         <span />
         <div className="relative h-5">
           <span
-            className="absolute -translate-x-1/2 whitespace-nowrap text-xs font-semibold text-mufin-900"
+            className="absolute -translate-x-1/2 whitespace-nowrap text-xs font-semibold text-mufin-ink"
             style={{ left: `${Math.min(Math.max(d.rulerCurrentAt, 15), 85)}%` }}
           >
             esta semana
@@ -125,7 +125,7 @@ function CompareRuler({ d, vs }: { d: Data; vs: CompareKey }) {
         {d.ruler.map((r) => (
           <div key={r.key} className="contents">
             <span
-              className={`whitespace-nowrap py-2.5 ${r.key === vs ? "font-semibold text-mufin-900" : "text-muted"}`}
+              className={`whitespace-nowrap py-2.5 ${r.key === vs ? "font-semibold text-mufin-ink" : "text-muted"}`}
             >
               {r.label}
             </span>
@@ -144,13 +144,13 @@ function CompareRuler({ d, vs }: { d: Data; vs: CompareKey }) {
                     style={{ left: `${d.rulerCurrentAt}%` }}
                   />
                 </div>
-                <span className="text-right text-xs tabular-nums text-mufin-900">{formatClp(r.total)}</span>
+                <span className="text-right text-xs tabular-nums text-mufin-ink">{formatClp(r.total)}</span>
               </>
             )}
           </div>
         ))}
       </div>
-      <p className="mt-4 border-t border-mufin-border pt-4 text-sm text-mufin-900">{d.rulerReading}</p>
+      <p className="mt-4 border-t border-mufin-border pt-4 text-sm text-mufin-ink">{d.rulerReading}</p>
     </section>
   );
 }
@@ -159,7 +159,7 @@ function KpiStrip({ d }: { d: Data }) {
   const k = d.kpis;
   const cell = "p-5";
   const name = "text-sm text-muted";
-  const value = "mt-1 text-2xl font-bold tabular-nums text-mufin-900";
+  const value = "mt-1 text-2xl font-bold tabular-nums text-mufin-ink";
   const why = "mt-2 text-xs text-muted";
   return (
     <section
@@ -216,12 +216,12 @@ function Donut({ title, slices }: { title: string; slices: Slice[] }) {
       <ul className="w-full space-y-2 text-sm">
         {slices.map((s, i) => (
           <li key={s.key} className="flex items-baseline justify-between gap-3">
-            <span className="flex items-center gap-2 text-mufin-900">
+            <span className="flex items-center gap-2 text-mufin-ink">
               <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ background: SLICE[i % SLICE.length] }} />
               {s.label}
             </span>
             <span className="whitespace-nowrap tabular-nums">
-              <span className="font-semibold text-mufin-900">{s.pct}%</span>
+              <span className="font-semibold text-mufin-ink">{s.pct}%</span>
               <span className="ml-2 text-muted">{formatClp(s.amount)}</span>
             </span>
           </li>
@@ -250,7 +250,7 @@ function Cards({ c }: { c: CardsView }) {
   return (
     <section aria-labelledby="tarjetas" className="grid gap-6 lg:grid-cols-2">
       <div className={`${box} p-5 sm:p-6`}>
-        <h2 id="tarjetas" className="font-semibold text-mufin-900">Tipo de tarjeta</h2>
+        <h2 id="tarjetas" className="font-semibold text-mufin-ink">Tipo de tarjeta</h2>
         <p className={hint}>Cómo pagaron tus clientes con tarjeta en los últimos 7 días. Débito y crédito tienen distinta comisión.</p>
         <div className="mt-5">
           <Donut title="Tipo de tarjeta" slices={c.types} />
@@ -258,7 +258,7 @@ function Cards({ c }: { c: CardsView }) {
         {c.brands.length > 0 && (
           <ul aria-label="Marcas" className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-mufin-border pt-4 text-sm">
             {c.brands.map((b) => (
-              <li key={b.key} className="flex items-center gap-2 text-mufin-900">
+              <li key={b.key} className="flex items-center gap-2 text-mufin-ink">
                 <BrandMark name={b.label} />
                 {b.label} <span className="font-semibold tabular-nums">{b.pct}%</span>
               </li>
@@ -267,7 +267,7 @@ function Cards({ c }: { c: CardsView }) {
         )}
       </div>
       <div className={`${box} p-5 sm:p-6`}>
-        <h2 className="font-semibold text-mufin-900">Bancos de tus clientes</h2>
+        <h2 className="font-semibold text-mufin-ink">Bancos de tus clientes</h2>
         <p className={hint}>El banco que emitió cada tarjeta. Sirve para elegir con qué banco hacer una promoción.</p>
         <div className="mt-5">
           {c.issuers.length ? <Donut title="Bancos" slices={c.issuers} /> : <p className="text-sm text-muted">Aún no hay bancos informados para estos días.</p>}
@@ -283,12 +283,12 @@ function Cards({ c }: { c: CardsView }) {
 function Tips({ tips }: { tips: Tip[] }) {
   return (
     <section aria-labelledby="consejos" className={`${box} p-5 sm:p-6`}>
-      <h2 id="consejos" className="font-semibold text-mufin-900">Recomendaciones para tu negocio</h2>
+      <h2 id="consejos" className="font-semibold text-mufin-ink">Recomendaciones para tu negocio</h2>
       <p className={hint}>Calculadas con tus ventas de los últimos 7 días.</p>
       <ul className="mt-4 divide-y divide-mufin-border">
         {tips.map((t) => (
           <li key={t.key} className="py-3">
-            <p className="text-mufin-900">{t.text}</p>
+            <p className="text-mufin-ink">{t.text}</p>
             <p className="mt-1 text-xs text-muted">Según: {t.basis}</p>
           </li>
         ))}
@@ -301,7 +301,7 @@ export default function Dashboard({ d, vs, cards, tips }: { d: Data; vs: Compare
   if (d.empty) {
     return (
       <section className={`${box} px-6 py-16 text-center`}>
-        <h1 className="text-2xl font-bold text-mufin-900">Aún no tienes ventas con DTEx®</h1>
+        <h1 className="text-2xl font-bold text-mufin-ink">Aún no tienes ventas con DTEx®</h1>
         <p className="mt-2 text-muted">Cuando cobres tu primera venta, aquí verás cómo va tu semana.</p>
       </section>
     );
@@ -315,7 +315,7 @@ export default function Dashboard({ d, vs, cards, tips }: { d: Data; vs: Compare
       <header>
         <h1 className="text-sm font-medium text-muted">Vendido en los últimos 7 días</h1>
         <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span className="text-5xl font-extrabold tracking-tight text-mufin-900 tabular-nums">
+          <span className="text-5xl font-extrabold tracking-tight text-mufin-ink tabular-nums">
             {formatClp(d.total)}
           </span>
           <span className="inline-flex items-center gap-2 text-sm text-muted">

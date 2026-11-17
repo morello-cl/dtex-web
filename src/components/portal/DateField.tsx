@@ -46,7 +46,7 @@ export default function DateField({ date, min, max, medio }: { date: string; min
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className={`inline-flex h-11 items-center gap-2 rounded-xl border border-mufin-border bg-white px-4 text-sm font-semibold text-mufin-900 hover:border-mufin-700 ${focus}`}
+        className={`inline-flex h-11 items-center gap-2 rounded-xl border border-mufin-border bg-white px-4 text-sm font-semibold text-mufin-ink hover:border-mufin-700 ${focus}`}
       >
         <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4 fill-none stroke-mufin-700" strokeWidth="1.6">
           <rect x="3" y="4.5" width="14" height="12.5" rx="2" />

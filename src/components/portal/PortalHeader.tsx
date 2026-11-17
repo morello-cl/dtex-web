@@ -21,7 +21,7 @@ export default function PortalHeader({ merchant, current }: { merchant: string; 
               href={n.href}
               aria-current={n.href === current ? "page" : undefined}
               className={`rounded-lg px-3 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700 ${
-                n.href === current ? "bg-mufin-bg text-mufin-900" : "text-muted hover:text-mufin-900"
+                n.href === current ? "bg-mufin-bg text-mufin-ink" : "text-muted hover:text-mufin-ink"
               }`}
             >
               {n.label}
@@ -29,11 +29,11 @@ export default function PortalHeader({ merchant, current }: { merchant: string; 
           ))}
         </nav>
         <div className="flex min-w-0 items-center gap-4">
-          <span className="hidden truncate text-sm font-medium text-mufin-900 md:block">{merchant}</span>
+          <span className="hidden truncate text-sm font-medium text-mufin-ink md:block">{merchant}</span>
           <form action={logoutAction}>
             <button
               type="submit"
-              className="inline-flex h-11 items-center whitespace-nowrap rounded-xl border border-mufin-border bg-white px-4 text-sm font-semibold text-mufin-900 hover:border-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700"
+              className="inline-flex h-11 items-center whitespace-nowrap rounded-xl border border-mufin-border bg-white px-4 text-sm font-semibold text-mufin-ink hover:border-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700"
             >
               Cerrar sesión
             </button>

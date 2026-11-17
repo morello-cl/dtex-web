@@ -15,7 +15,7 @@ function MethodDot({ card }: { card: boolean }) {
 }
 
 function Document({ r, detail }: { r: Row; detail: string }) {
-  const text = <span className={r.voided ? "text-muted line-through" : "text-mufin-900"}>{r.document}</span>;
+  const text = <span className={r.voided ? "text-muted line-through" : "text-mufin-ink"}>{r.document}</span>;
   return (
     <span className="font-medium">
       {r.uuid ? (
@@ -33,7 +33,7 @@ function Document({ r, detail }: { r: Row; detail: string }) {
 function Amount({ r }: { r: Row }) {
   return (
     <span className="text-right">
-      <span className={`block font-semibold tabular-nums ${r.voided ? "text-muted line-through" : r.negative ? "text-warn-700" : "text-mufin-900"}`}>
+      <span className={`block font-semibold tabular-nums ${r.voided ? "text-muted line-through" : r.negative ? "text-warn-700" : "text-mufin-ink"}`}>
         {formatClp(r.amount)}
       </span>
       {r.tip > 0 && <span className="block text-xs text-muted tabular-nums">propina {formatClp(r.tip)}</span>}
@@ -93,7 +93,7 @@ export default function SalesTable({ rows, detail }: { rows: Row[]; detail: stri
                     className={`py-2 pr-4 font-medium text-muted last:pr-0 ${h.column.id === "amount" ? "text-right" : ""}`}
                   >
                     {h.column.getCanSort() ? (
-                      <button type="button" onClick={h.column.getToggleSortingHandler()} className={`rounded hover:text-mufin-900 ${focus}`}>
+                      <button type="button" onClick={h.column.getToggleSortingHandler()} className={`rounded hover:text-mufin-ink ${focus}`}>
                         {flexRender(h.column.columnDef.header, h.getContext())}
                         {ARROW[dir || ""] ?? ""}
                       </button>

@@ -18,12 +18,12 @@ const idle: FormState = { status: "idle" };
 
 // text-base en mobile (16px) evita el auto-zoom de iOS Safari al enfocar inputs.
 const input =
-  "w-full rounded-xl border border-mufin-border bg-white px-4 py-3 text-base text-mufin-900 focus:border-mufin-700 focus:outline-none focus:ring-2 focus:ring-mufin-300 sm:text-sm";
-const label = "mb-1.5 block text-sm font-medium text-mufin-900";
+  "w-full rounded-xl border border-mufin-border bg-white px-4 py-3 text-base text-mufin-ink focus:border-mufin-700 focus:outline-none focus:ring-2 focus:ring-mufin-300 sm:text-sm";
+const label = "mb-1.5 block text-sm font-medium text-mufin-ink";
 const button =
   "w-full rounded-xl bg-mufin-900 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700 disabled:opacity-60";
 const buttonSecondary =
-  "w-full rounded-xl border border-mufin-border bg-white px-4 py-3 text-sm font-semibold text-mufin-900 transition-colors hover:border-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700 disabled:opacity-60";
+  "w-full rounded-xl border border-mufin-border bg-white px-4 py-3 text-sm font-semibold text-mufin-ink transition-colors hover:border-mufin-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700 disabled:opacity-60";
 const link =
   "font-medium text-mufin-700 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-mufin-700";
 
@@ -204,7 +204,7 @@ function PortalPreview() {
     <div aria-hidden="true" className="w-full max-w-sm space-y-4">
       <div className="rounded-3xl bg-white p-6 shadow-[0_30px_60px_-20px_rgba(3,0,20,0.5)]">
         <p className="text-sm text-muted">Vendido en los últimos 7 días</p>
-        <p className="mt-1 text-4xl font-extrabold tracking-tight text-mufin-900 tabular-nums">
+        <p className="mt-1 text-4xl font-extrabold tracking-tight text-mufin-ink tabular-nums">
           $4.512.900
         </p>
         <p className="mt-1 text-sm font-semibold text-accent-500">
@@ -236,7 +236,7 @@ function PortalPreview() {
       <div className="ml-10 flex items-center justify-between rounded-2xl bg-white/95 px-5 py-4 shadow-[0_20px_40px_-20px_rgba(3,0,20,0.5)]">
         <div>
           <p className="text-xs text-muted">Próximo abono</p>
-          <p className="text-lg font-bold text-mufin-900 tabular-nums">
+          <p className="text-lg font-bold text-mufin-ink tabular-nums">
             $798.400
           </p>
         </div>
@@ -286,7 +286,7 @@ export function AuthCard({
           <MufinLogo height={30} />
         </Link>
         <main className="my-auto w-full max-w-sm self-center py-12">
-          <h1 className="mb-8 text-balance text-3xl font-bold tracking-tight text-mufin-900">
+          <h1 className="mb-8 text-balance text-3xl font-bold tracking-tight text-mufin-ink">
             {title}
           </h1>
           {children}
@@ -307,7 +307,7 @@ export function LinkProblem({
   return (
     <div className="space-y-6">
       {showTitle && (
-        <h2 role="alert" className="text-lg font-semibold text-mufin-900">
+        <h2 role="alert" className="text-lg font-semibold text-mufin-ink">
           {LINK_PROBLEMS[problem].title}
         </h2>
       )}
@@ -328,7 +328,7 @@ export function LinkProblem({
         }
       >
         {problem === "used" && (
-          <p className="mb-4 text-sm font-medium text-mufin-900">
+          <p className="mb-4 text-sm font-medium text-mufin-ink">
             ¿Necesitas otro enlace?
           </p>
         )}

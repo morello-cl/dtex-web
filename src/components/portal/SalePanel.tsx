@@ -12,8 +12,8 @@ function Rows({ rows }: { rows: { label: string; value: string; strong?: boolean
     <dl className="divide-y divide-mufin-border text-sm">
       {rows.map((r) => (
         <div key={r.label} className="flex justify-between gap-4 py-2">
-          <dt className={r.strong ? "font-semibold text-mufin-900" : "text-muted"}>{r.label}</dt>
-          <dd className={`text-right tabular-nums ${r.strong ? "font-semibold text-mufin-900" : "text-mufin-900"}`}>{r.value}</dd>
+          <dt className={r.strong ? "font-semibold text-mufin-ink" : "text-muted"}>{r.label}</dt>
+          <dd className={`text-right tabular-nums ${r.strong ? "font-semibold text-mufin-ink" : "text-mufin-ink"}`}>{r.value}</dd>
         </div>
       ))}
     </dl>
@@ -42,12 +42,12 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
       <section role="dialog" aria-modal="true" aria-labelledby="venta-titulo" className="relative flex h-full w-full flex-col bg-white shadow-xl sm:max-w-md">
         <header className="flex items-start justify-between gap-4 border-b border-mufin-border p-5">
           <div>
-            <h2 id="venta-titulo" ref={heading} tabIndex={-1} className="text-lg font-bold text-mufin-900 outline-none">
+            <h2 id="venta-titulo" ref={heading} tabIndex={-1} className="text-lg font-bold text-mufin-ink outline-none">
               {v ? v.title : "Detalle de la venta"}
             </h2>
             {v && <p className="mt-1 text-sm text-muted">{v.issued}</p>}
           </div>
-          <Link href={close} scroll={false} replace className={`inline-flex h-11 items-center rounded-xl border border-mufin-border px-4 text-sm font-semibold text-mufin-900 hover:border-mufin-700 ${focus}`}>
+          <Link href={close} scroll={false} replace className={`inline-flex h-11 items-center rounded-xl border border-mufin-border px-4 text-sm font-semibold text-mufin-ink hover:border-mufin-700 ${focus}`}>
             Cerrar
           </Link>
         </header>
@@ -58,8 +58,8 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
             <>
               {v.receiver && (
                 <section>
-                  <h3 className="text-sm font-semibold text-mufin-900">Cliente</h3>
-                  <p className="mt-2 text-sm text-mufin-900">
+                  <h3 className="text-sm font-semibold text-mufin-ink">Cliente</h3>
+                  <p className="mt-2 text-sm text-mufin-ink">
                     {v.receiver.name}, RUT {v.receiver.rut}
                   </p>
                   {(v.receiver.address || v.receiver.commune) && (
@@ -69,7 +69,7 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
               )}
               {v.reference && <p className="text-sm text-muted">{v.reference}</p>}
               <section>
-                <h3 className="text-sm font-semibold text-mufin-900">Detalle del documento</h3>
+                <h3 className="text-sm font-semibold text-mufin-ink">Detalle del documento</h3>
                 {v.items.length === 0 ? (
                   <p className="mt-2 text-sm text-muted">Documento por monto, sin detalle de productos.</p>
                 ) : (
@@ -77,10 +77,10 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
                     {v.items.map((i) => (
                       <li key={i.key} className="flex justify-between gap-4 py-2">
                         <span>
-                          <span className="block text-mufin-900">{i.description}</span>
+                          <span className="block text-mufin-ink">{i.description}</span>
                           <span className="block text-xs text-muted tabular-nums">{i.detail}</span>
                         </span>
-                        <span className="tabular-nums text-mufin-900">{i.total}</span>
+                        <span className="tabular-nums text-mufin-ink">{i.total}</span>
                       </li>
                     ))}
                   </ul>
@@ -91,7 +91,7 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
               </section>
               {v.payment.length > 0 && (
                 <section>
-                  <h3 className="text-sm font-semibold text-mufin-900">Pago</h3>
+                  <h3 className="text-sm font-semibold text-mufin-ink">Pago</h3>
                   <div className="mt-2">
                     <Rows rows={v.payment} />
                   </div>

@@ -30,7 +30,8 @@
   --warn-700: #8a4b00;
 
   /* Portal de comercios: morado corporativo MUFIN como eje. */
-  --mufin-900: #2d0d54;
+  --mufin-900: #4a1a7a; /* oscuro de los degradados de dtex_app (mufinPurple → 4A1A7A) */
+  --mufin-ink: #1e293b; /* MColors.textPrimary: títulos y texto principal */
   --mufin-700: #7c25c4; /* MColors.mufinPurple de dtex_app: el morado de marca va idéntico al de la app */
   --mufin-300: #c9bfe6;
   --mufin-bg: #f8f7fb;
@@ -66,6 +67,7 @@
   --color-warn-700: var(--warn-700);
 
   --color-mufin-900: var(--mufin-900);
+  --color-mufin-ink: var(--mufin-ink);
   --color-mufin-700: var(--mufin-700);
   --color-mufin-300: var(--mufin-300);
   --color-mufin-bg: var(--mufin-bg);
