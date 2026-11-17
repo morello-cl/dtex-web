@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandMark from "./BrandMark";
 import type { CardsView, Slice, Tip } from "@/lib/portal/cards";
 import {
   COMPARE_LABELS,
@@ -229,21 +230,6 @@ function Donut({ title, slices }: { title: string; slices: Slice[] }) {
       </ul>
     </div>
   );
-}
-
-// Logos de simple-icons, en el color oficial de cada marca.
-const BRANDS: Record<string, [string, string]> = {
-  Visa: ["visa", "#1A1F71"],
-  Mastercard: ["mastercard", "#EB001B"],
-  "American Express": ["americanexpress", "#2E77BC"],
-  Amex: ["americanexpress", "#2E77BC"],
-};
-
-function BrandMark({ name }: { name: string }) {
-  const b = BRANDS[name];
-  if (!b) return null;
-  const url = `url(/marcas/${b[0]}.svg)`;
-  return <span aria-hidden="true" className="inline-block h-4 w-4 shrink-0" style={{ background: b[1], maskImage: url, WebkitMaskImage: url, maskSize: "contain", WebkitMaskSize: "contain" }} />;
 }
 
 function Cards({ c }: { c: CardsView }) {

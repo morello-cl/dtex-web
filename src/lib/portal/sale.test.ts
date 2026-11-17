@@ -43,6 +43,18 @@ test("efectivo con vuelto: sin bloque de tarjeta, el vuelto se llama vuelto", ()
   assert.ok(v.totals.some((t) => t.label === "Pagado"));
 });
 
+test("SII: estado, track ID y fecha de envío; sin dato no se muestra", () => {
+  const s = sale();
+  s.document.sii = { status: "accepted", track_id: "0234567890", sent_at: "2026-11-13T14:40:00-03:00", message: null };
+  const v = buildSale(s);
+  assert.equal(v.sii?.label, "Aceptado por el SII");
+  assert.equal(v.sii?.tone, "ok");
+  assert.equal(v.sii?.trackId, "0234567890");
+  assert.equal(v.total, "$11.000");
+  assert.equal(v.brand, "Visa");
+  assert.equal(buildSale(sale()).sii, null);
+});
+
 test("getSale: 404 → null; forma inválida → 502", async (t) => {
   const f = t.mock.method(globalThis, "fetch", async () => new Response(JSON.stringify({ error: true, message: "NOT_FOUND", data: null }), { status: 404 }));
   assert.equal(await getSale("jwt", "u1"), null);

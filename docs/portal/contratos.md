@@ -271,7 +271,10 @@ la venta es de otro comercio.
     "amounts": { "net", "tax", "tax_rate", "exempt", "total", "tip", "paid", "change" },
     "receiver": null | { "rut", "name", "business_activity", "address", "commune" }, // solo facturas
     "reference": null | { "type_code", "folio", "reason" },
-    "xml_available": bool },
+    "xml_available": bool,
+    // Propuesto por el portal (2026-11-17), pendiente: null si el documento no es electrónico.
+    "sii": null | { "status": "accepted" | "accepted_with_objections" | "rejected" | "sent" | "not_sent",
+      "track_id": "0240123456" | null, "sent_at": "<ISO>" | null, "message": "<glosa del SII>" | null } },
   "items": [{ "line", "code", "description", "quantity", "unit", "unit_price", "discount_pct", "exempt", "total" }],
   "payment": null | { "method", "acquirer",
     "card": { "type", "brand", "last4", "issuer", "foreign" },
@@ -280,6 +283,9 @@ la venta es de otro comercio.
   "equipment": { "uuid", "tid" }, "cashier_code" }
 ```
 
+- `sii` lo pidió Marco: el comercio necesita ver si el SII aceptó el documento y
+  su track ID para validarlo o hacerle seguimiento. Mientras no llegue, el panel
+  no muestra ese bloque.
 - `items` viene vacío en las boletas por monto (hoy, 69 % de los documentos).
 - No salen al portal: BIN, costo del adquirente, monto abonado por venta,
   identificadores internos del procesador, ubicación ni el correo del receptor.

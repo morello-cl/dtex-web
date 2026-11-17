@@ -228,6 +228,7 @@ export function buildDay(d: SalesDayData, method: Method | null, today: string) 
       time: s.time ? s.time.slice(0, 5) : "—",
       document: `${s.dte_type_name} N° ${s.folio}`,
       isCard: s.payment_method === "card",
+      brand: s.payment_method === "card" ? (s.card?.brand ?? null) : null,
       method: s.payment_method === "card" ? cardLabel(s.card) : methodLabel(s.payment_method),
       place: s.subsidiary ? `${s.subsidiary.name}, equipo ${s.equipment.tid}` : `Equipo ${s.equipment.tid}`,
       amount: s.amount,

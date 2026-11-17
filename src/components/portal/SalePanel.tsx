@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { SaleView } from "@/lib/portal/sale";
+import BrandMark from "./BrandMark";
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700";
 
@@ -17,6 +18,44 @@ function Rows({ rows }: { rows: { label: string; value: string; strong?: boolean
         </div>
       ))}
     </dl>
+  );
+}
+
+const card = "rounded-xl border border-mufin-border p-4";
+const h3 = "text-sm font-semibold text-mufin-ink";
+const TONE = { ok: "bg-accent-50 text-accent-600", warn: "bg-warn-50 text-warn-700", wait: "bg-mufin-bg text-muted" };
+
+function Copy({ text }: { text: string }) {
+  const [done, setDone] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={() => navigator.clipboard.writeText(text).then(() => setDone(true), () => {})}
+      className={`inline-flex h-9 items-center rounded-[10px] border border-mufin-border px-3 text-sm font-semibold text-mufin-700 hover:border-mufin-700 ${focus}`}
+    >
+      <span aria-live="polite">{done ? "Copiado" : "Copiar"}</span>
+    </button>
+  );
+}
+
+function Sii({ s }: { s: NonNullable<SaleView["sii"]> }) {
+  return (
+    <section className={`${card} bg-white`}>
+      <h3 className={h3}>Documento electrónico en el SII</h3>
+      <p className={`mt-3 inline-block rounded-full px-2.5 py-1 text-sm font-semibold ${TONE[s.tone]}`}>{s.label}</p>
+      {s.message && <p className="mt-2 text-sm text-mufin-ink">{s.message}</p>}
+      {s.trackId && (
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs text-muted">Track ID del SII</p>
+            <p className="font-mono text-base font-semibold text-mufin-ink">{s.trackId}</p>
+          </div>
+          <Copy text={s.trackId} />
+        </div>
+      )}
+      {s.sentAt && <p className="mt-2 text-xs text-muted">Enviado al SII el {s.sentAt}.</p>}
+      {s.trackId && <p className="mt-2 text-xs text-muted">Con el track ID puedes consultar el envío en el SII.</p>}
+    </section>
   );
 }
 
@@ -51,14 +90,25 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
             Cerrar
           </Link>
         </header>
-        <div className="flex-1 space-y-6 overflow-y-auto p-5">
+        <div className="flex-1 space-y-4 overflow-y-auto bg-mufin-bg p-5">
           {!v ? (
             <p className="text-sm text-muted">{error}</p>
           ) : (
             <>
+              <section className={`${card} bg-white`}>
+                <p className="text-sm text-muted">Total cobrado</p>
+                <p className="text-3xl font-extrabold tracking-tight text-mufin-ink tabular-nums">{v.total}</p>
+                {v.payment[0] && (
+                  <p className="mt-2 flex items-center gap-2 text-sm text-mufin-ink">
+                    <BrandMark name={v.brand} size="h-5 w-5" />
+                    {v.payment[0].value}
+                  </p>
+                )}
+              </section>
+              {v.sii && <Sii s={v.sii} />}
               {v.receiver && (
-                <section>
-                  <h3 className="text-sm font-semibold text-mufin-ink">Cliente</h3>
+                <section className={`${card} bg-white`}>
+                  <h3 className={h3}>Cliente</h3>
                   <p className="mt-2 text-sm text-mufin-ink">
                     {v.receiver.name}, RUT {v.receiver.rut}
                   </p>
@@ -67,9 +117,9 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
                   )}
                 </section>
               )}
-              {v.reference && <p className="text-sm text-muted">{v.reference}</p>}
-              <section>
-                <h3 className="text-sm font-semibold text-mufin-ink">Detalle del documento</h3>
+              <section className={`${card} bg-white`}>
+                <h3 className={h3}>Detalle del documento</h3>
+                {v.reference && <p className="mt-1 text-sm text-muted">{v.reference}</p>}
                 {v.items.length === 0 ? (
                   <p className="mt-2 text-sm text-muted">Documento por monto, sin detalle de productos.</p>
                 ) : (
@@ -90,8 +140,8 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
                 </div>
               </section>
               {v.payment.length > 0 && (
-                <section>
-                  <h3 className="text-sm font-semibold text-mufin-ink">Pago</h3>
+                <section className={`${card} bg-white`}>
+                  <h3 className={h3}>Pago</h3>
                   <div className="mt-2">
                     <Rows rows={v.payment} />
                   </div>

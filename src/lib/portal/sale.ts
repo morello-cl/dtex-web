@@ -5,6 +5,7 @@ import { cardLabel } from "./day.ts";
 import { formatClp } from "./sales.ts";
 
 type CardType = "credit" | "debit" | "prepaid" | null;
+type SiiStatus = "accepted" | "accepted_with_objections" | "rejected" | "sent" | "not_sent";
 export type SaleDetail = {
   uuid: string;
   document: {
@@ -15,6 +16,8 @@ export type SaleDetail = {
     amounts: { net: number | null; tax: number | null; tax_rate: number | null; exempt: number | null; total: number; tip: number; paid: number | null; change: number };
     receiver: { rut: string; name: string; business_activity: string | null; address: string | null; commune: string | null } | null;
     reference: { type_code: number; folio: number; reason: string | null } | null;
+    // null si el documento no es electrónico. Opcional mientras tomahawk no lo publique.
+    sii?: { status: SiiStatus; track_id: string | null; sent_at: string | null; message: string | null } | null;
   };
   items: { line: number; code: string | null; description: string; quantity: number; unit: string | null; unit_price: number; discount_pct: number | null; total: number }[];
   payment: {
@@ -62,6 +65,15 @@ const ACQUIRERS: Record<string, string> = { kushki: "Kushki", tuu: "TUU", mercad
 const dateTime = new Intl.DateTimeFormat("es-CL", { dateStyle: "long", timeStyle: "short", timeZone: "America/Santiago" });
 const day = (iso: string) => new Intl.DateTimeFormat("es-CL", { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
 
+// tone: ok (verde), warn (ámbar), wait (neutro). Un rechazo del SII es ámbar: hay que corregir, no es una venta perdida.
+const SII: Record<SiiStatus, { label: string; tone: "ok" | "warn" | "wait" }> = {
+  accepted: { label: "Aceptado por el SII", tone: "ok" },
+  accepted_with_objections: { label: "Aceptado con reparos por el SII", tone: "warn" },
+  rejected: { label: "Rechazado por el SII", tone: "warn" },
+  sent: { label: "Enviado, esperando respuesta del SII", tone: "wait" },
+  not_sent: { label: "Aún no enviado al SII", tone: "wait" },
+};
+
 export type SaleView = ReturnType<typeof buildSale>;
 
 export function buildSale(s: SaleDetail) {
@@ -95,7 +107,17 @@ export function buildSale(s: SaleDetail) {
       });
   }
 
+  const sii = d.sii && SII[d.sii.status] ? {
+    ...SII[d.sii.status],
+    trackId: d.sii.track_id,
+    sentAt: d.sii.sent_at && dateTime.format(new Date(d.sii.sent_at)),
+    message: d.sii.message,
+  } : null;
+
   return {
+    sii,
+    total: formatClp(a.total + a.tip),
+    brand: c?.brand ?? null,
     title: `${d.type_name} N° ${d.folio}`,
     issued: dateTime.format(new Date(d.issued_at)),
     receiver: d.receiver,
