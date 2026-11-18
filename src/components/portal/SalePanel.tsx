@@ -64,22 +64,33 @@ function Sii({ s }: { s: NonNullable<SaleView["sii"]> }) {
 export default function SalePanel({ v, error, close }: { v: SaleView | null; error: string | null; close: string }) {
   const router = useRouter();
   const heading = useRef<HTMLHeadingElement>(null);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const shut = () => router.replace(close, { scroll: false });
 
+  // showModal deja el resto de la página inerte: el foco no sale del panel.
   useEffect(() => {
+    const d = dialog.current;
+    if (d && !d.open) d.showModal();
     heading.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && router.replace(close, { scroll: false });
-    document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [close, router]);
+  }, []);
 
   return (
-    <div className="fixed inset-0 z-40 flex justify-end">
-      <Link href={close} scroll={false} replace aria-hidden="true" tabIndex={-1} className="absolute inset-0 bg-mufin-900/40" />
-      <section role="dialog" aria-modal="true" aria-labelledby="venta-titulo" className="relative flex h-full w-full flex-col bg-white shadow-xl sm:max-w-md">
+    // Escape dispara cancel; un clic en el fondo cae sobre el propio dialog.
+    <dialog
+      ref={dialog}
+      aria-labelledby="venta-titulo"
+      onCancel={(e) => {
+        e.preventDefault();
+        shut();
+      }}
+      onClick={(e) => e.target === e.currentTarget && shut()}
+      className="m-0 ml-auto h-dvh max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-mufin-900/40 sm:max-w-md"
+    >
+      <section className="flex h-full w-full flex-col bg-white shadow-xl">
         <header className="flex items-start justify-between gap-4 border-b border-mufin-border p-5">
           <div>
             <h2 id="venta-titulo" ref={heading} tabIndex={-1} className="text-lg font-bold text-mufin-ink outline-none">
@@ -166,6 +177,6 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
           )}
         </div>
       </section>
-    </div>
+    </dialog>
   );
 }

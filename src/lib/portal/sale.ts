@@ -39,10 +39,11 @@ const num = (v: unknown) => typeof v === "number" && Number.isFinite(v);
 const str = (v: unknown) => typeof v === "string";
 
 /** null si la venta no existe o es de otro comercio (404). */
-export async function getSale(jwt: string, uuid: string): Promise<SaleDetail | null> {
+// ponytail: plazo fijo; con comercios grandes tomahawk puede tardar hasta que exista el índice de dtes.uuid.
+export async function getSale(jwt: string, uuid: string, ms = 8000): Promise<SaleDetail | null> {
   let s: SaleDetail;
   try {
-    s = await portalRequest<SaleDetail>(`/api/portal/v1/sales/${encodeURIComponent(uuid)}`, { headers: { "x-token-dtex": jwt } });
+    s = await portalRequest<SaleDetail>(`/api/portal/v1/sales/${encodeURIComponent(uuid)}`, { headers: { "x-token-dtex": jwt }, signal: AbortSignal.timeout(ms) });
   } catch (e) {
     if (e instanceof PortalApiError && e.status === 404) return null;
     throw e;
@@ -99,13 +100,13 @@ export function buildSale(s: SaleDetail) {
     else if (c?.foreign) payment.push({ label: "Banco", value: "Tarjeta extranjera" });
     if (p.installments && p.installments > 1) payment.push({ label: "Cuotas", value: String(p.installments) });
     if (p.authorization_code) payment.push({ label: "Código de autorización", value: p.authorization_code });
-    if (p.transaction_id) payment.push({ label: "N° de transacción", value: p.transaction_id });
+    if (p.transaction_id) payment.push({ label: "Referencia de pago MUFIN", value: p.transaction_id });
     if (p.acquirer) payment.push({ label: "Procesado por", value: ACQUIRERS[p.acquirer] ?? p.acquirer });
     if (p.paid_at) payment.push({ label: "Fecha del pago", value: dateTime.format(new Date(p.paid_at)) });
     if (p.settlement)
       payment.push({
         label: "Liquidación",
-        value: p.settlement.status === "settled" && p.settlement.settled_on ? `Liquidada el ${day(p.settlement.settled_on)}` : "Pendiente de liquidar",
+        value: p.settlement.status !== "settled" ? "Pendiente de liquidar" : p.settlement.settled_on ? `Liquidada el ${day(p.settlement.settled_on)}` : "Liquidada",
       });
   }
 

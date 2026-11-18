@@ -34,7 +34,7 @@ export const CHANGELOG: Release[] = [
       },
       {
         type: "added",
-        description: "Calendario para elegir cualquier día en las ventas del portal.",
+        description: "Calendario para elegir el día en las ventas del portal.",
       },
       {
         type: "changed",

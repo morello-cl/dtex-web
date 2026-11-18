@@ -80,7 +80,7 @@ export function buildTips(d: Dashboard, cards: CardsView | null): Tip[] {
   if (bank && bank.pct >= 25) {
     tips.push({
       key: "bank",
-      text: `El ${bank.pct}% de lo que cobras con tarjeta viene de clientes de ${bank.label}. Una promoción con ese banco llega a muchos de ellos.`,
+      text: `El ${bank.pct}% de lo que cobras con tarjeta con banco informado viene de clientes de ${bank.label}. Una promoción con ese banco llega a muchos de ellos.`,
       basis: "Bancos de los últimos 7 días",
     });
   }

@@ -25,10 +25,9 @@ export default async function VentasPage({ searchParams }: { searchParams: Promi
   const venta = typeof p.venta === "string" ? p.venta : null;
   // El detalle es secundario: si falla, la tabla se muestra igual y el panel lo explica.
   const sale = venta
-    ? getSale(jwt, venta).then(
-        (s) => ({ v: s && buildSale(s), error: s ? null : "No encontramos esta venta." }),
-        () => ({ v: null as SaleView | null, error: "El detalle de la venta no está disponible en este momento. Intenta más tarde." }),
-      )
+    ? getSale(jwt, venta)
+        .then((s) => ({ v: s && buildSale(s), error: s ? null : "No encontramos esta venta." }))
+        .catch(() => ({ v: null as SaleView | null, error: "El detalle de la venta no está disponible en este momento. Intenta más tarde." }))
     : null;
 
   let data: SalesDayData | null = null;

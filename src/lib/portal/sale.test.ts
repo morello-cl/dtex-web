@@ -32,6 +32,19 @@ test("boleta con tarjeta: título, ítems, totales y pago", () => {
   assert.equal(pay["Procesado por"], "Kushki");
   assert.equal(pay["Liquidación"], "Liquidada el 14 de noviembre de 2026");
   assert.equal(pay["Cuotas"], undefined);
+  assert.equal(pay["Referencia de pago MUFIN"], "T-9");
+});
+
+test("TUU sin liquidación y Kushki liquidada sin fecha", () => {
+  const tuu = sale();
+  tuu.payment = { ...tuu.payment!, acquirer: "tuu", settlement: null };
+  const a = Object.fromEntries(buildSale(tuu).payment.map((p) => [p.label, p.value]));
+  assert.equal(a["Procesado por"], "TUU");
+  assert.equal(a["Liquidación"], undefined);
+  const k = sale();
+  k.payment = { ...k.payment!, settlement: { status: "settled", settled_on: null } };
+  const b = Object.fromEntries(buildSale(k).payment.map((p) => [p.label, p.value]));
+  assert.equal(b["Liquidación"], "Liquidada");
 });
 
 test("efectivo con vuelto: sin bloque de tarjeta, el vuelto se llama vuelto", () => {
@@ -66,4 +79,9 @@ test("getSale: 404 → null; forma inválida → 502", async (t) => {
   assert.equal(await getSale("jwt", "u1"), null);
   f.mock.mockImplementation(async () => new Response(JSON.stringify({ error: false, message: null, data: { uuid: "u1" } }), { status: 200 }));
   await assert.rejects(getSale("jwt", "u1"), { status: 502 });
+});
+
+test("getSale: corta la espera con un plazo", async (t) => {
+  t.mock.method(globalThis, "fetch", (_u: unknown, init: RequestInit) => new Promise((_, rej) => init.signal?.addEventListener("abort", () => rej(init.signal!.reason))));
+  await assert.rejects(getSale("jwt", "u1", 20), { status: 0 });
 });
