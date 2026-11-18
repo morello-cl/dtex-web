@@ -54,6 +54,11 @@ test("SII: estado, track ID y fecha de envío; sin dato no se muestra", () => {
   assert.equal(v.brand, "Visa");
   assert.equal(v.methodNoBrand, "Débito ••1234");
   assert.equal(buildSale(sale()).sii, null);
+  s.document.sii = { status: "duplicate", track_id: null, sent_at: null, message: null };
+  assert.equal(buildSale(s).sii?.tone, "warn");
+  // Un estado que tomahawk agregue después no rompe el panel: se oculta.
+  s.document.sii = { status: "constructor" as never, track_id: null, sent_at: null, message: null };
+  assert.equal(buildSale(s).sii, null);
 });
 
 test("getSale: 404 → null; forma inválida → 502", async (t) => {

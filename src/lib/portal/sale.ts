@@ -5,7 +5,8 @@ import { cardLabel } from "./day.ts";
 import { formatClp } from "./sales.ts";
 
 type CardType = "credit" | "debit" | "prepaid" | null;
-type SiiStatus = "accepted" | "accepted_with_objections" | "rejected" | "sent" | "not_sent";
+// Estados del mapeo SII que ya usa tomahawk (services/dtex/sii-status/v1).
+type SiiStatus = "pending" | "accepted" | "accepted_with_remarks" | "rejected" | "duplicate" | "unknown";
 export type SaleDetail = {
   uuid: string;
   document: {
@@ -68,10 +69,11 @@ const day = (iso: string) => new Intl.DateTimeFormat("es-CL", { dateStyle: "long
 // tone: ok (verde), warn (ámbar), wait (neutro). Un rechazo del SII es ámbar: hay que corregir, no es una venta perdida.
 const SII: Record<SiiStatus, { label: string; tone: "ok" | "warn" | "wait" }> = {
   accepted: { label: "Aceptado por el SII", tone: "ok" },
-  accepted_with_objections: { label: "Aceptado con reparos por el SII", tone: "warn" },
+  accepted_with_remarks: { label: "Aceptado con reparos por el SII", tone: "warn" },
   rejected: { label: "Rechazado por el SII", tone: "warn" },
-  sent: { label: "Enviado, esperando respuesta del SII", tone: "wait" },
-  not_sent: { label: "Aún no enviado al SII", tone: "wait" },
+  duplicate: { label: "Duplicado en el SII", tone: "warn" },
+  pending: { label: "Esperando respuesta del SII", tone: "wait" },
+  unknown: { label: "Sin respuesta del SII por ahora", tone: "wait" },
 };
 
 export type SaleView = ReturnType<typeof buildSale>;
@@ -107,7 +109,7 @@ export function buildSale(s: SaleDetail) {
       });
   }
 
-  const sii = d.sii && SII[d.sii.status] ? {
+  const sii = d.sii && Object.hasOwn(SII, d.sii.status) ? {
     ...SII[d.sii.status],
     trackId: d.sii.track_id,
     sentAt: d.sii.sent_at && dateTime.format(new Date(d.sii.sent_at)),
