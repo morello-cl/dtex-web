@@ -30,8 +30,9 @@
   --warn-700: #8a4b00;
 
   /* Portal de comercios: morado corporativo MUFIN como eje. */
-  --mufin-900: #2d0d54;
-  --mufin-700: #461fb6;
+  --mufin-900: #4a1a7a; /* oscuro de los degradados de dtex_app (mufinPurple → 4A1A7A) */
+  --mufin-ink: #1e293b; /* MColors.textPrimary: títulos y texto principal */
+  --mufin-700: #7c25c4; /* MColors.mufinPurple de dtex_app: el morado de marca va idéntico al de la app */
   --mufin-300: #c9bfe6;
   --mufin-bg: #f8f7fb;
   --mufin-border: #e4dff0;
@@ -66,6 +67,7 @@
   --color-warn-700: var(--warn-700);
 
   --color-mufin-900: var(--mufin-900);
+  --color-mufin-ink: var(--mufin-ink);
   --color-mufin-700: var(--mufin-700);
   --color-mufin-300: var(--mufin-300);
   --color-mufin-bg: var(--mufin-bg);
@@ -409,4 +411,21 @@ body {
   .legal-prose h2 {
     scroll-margin-top: 6rem;
   }
+}
+
+/* Calendario del portal (react-day-picker). Fuera de @layer y con más especificidad que su style.css, que carga después. */
+.rdp-root.rdp-root {
+  --rdp-accent-color: var(--mufin-700);
+  --rdp-accent-background-color: var(--mufin-bg);
+  --rdp-day_button-border-radius: 10px;
+  --rdp-selected-border: 0;
+  --rdp-today-color: var(--mufin-700);
+}
+.rdp-root .rdp-selected .rdp-day_button {
+  background: var(--mufin-700);
+  color: #fff;
+}
+.rdp-root .rdp-day_button:focus-visible {
+  outline: 2px solid var(--mufin-700);
+  outline-offset: 2px;
 }

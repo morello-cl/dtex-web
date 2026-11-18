@@ -20,6 +20,41 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.18.0",
+    date: "2026-11-18",
+    summary: "Detalle de cada venta en el portal, con su estado en el SII.",
+    changes: [
+      {
+        type: "added",
+        description: "Cada venta del portal abre su detalle: documento, productos, pago y estado en el SII con su track ID para copiarlo.",
+      },
+      {
+        type: "added",
+        description: "El inicio del portal muestra recomendaciones y la distribución de ventas por tipo de tarjeta y banco.",
+      },
+      {
+        type: "added",
+        description: "Calendario para elegir el día en las ventas del portal.",
+      },
+      {
+        type: "changed",
+        description: "La tabla de ventas tiene una columna por dato (documento, folio, medio, marca, tarjeta, sucursal, equipo y monto) y se puede ordenar por cualquiera.",
+      },
+      {
+        type: "changed",
+        description: "Las ventas con tarjeta muestran el logo de la marca y el detalle indica que el pago fue gestionado por MUFIN.",
+      },
+      {
+        type: "fixed",
+        description: "Los colores del portal son los mismos de la app MUFIN.",
+      },
+      {
+        type: "fixed",
+        description: "Los pagos no completados ya no se repiten al ver más ventas.",
+      },
+    ],
+  },
+  {
     version: "0.17.0",
     date: "2026-11-15",
     changes: [

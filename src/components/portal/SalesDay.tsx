@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { DayView, Method } from "@/lib/portal/day";
 import { formatClp } from "@/lib/portal/sales";
+import DateField from "./DateField";
 import SalesTable from "./SalesTable";
 
 const box = "rounded-2xl border border-mufin-border bg-white";
@@ -29,7 +30,7 @@ function DayPicker({ d, today, min }: { d: DayView; today: string; min: string }
                 scroll={false}
                 aria-current={s.selected ? "date" : undefined}
                 className={`flex w-12 flex-col items-center rounded-xl py-2 ${focus} ${
-                  s.selected ? "bg-mufin-700 text-white" : "bg-white text-mufin-900 hover:bg-mufin-bg"
+                  s.selected ? "bg-mufin-700 text-white" : "bg-white text-mufin-ink hover:bg-mufin-bg"
                 }`}
               >
                 <span className={`text-xs ${s.selected ? "text-white" : s.label === "hoy" ? "font-bold" : "text-muted"}`}>
@@ -41,26 +42,7 @@ function DayPicker({ d, today, min }: { d: DayView; today: string; min: string }
           ))}
         </ol>
       </nav>
-      {/* Sin JS: el calendario nativo envía la fecha por GET. */}
-      <form action="/portal/ventas" className="flex flex-wrap items-center gap-2 text-sm">
-        <label htmlFor="fecha" className="text-muted">
-          Otro día
-        </label>
-        <input
-          id="fecha"
-          name="fecha"
-          type="date"
-          required
-          min={min}
-          max={today}
-          defaultValue={d.date}
-          className={`rounded-xl border border-mufin-border bg-white px-3 py-1.5 text-mufin-900 ${focus}`}
-        />
-        {d.method && <input type="hidden" name="medio" value={d.method} />}
-        <button type="submit" className={`rounded-xl bg-mufin-700 px-3.5 py-1.5 font-medium text-white hover:bg-mufin-900 ${focus}`}>
-          Ver día
-        </button>
-      </form>
+      <DateField date={d.date} min={min} max={today} medio={d.method} />
     </div>
   );
 }
@@ -74,7 +56,7 @@ function Summary({ d }: { d: DayView }) {
   return (
     <div className="grid gap-6 lg:grid-cols-5">
       <section aria-label="Por medio de pago" className={`${box} p-5 sm:p-6 lg:col-span-3`}>
-        <p className="text-5xl font-extrabold tracking-tight text-mufin-900 tabular-nums">{formatClp(d.total)}</p>
+        <p className="text-5xl font-extrabold tracking-tight text-mufin-ink tabular-nums">{formatClp(d.total)}</p>
         <p className="mt-2 text-sm text-muted tabular-nums">
           {count(d.count)}, {extra.join(", ")}.
         </p>
@@ -82,12 +64,12 @@ function Summary({ d }: { d: DayView }) {
           {d.methods.map((m) => (
             <div key={m.key} className="py-3">
               <div className="flex items-baseline justify-between gap-3">
-                <dt className="flex items-center gap-2 font-semibold text-mufin-900">
+                <dt className="flex items-center gap-2 font-semibold text-mufin-ink">
                   <MethodDot card={m.key === "card"} />
                   {m.label}
                   <span className="font-normal text-muted tabular-nums">{count(m.count)}</span>
                 </dt>
-                <dd className="font-semibold tabular-nums text-mufin-900">{formatClp(m.amount)}</dd>
+                <dd className="font-semibold tabular-nums text-mufin-ink">{formatClp(m.amount)}</dd>
               </div>
               {m.sub.map((s) => (
                 <div key={s.label} className="mt-1.5 flex items-baseline justify-between gap-3 pl-6 text-muted">
@@ -102,20 +84,20 @@ function Summary({ d }: { d: DayView }) {
         </dl>
       </section>
       <section className={`${box} p-5 sm:p-6 lg:col-span-2`}>
-        <h2 className="font-semibold text-mufin-900">Documentos emitidos</h2>
+        <h2 className="font-semibold text-mufin-ink">Documentos emitidos</h2>
         {d.documents.length === 0 ? (
           <p className="mt-4 text-sm text-muted">Sin documentos este día.</p>
         ) : (
           <dl className="mt-4 space-y-2 text-sm">
             {d.documents.map((x) => (
               <div key={x.dte_type} className="flex items-baseline justify-between gap-3">
-                <dt className="text-mufin-900">
+                <dt className="text-mufin-ink">
                   {x.dte_type_name} <span className="text-muted tabular-nums">{docs(x.count)}</span>
                 </dt>
-                <dd className={`tabular-nums ${x.amount < 0 ? "text-warn-700" : "text-mufin-900"}`}>{formatClp(x.amount)}</dd>
+                <dd className={`tabular-nums ${x.amount < 0 ? "text-warn-700" : "text-mufin-ink"}`}>{formatClp(x.amount)}</dd>
               </div>
             ))}
-            <div className="flex items-baseline justify-between gap-3 border-t border-mufin-border pt-2 font-semibold text-mufin-900">
+            <div className="flex items-baseline justify-between gap-3 border-t border-mufin-border pt-2 font-semibold text-mufin-ink">
               <dt>
                 Total <span className="font-normal text-muted tabular-nums">{docs(docCount)}</span>
               </dt>
@@ -138,12 +120,12 @@ const FILTERS: { key: Method | null; label: string }[] = [
   { key: "card", label: "Tarjeta" },
 ];
 
-function SalesList({ d, paged }: { d: DayView; paged: boolean }) {
+function SalesList({ d, paged, detail }: { d: DayView; paged: boolean; detail: string }) {
   const empty = d.method === "cash" ? "No hay ventas en efectivo este día." : d.method === "card" ? "No hay ventas con tarjeta este día." : "No registras ventas este día.";
   return (
     <section id="ventas" className={`${box} scroll-mt-4 p-5 sm:p-6`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-semibold text-mufin-900">Ventas</h2>
+        <h2 className="font-semibold text-mufin-ink">Ventas</h2>
         <nav aria-label="Filtrar por medio de pago" className="flex gap-2">
           {FILTERS.map((f) => {
             const on = f.key === d.method;
@@ -153,8 +135,8 @@ function SalesList({ d, paged }: { d: DayView; paged: boolean }) {
                 href={href(d.date, f.key)}
                 scroll={false}
                 aria-current={on ? "true" : undefined}
-                className={`rounded-full px-3.5 py-1.5 text-sm font-medium ${focus} ${
-                  on ? "bg-mufin-700 text-white" : "border border-mufin-border bg-white text-mufin-900 hover:border-mufin-700"
+                className={`inline-flex h-[38px] items-center rounded-[10px] px-3.5 text-sm font-semibold ${focus} ${
+                  on ? "bg-mufin-700 text-white" : "border border-mufin-border bg-white text-mufin-ink hover:border-mufin-700"
                 }`}
               >
                 {f.label}
@@ -166,7 +148,7 @@ function SalesList({ d, paged }: { d: DayView; paged: boolean }) {
       {d.rows.length === 0 ? (
         <p className="mt-6 text-sm text-muted">{empty}</p>
       ) : (
-        <SalesTable rows={d.rows} />
+        <SalesTable rows={d.rows} detail={detail} />
       )}
       {/* ponytail: cada página reemplaza a la anterior; acumular exige JS. */}
       {(d.nextCursor || paged) && (
@@ -190,7 +172,7 @@ function SalesList({ d, paged }: { d: DayView; paged: boolean }) {
 function Attempts({ title, empty, rows }: { title: string; empty: string; rows: DayView["rejected"] }) {
   return (
     <div>
-      <h3 className="text-sm font-semibold text-mufin-900">{title}</h3>
+      <h3 className="text-sm font-semibold text-mufin-ink">{title}</h3>
       {rows.length === 0 ? (
         <p className="mt-2 text-sm text-muted">{empty}</p>
       ) : (
@@ -199,7 +181,7 @@ function Attempts({ title, empty, rows }: { title: string; empty: string; rows: 
             <li key={r.key} className="grid grid-cols-[3.5rem_1fr_auto] gap-x-4 py-3">
               <span className="text-muted tabular-nums">{r.time}</span>
               <span>
-                {r.reason && <span className="block text-mufin-900">{r.reason}</span>}
+                {r.reason && <span className="block text-mufin-ink">{r.reason}</span>}
                 <span className="block text-muted">{r.method}</span>
               </span>
               <span className="tabular-nums text-muted">{formatClp(r.amount)}</span>
@@ -214,7 +196,7 @@ function Attempts({ title, empty, rows }: { title: string; empty: string; rows: 
 function Rejections({ d }: { d: DayView }) {
   return (
     <section className={`${box} p-5 sm:p-6`}>
-      <h2 className="font-semibold text-mufin-900">Pagos no completados</h2>
+      <h2 className="font-semibold text-mufin-ink">Pagos no completados</h2>
       <p className="mt-1 text-sm text-muted">No suman ni restan a los totales.</p>
       <div className="mt-4 grid gap-6 lg:grid-cols-2">
         <Attempts title="Rechazados" empty="No hay pagos rechazados este día." rows={d.rejected} />
@@ -224,17 +206,18 @@ function Rejections({ d }: { d: DayView }) {
   );
 }
 
-export default function SalesDay({ d, today, min, paged }: { d: DayView; today: string; min: string; paged: boolean }) {
+export default function SalesDay({ d, today, min, paged, self }: { d: DayView; today: string; min: string; paged: boolean; self: string }) {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold text-mufin-900 first-letter:uppercase">{d.title}</h1>
+        <h1 className="text-2xl font-bold text-mufin-ink first-letter:uppercase">{d.title}</h1>
         {d.isToday && <p className="mt-1 text-sm text-muted">Actualizado a las {d.asOf}.</p>}
       </header>
       <DayPicker d={d} today={today} min={min} />
       <Summary d={d} />
-      <SalesList d={d} paged={paged} />
-      <Rejections d={d} />
+      <SalesList d={d} paged={paged} detail={self} />
+      {/* tomahawk manda los rechazos solo en la primera página; en las siguientes vendrían vacíos. */}
+      {!paged && <Rejections d={d} />}
     </div>
   );
 }

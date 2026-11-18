@@ -232,3 +232,63 @@ fila de `pagos_comercio`, que existe recién cuando se genera la nómina.
   `INVALID_RANGE`.
 - El `uuid` es `BIN_TO_UUID(uuid, 1)`. Uno que no es del comercio responde
   404, igual que uno que no existe.
+
+## 5. Tarjetas por tipo, marca y banco
+
+Pendiente de aprobación de Marco en la sesión de tomahawk. El portal ya lo
+consume: mientras responda 404, el Inicio no muestra el bloque.
+
+`GET /api/portal/v1/sales/cards?from=YYYY-MM-DD&to=YYYY-MM-DD`, con el header
+`x-token-dtex`. El Inicio pide los últimos 7 días.
+
+```jsonc
+{ "from", "to",
+  "by_type":   [{ "type": "credit" | "debit" | "prepaid" | null, "amount", "count" }],
+  "by_brand":  [{ "brand": "Visa" | "Mastercard" | "American Express" | null, "amount", "count" }],
+  "by_issuer": [{ "issuer": "BancoEstado" | … | null, "amount", "count" }], // null = adquirente sin dato de banco
+  "issuer_pending": { "amount", "count" } }  // Kushki aún no informa el banco (hoy y ayer)
+```
+
+- Solo ventas con tarjeta, con las reglas de montos del §2.
+- `type` sale de `dte_payment.tipo`/`tipo_de_pago` normalizado; prepago solo
+  cuando lo informa el archivo de Kushki.
+- `issuer` viene normalizado con el mapa de bancos (26 grafías hoy). Lo
+  pendiente de Kushki va en `issuer_pending`, no en `null`.
+- El portal agrupa: 5 bancos y «Otros bancos».
+
+## 6. Detalle de una venta
+
+Propuesto por tomahawk (2026-11-16), pendiente de aprobación de Marco. El
+portal ya lo consume desde el panel lateral de Ventas (`?venta=<uuid>`); si
+responde 404 o falla, el panel lo explica y la tabla sigue visible.
+
+`GET /api/portal/v1/sales/{uuid}`, con el header `x-token-dtex`. Responde 404 si
+la venta es de otro comercio.
+
+```jsonc
+{ "uuid",
+  "document": { "type_code", "type_name", "folio", "issued_at", "status",
+    "amounts": { "net", "tax", "tax_rate", "exempt", "total", "tip", "paid", "change" },
+    "receiver": null | { "rut", "name", "business_activity", "address", "commune" }, // solo facturas
+    "reference": null | { "type_code", "folio", "reason" },
+    "xml_available": bool,
+    // Propuesto por el portal (2026-11-17), pendiente: null si el documento no es electrónico.
+    "sii": null | { "status": "pending" | "accepted" | "accepted_with_remarks" | "rejected" | "duplicate" | "unknown",
+      "track_id": "0240123456" | null, "sent_at": "<ISO>" | null, "message": "<glosa del SII>" | null } },
+  "items": [{ "line", "code", "description", "quantity", "unit", "unit_price", "discount_pct", "exempt", "total" }],
+  "payment": null | { "method", "acquirer",
+    "card": { "type", "brand", "last4", "issuer", "foreign" },
+    "authorization_code", "installments", "transaction_id", "paid_at",
+    "settlement": { "status": "pending" | "settled", "settled_on" } },
+  "equipment": { "uuid", "tid" }, "cashier_code" }
+```
+
+- `sii` lo pidió Marco: el comercio necesita ver si el SII aceptó el documento y
+  su track ID para validarlo o hacerle seguimiento. Mientras no llegue, el panel
+  no muestra ese bloque. Aprobado por Marco el 2026-11-18 con los estados del
+  mapeo SII que ya existe en tomahawk; `sent_at` en ISO con zona; `sii: null`
+  para el ticket (td 0), que no va al SII.
+- `items` viene vacío en las boletas por monto (hoy, 69 % de los documentos).
+- No salen al portal: BIN, costo del adquirente, monto abonado por venta,
+  identificadores internos del procesador, ubicación ni el correo del receptor.
+- El XML (`GET …/{uuid}/xml`) queda fuera de esta versión del portal.
