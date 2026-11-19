@@ -82,15 +82,27 @@ test("monthRange: corta en hoy y en el 2026-10-01", () => {
 test("lista: título del mes, navegación y estados para el comercio", () => {
   const v = buildPayouts(list(), "2026-11", "2026-11-12");
   assert.equal(v.title, "Noviembre de 2026");
-  assert.equal(v.prevMonth, "2026-10");
-  assert.equal(v.nextMonth, null);
+  assert.deepEqual(v.months, [
+    { month: "2026-10", name: "oct", year: "2026", selected: false },
+    { month: "2026-11", name: "nov", year: "2026", selected: true },
+  ]);
   assert.equal(v.rows[0].sale, "miércoles 11 de noviembre");
   assert.equal(v.rows[0].state, "pending");
   assert.equal(v.rows[0].stateLabel, "Pendiente de pago");
   assert.equal(v.rows[1].state, "paid");
   assert.equal(v.rows[1].stateLabel, "Pagado el miércoles 11 de noviembre");
-  assert.equal(buildPayouts(list(), "2026-10", "2026-11-12").prevMonth, null);
-  assert.equal(buildPayouts(list(), "2026-10", "2026-11-12").nextMonth, "2026-11");
+  assert.equal(buildPayouts(list(), "2026-10", "2026-11-12").months[0].selected, true);
+  assert.equal(buildPayouts(list(), "2027-01", "2027-01-05").months.length, 4);
+});
+
+test("lista: columnas por abono y resumen del mes", () => {
+  const v = buildPayouts(list(), "2026-11", "2026-11-12");
+  const r = v.rows[0];
+  assert.deepEqual([r.salesCount, r.gross, r.fees, r.adjustment], [42, 540000, -10710, 4408]);
+  assert.equal(r.href, "/portal/abonos?mes=2026-11&abono=p-11");
+  assert.deepEqual(v.summary, { total: 533698 * 2, count: 2, paid: 533698, paidCount: 1, pending: 533698, pendingCount: 1 });
+  assert.equal(v.adjustments, true);
+  assert.equal(buildPayouts(list({ payouts: [P({ adjustment: 0 })] }), "2026-11", "2026-11-12").adjustments, false);
 });
 
 test("rechazado se muestra como pendiente de pago", () => {
@@ -134,6 +146,9 @@ test("detalle: estado, método, diferencia pendiente, movimientos y ajustes", ()
   assert.equal(s.kind === "sale" && s.document, "Boleta N° 9");
   assert.equal(s.kind === "sale" && s.method, "Débito Visa");
   assert.equal(s.kind === "sale" && s.fee, -452);
+  assert.equal(s.kind === "sale" && s.brand, "Visa");
+  assert.equal(s.kind === "sale" && s.methodNoBrand, "Débito");
+  assert.equal(s.kind === "sale" && s.href, "/portal/ventas?fecha=2026-11-11&medio=card&venta=s-1");
   assert.equal(adj.kind === "adjustment" && adj.label, "Diferencia de las ventas del martes 3 de noviembre");
   assert.equal(adj.amount, 4408);
   assert.equal(buildPayout(detail({ method: "reconciled", reconciled_at: "2026-11-13T09:00:00-03:00" }), "2026-11-12").methodNote, "Monto conciliado con Kushki.");
@@ -143,6 +158,7 @@ test("detalle sin comisión por venta (abonos antiguos): fee null", () => {
   const v = buildPayout(detail({ movements: [sale({ commission: null, commission_tax: null, difference: null, sale_uuid: null })] }), "2026-11-12");
   const s = v.movements[0];
   assert.equal(s.kind === "sale" && s.fee, null);
+  assert.equal(s.kind === "sale" && s.href, null);
   assert.equal(v.hasFees, false);
 });
 
@@ -190,7 +206,7 @@ test("formas inválidas → NETWORK", async (t) => {
 
 test("nextPayout: primero el enviado pendiente; si no, el disponible más antiguo; si no, null", () => {
   const n = nextPayout(list({ available: [A] }), "2026-11-12")!;
-  assert.deepEqual(n, { title: "Próximo abono", amount: 533698, note: "Ventas del miércoles 11 de noviembre, pendiente de pago", href: "/portal/abonos/p-11" });
+  assert.deepEqual(n, { title: "Próximo abono", amount: 533698, note: "Ventas del miércoles 11 de noviembre, pendiente de pago", href: "/portal/abonos?mes=2026-11&abono=p-11" });
   const a = nextPayout(list({ next: null, available: [{ ...A, sale_date: "2026-11-10" }, A] }), "2026-11-12")!;
   assert.equal(a.title, "Abono disponible");
   assert.equal(a.note, "Ventas del martes 10 de noviembre, en espera de pago");

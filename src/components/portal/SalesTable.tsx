@@ -38,7 +38,7 @@ function Amount({ r }: { r: Row }) {
 
 const ventaHref = (detail: string, r: Row) => (r.uuid ? `${detail}&venta=${encodeURIComponent(r.uuid)}` : null);
 
-function Chevron() {
+export function Chevron() {
   return (
     <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5 fill-none stroke-current" strokeWidth="2">
       <path d="m8 5 5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />

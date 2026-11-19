@@ -133,16 +133,34 @@ function state(p: Payout, today: string) {
 
 export type PayoutsView = ReturnType<typeof buildPayouts>;
 
+const sum = (xs: Payout[]) => xs.reduce((a, p) => a + p.amount, 0);
+
+export const payoutHref = (p: Payout) => `/portal/abonos?mes=${p.sale_date.slice(0, 7)}&abono=${encodeURIComponent(p.uuid)}`;
+
 export function buildPayouts(d: PayoutsData, month: string, today: string) {
   const name = MONTHS[Number(month.slice(5, 7)) - 1];
+  // Todos los meses desde el primero con datos; la tira se desplaza como la de días en Ventas.
+  const months = [];
+  for (let m = FIRST_MONTH; m <= today.slice(0, 7); m = shiftMonth(m, 1)) {
+    months.push({ month: m, name: MONTHS[Number(m.slice(5, 7)) - 1].slice(0, 3), year: m.slice(0, 4), selected: m === month });
+  }
+  const paid = d.payouts.filter((p) => p.status === "paid" && p.paid_on);
+  const pending = d.payouts.filter((p) => !paid.includes(p));
   return {
     title: `${name.charAt(0).toUpperCase()}${name.slice(1)} de ${month.slice(0, 4)}`,
-    prevMonth: month > FIRST_MONTH ? shiftMonth(month, -1) : null,
-    nextMonth: month < today.slice(0, 7) ? shiftMonth(month, 1) : null,
+    months,
+    summary: { total: sum(d.payouts), count: d.payouts.length, paid: sum(paid), paidCount: paid.length, pending: sum(pending), pendingCount: pending.length },
+    // La columna de regularización aparece solo si algún abono del mes la tiene.
+    adjustments: d.payouts.some((p) => p.adjustment !== 0),
     available: d.available.map((a) => ({ key: a.sale_date, sale: longDate(a.sale_date, today), amount: a.amount, lines: lines(a) })),
     rows: d.payouts.map((p) => ({
       uuid: p.uuid,
+      href: payoutHref(p),
       sale: longDate(p.sale_date, today),
+      salesCount: p.sales_count,
+      gross: p.gross_amount,
+      fees: -(p.commission + p.commission_tax),
+      adjustment: p.adjustment,
       amount: p.amount,
       lines: lines(p),
       ...state(p, today),
@@ -161,6 +179,9 @@ export function buildPayout(d: PayoutDetailData, today: string) {
           time: m.time ? m.time.slice(0, 5) : "—",
           document: `${m.dte_type_name} N° ${m.folio}`,
           method: cardLabel(m.card),
+          brand: m.card?.brand ?? null,
+          methodNoBrand: cardLabel(m.card && { ...m.card, brand: null }),
+          href: m.sale_uuid ? `/portal/ventas?fecha=${d.sale_date}&medio=card&venta=${encodeURIComponent(m.sale_uuid)}` : null,
           amount: m.amount,
           // ponytail: sin detalle por venta (abonos anteriores a la tabla de tomahawk) no hay comisión que mostrar.
           fee: m.commission === null || m.commission_tax === null ? null : -(m.commission + m.commission_tax),
@@ -197,7 +218,7 @@ export function nextPayout(d: PayoutsData, today: string) {
       title: "Próximo abono",
       amount: d.next.amount,
       note: `Ventas del ${longDate(d.next.sale_date, today)}, pendiente de pago`,
-      href: `/portal/abonos/${d.next.uuid}`,
+      href: payoutHref(d.next),
     };
   }
   const a = [...d.available].sort((x, y) => x.sale_date.localeCompare(y.sale_date))[0];

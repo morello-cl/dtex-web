@@ -1,0 +1,55 @@
+"use client";
+
+import { useEffect, useRef, type ReactNode } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700";
+
+// Panel lateral sobre la página; en el celular ocupa la pantalla. La URL lo abre y cerrarlo vuelve a `close`.
+export default function SidePanel({ title, subtitle, close, children }: { title: string; subtitle?: string | null; close: string; children: ReactNode }) {
+  const router = useRouter();
+  const heading = useRef<HTMLHeadingElement>(null);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const shut = () => router.replace(close, { scroll: false });
+
+  // showModal deja el resto de la página inerte: el foco no sale del panel.
+  useEffect(() => {
+    const d = dialog.current;
+    if (d && !d.open) d.showModal();
+    heading.current?.focus();
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  return (
+    // Escape dispara cancel; un clic en el fondo cae sobre el propio dialog.
+    <dialog
+      ref={dialog}
+      aria-labelledby="panel-titulo"
+      onCancel={(e) => {
+        e.preventDefault();
+        shut();
+      }}
+      onClick={(e) => e.target === e.currentTarget && shut()}
+      className="m-0 ml-auto h-dvh max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-mufin-900/40 sm:max-w-md"
+    >
+      <section className="flex h-full w-full flex-col bg-white shadow-xl">
+        <header className="flex items-start justify-between gap-4 border-b border-mufin-border p-5">
+          <div>
+            <h2 id="panel-titulo" ref={heading} tabIndex={-1} className="text-lg font-bold text-mufin-ink outline-none first-letter:uppercase">
+              {title}
+            </h2>
+            {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
+          </div>
+          <Link href={close} scroll={false} replace className={`inline-flex h-11 items-center rounded-xl border border-mufin-border px-4 text-sm font-semibold text-mufin-ink hover:border-mufin-700 ${focus}`}>
+            Cerrar
+          </Link>
+        </header>
+        <div className="flex-1 space-y-4 overflow-y-auto bg-mufin-bg p-5">{children}</div>
+      </section>
+    </dialog>
+  );
+}
