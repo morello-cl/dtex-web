@@ -20,6 +20,29 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.19.0",
+    date: "2026-11-19",
+    summary: "Abonos del portal más claros, con el mismo diseño de las ventas.",
+    changes: [
+      {
+        type: "added",
+        description: "Resumen del mes en los abonos del portal: total, pagados y pendientes de pago.",
+      },
+      {
+        type: "added",
+        description: "El detalle de cada abono muestra la marca de cada tarjeta y abre la venta correspondiente.",
+      },
+      {
+        type: "added",
+        description: "Vista previa con la marca MUFIN al compartir un enlace del portal por WhatsApp o correo.",
+      },
+      {
+        type: "changed",
+        description: "Los abonos se ven en una tabla con una columna por dato, se elige el mes en una tira como la de los días y el detalle abre en un panel lateral.",
+      },
+    ],
+  },
+  {
     version: "0.18.0",
     date: "2026-11-18",
     summary: "Detalle de cada venta en el portal, con su estado en el SII.",
