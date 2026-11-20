@@ -30,7 +30,7 @@ export const CHANGELOG: Release[] = [
       },
       {
         type: "changed",
-        description: "Ordenar por hora, monto u otra columna ahora ordena todas las ventas del día, no solo las visibles.",
+        description: "Ordenar por hora, monto u otra columna ahora ordena todas las ventas cargadas, no solo las de la página visible.",
       },
     ],
   },

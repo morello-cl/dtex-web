@@ -147,7 +147,8 @@ function Pager({ table, total }: { table: Table<Row>; total: number }) {
 }
 
 // Ordena y pagina en el navegador sobre lo que trajo tomahawk (hasta 500 ventas, casi siempre el día completo).
-// Al ordenar o cambiar de día, TanStack vuelve a la página 1.
+// Abrir o cerrar una venta trae filas nuevas del servidor: la página no se reinicia por eso.
+// Ordenar vuelve a la página 1; cambiar de día o de filtro remonta la tabla (key en SalesDay).
 // `detail`: la URL actual del día; la fila le agrega &venta= para abrir el panel.
 export default function SalesTable({ rows, detail }: { rows: Row[]; detail: string }) {
   const router = useRouter();
@@ -159,7 +160,11 @@ export default function SalesTable({ rows, detail }: { rows: Row[]; detail: stri
     data: rows,
     columns,
     state: { sorting },
-    onSortingChange: setSorting,
+    onSortingChange: (u) => {
+      setSorting(u);
+      table.setPageIndex(0);
+    },
+    autoResetPageIndex: false,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

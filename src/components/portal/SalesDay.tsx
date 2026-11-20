@@ -148,7 +148,7 @@ function SalesList({ d, paged, detail }: { d: DayView; paged: boolean; detail: s
       {d.rows.length === 0 ? (
         <p className="mt-6 text-sm text-muted">{empty}</p>
       ) : (
-        <SalesTable rows={d.rows} detail={detail} />
+        <SalesTable key={detail} rows={d.rows} detail={detail} />
       )}
       {/* ponytail: cada página reemplaza a la anterior; acumular exige JS. */}
       {(d.nextCursor || paged) && (
