@@ -20,6 +20,21 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.19.1",
+    date: "2026-11-19",
+    summary: "Las ventas del día en el portal ahora se ven por páginas.",
+    changes: [
+      {
+        type: "added",
+        description: "Paginador en la lista de ventas del día: 25 ventas por página, con «Anterior» y «Siguiente».",
+      },
+      {
+        type: "changed",
+        description: "Ordenar por hora, monto u otra columna ahora ordena todas las ventas del día, no solo las visibles.",
+      },
+    ],
+  },
+  {
     version: "0.19.0",
     date: "2026-11-19",
     summary: "Abonos del portal más claros, con el mismo diseño de las ventas.",

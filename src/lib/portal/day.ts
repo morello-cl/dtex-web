@@ -63,7 +63,8 @@ export async function getSalesDay(
   method: Method | null,
   cursor: string | null,
 ): Promise<SalesDayData> {
-  const q = new URLSearchParams({ date });
+  // 500 es el máximo del contrato: casi todos los días llegan completos y la tabla pagina en el navegador.
+  const q = new URLSearchParams({ date, limit: "500" });
   if (method) q.set("payment_method", method);
   if (cursor) q.set("cursor", cursor);
   const d = await portalRequest<SalesDayData>(`/api/portal/v1/sales/day?${q}`, {

@@ -190,6 +190,7 @@ test("getSalesDay arma la query, envía el JWT y rechaza formas inválidas", asy
   assert.equal(url.searchParams.get("date"), "2026-11-12");
   assert.equal(url.searchParams.get("payment_method"), "card");
   assert.equal(url.searchParams.get("cursor"), "abc");
+  assert.equal(url.searchParams.get("limit"), "500");
   assert.equal((init.headers as Record<string, string>)["x-token-dtex"], "jwt-1");
 
   await getSalesDay("jwt-1", "2026-11-12", null, null);
