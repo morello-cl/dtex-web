@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, useReactTable, type SortingState } from "@tanstack/react-table";
+import { createColumnHelper, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type SortingState, type Table } from "@tanstack/react-table";
 import type { DayView } from "@/lib/portal/day";
 import { formatClp } from "@/lib/portal/sales";
 import BrandMark, { hasBrand } from "./BrandMark";
@@ -116,7 +116,39 @@ function SortIcon({ dir }: { dir: false | "asc" | "desc" }) {
   );
 }
 
-// ponytail: ordena solo la página cargada (tomahawk pagina con cursor); ordenar el día completo exige que tomahawk ordene.
+const PAGE = 25;
+
+// Al cambiar de página se vuelve al inicio de la lista: los controles están abajo.
+function Pager({ table, total }: { table: Table<Row>; total: number }) {
+  if (table.getPageCount() <= 1) return null;
+  const { pageIndex } = table.getState().pagination;
+  const from = pageIndex * PAGE + 1;
+  const to = Math.min(from + PAGE - 1, total);
+  const go = (fn: () => void) => {
+    fn();
+    document.getElementById("ventas")?.scrollIntoView({ block: "start" });
+  };
+  const btn = `inline-flex h-11 items-center rounded-xl border border-mufin-border bg-white px-4 text-sm font-semibold text-mufin-ink hover:border-mufin-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-mufin-border ${focus}`;
+  return (
+    <nav aria-label="Páginas de ventas" className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-mufin-border pt-4 text-sm">
+      <p className="text-muted tabular-nums" aria-live="polite">
+        Ventas {from.toLocaleString("es-CL")} a {to.toLocaleString("es-CL")} de {total.toLocaleString("es-CL")}, página {pageIndex + 1} de {table.getPageCount()}
+      </p>
+      <span className="flex gap-2">
+        <button type="button" className={btn} disabled={!table.getCanPreviousPage()} onClick={() => go(table.previousPage)}>
+          Anterior
+        </button>
+        <button type="button" className={btn} disabled={!table.getCanNextPage()} onClick={() => go(table.nextPage)}>
+          Siguiente
+        </button>
+      </span>
+    </nav>
+  );
+}
+
+// Ordena y pagina en el navegador sobre lo que trajo tomahawk (hasta 500 ventas, casi siempre el día completo).
+// Abrir o cerrar una venta trae filas nuevas del servidor: la página no se reinicia por eso.
+// Ordenar vuelve a la página 1; cambiar de día o de filtro remonta la tabla (key en SalesDay).
 // `detail`: la URL actual del día; la fila le agrega &venta= para abrir el panel.
 export default function SalesTable({ rows, detail }: { rows: Row[]; detail: string }) {
   const router = useRouter();
@@ -128,9 +160,15 @@ export default function SalesTable({ rows, detail }: { rows: Row[]; detail: stri
     data: rows,
     columns,
     state: { sorting },
-    onSortingChange: setSorting,
+    onSortingChange: (u) => {
+      setSorting(u);
+      table.setPageIndex(0);
+    },
+    autoResetPageIndex: false,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageIndex: 0, pageSize: PAGE } },
     getRowId: (r) => r.key,
   });
   const sorted = table.getRowModel().rows;
@@ -238,6 +276,7 @@ export default function SalesTable({ rows, detail }: { rows: Row[]; detail: stri
           );
         })}
       </ul>
+      <Pager table={table} total={rows.length} />
     </>
   );
 }
