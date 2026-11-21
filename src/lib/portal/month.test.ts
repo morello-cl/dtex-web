@@ -77,3 +77,14 @@ test("getSalesMonth arma la query, envía el JWT y rechaza formas inválidas", a
   body = data({ month: "2026-10" });
   await assert.rejects(getSalesMonth("jwt-1", "2026-11"), PortalApiError);
 });
+
+test("buildMonth: en el mes más antiguo, los días antes de los 2 años exactos no enlazan", () => {
+  const v = buildMonth(data({ month: "2024-11", days: [day("2024-11-19", 1000, 1), day("2024-11-20", 2000, 1)] }), "2026-11-20");
+  assert.deepEqual(v.rows.map((r) => [r.date, r.href]), [
+    ["2024-11-20", "/portal/ventas?fecha=2024-11-20"],
+    ["2024-11-19", null],
+  ]);
+  assert.equal(v.day, "2024-11-20");
+  assert.equal(buildMonth(data({ month: "2025-03" }), "2026-11-20").day, "2025-03-01");
+  assert.equal(buildMonth(data(), "2026-11-20").day, "2026-11-20");
+});

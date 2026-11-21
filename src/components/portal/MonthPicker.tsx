@@ -43,7 +43,7 @@ export default function MonthPicker({ month, min, max, prev, next }: { month: st
   const maxYear = Number(max.slice(0, 4));
 
   return (
-    <nav aria-label="Elegir mes" className="flex items-center gap-2">
+    <nav aria-label="Elegir mes" className="relative flex items-center gap-2">
       {prev ? (
         <Link href={href(prev)} scroll={false} aria-label="Mes anterior" title="Mes anterior" className={square}>
           <Arrow back />
@@ -53,7 +53,7 @@ export default function MonthPicker({ month, min, max, prev, next }: { month: st
           <Arrow back />
         </span>
       )}
-      <div ref={box} className="relative">
+      <div ref={box}>
         <button
           type="button"
           aria-haspopup="dialog"
@@ -75,7 +75,7 @@ export default function MonthPicker({ month, min, max, prev, next }: { month: st
           <div
             role="dialog"
             aria-label="Elegir mes"
-            className="absolute left-0 z-20 mt-2 w-72 rounded-2xl border border-mufin-border bg-white p-3 shadow-[0_20px_40px_-20px_rgba(3,0,20,0.35)]"
+            className="absolute top-full left-0 z-20 mt-2 w-72 max-w-[calc(100vw-2rem)] rounded-2xl border border-mufin-border bg-white p-3 shadow-[0_20px_40px_-20px_rgba(3,0,20,0.35)]"
           >
             <div className="flex items-center justify-between">
               <button type="button" aria-label="Año anterior" disabled={year <= minYear} onClick={() => setYear(year - 1)} className={`${square} h-9 w-9 disabled:opacity-40 disabled:hover:border-mufin-border`}>

@@ -128,7 +128,6 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
             {v.xmlHref && (
               <a
                 href={v.xmlHref}
-                download
                 className={`mt-3 inline-flex h-9 items-center rounded-[10px] border border-mufin-border px-3 text-sm font-semibold text-mufin-700 hover:border-mufin-700 ${focus}`}
               >
                 Descargar XML

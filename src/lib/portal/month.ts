@@ -1,7 +1,7 @@
 // Ventas de un mes (contrato: docs/portal/contratos.md §7). Cálculo de
 // presentación como función pura. Sin imports de next/*.
 import { PortalApiError, portalRequest } from "./auth.ts";
-import { MONTHS, methodLabel, type SalesDayData } from "./day.ts";
+import { MONTHS, methodLabel, minDate, type SalesDayData } from "./day.ts";
 import { shiftMonth } from "./payouts.ts";
 import { dayName } from "./sales.ts";
 
@@ -69,6 +69,9 @@ export type MonthView = ReturnType<typeof buildMonth>;
 export function buildMonth(d: SalesMonthData, today: string) {
   const current = today.slice(0, 7);
   const min = minMonth(today);
+  // La vista del día llega a 2 años exactos: en el mes más antiguo, los primeros días no se pueden abrir.
+  const firstDay = minDate(today);
+  const dayHref = (date: string) => (date >= firstDay ? `/portal/ventas?fecha=${date}` : null);
   const best = d.days.reduce<MonthDay | null>((a, x) => (x.amount > 0 && (!a || x.amount > a.amount) ? x : a), null);
   return {
     month: d.month,
@@ -77,6 +80,8 @@ export function buildMonth(d: SalesMonthData, today: string) {
     asOf: d.as_of.slice(11, 16),
     min,
     max: current,
+    // Día que abre el botón «Día»: hoy en el mes actual; si no, el 1 o el primer día que acepta la vista del día.
+    day: d.month === current ? today : `${d.month}-01` < firstDay ? firstDay : `${d.month}-01`,
     // Flechas ‹ ›: null en los bordes del rango del §7.
     prev: d.month > min ? shiftMonth(d.month, -1) : null,
     next: d.month < current ? shiftMonth(d.month, 1) : null,
@@ -91,7 +96,7 @@ export function buildMonth(d: SalesMonthData, today: string) {
       .map((x) => ({
         date: x.date,
         label: cap(dayName(x.date)),
-        href: `/portal/ventas?fecha=${x.date}`,
+        href: dayHref(x.date),
         amount: x.amount,
         count: x.count,
         cash: x.cash_amount,

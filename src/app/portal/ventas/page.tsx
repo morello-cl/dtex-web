@@ -89,7 +89,7 @@ async function MonthPage({ merchant, month, today }: { merchant: string; month: 
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
         <p className="mb-6 truncate text-sm font-medium text-mufin-ink md:hidden">{merchant}</p>
         {v ? (
-          <SalesMonth v={v} today={today} />
+          <SalesMonth v={v} />
         ) : (
           <div className="space-y-6">
             <header className="flex flex-wrap items-start justify-between gap-4">

@@ -27,7 +27,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<"/portal/ventas/[
   if (!r.ok || !r.body) return text("No pudimos descargar el XML en este momento. Intenta más tarde.", 502);
   return new Response(r.body, {
     headers: {
-      "content-type": "application/xml; charset=iso-8859-1",
+      "content-type": r.headers.get("content-type") ?? "application/xml",
       "content-disposition": r.headers.get("content-disposition") ?? `attachment; filename="documento-${uuid}.xml"`,
       "cache-control": "private, no-store",
     },

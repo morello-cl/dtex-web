@@ -41,7 +41,8 @@ const columns = [
   col.display({
     id: "detail",
     header: () => <span className="sr-only">Ver el día</span>,
-    cell: (c) => (
+    cell: (c) =>
+      c.row.original.href && (
       <Link
         href={c.row.original.href}
         aria-label={`Ver ventas del ${c.row.original.label.toLowerCase()}`}
@@ -50,7 +51,7 @@ const columns = [
       >
         <Chevron />
       </Link>
-    ),
+      ),
   }),
 ];
 
@@ -118,12 +119,15 @@ export default function DaysTable({ rows }: { rows: Row[] }) {
             ))}
           </thead>
           <tbody className="divide-y divide-mufin-border">
-            {sorted.map((row) => (
+            {sorted.map((row) => {
+              const href = row.original.href;
+              return (
               // Toda la fila abre el día con el mouse; con teclado, el botón de la última columna.
+              // Sin href: el día queda antes de lo que acepta la vista del día (2 años exactos).
               <tr
                 key={row.id}
-                onClick={(e) => !(e.target as HTMLElement).closest("a, button") && router.push(row.original.href)}
-                className="group cursor-pointer hover:bg-mufin-bg"
+                onClick={href ? (e) => !(e.target as HTMLElement).closest("a, button") && router.push(href) : undefined}
+                className={href ? "group cursor-pointer hover:bg-mufin-bg" : undefined}
               >
                 {row.getVisibleCells().map((c) => (
                   <td key={c.id} className={`py-1 pr-4 align-middle first:pl-2 last:pr-2 ${RIGHT.has(c.column.id) ? "text-right" : ""}`}>
@@ -131,16 +135,18 @@ export default function DaysTable({ rows }: { rows: Row[] }) {
                   </td>
                 ))}
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>
 
       {/* En el celular, como en el día: cada fila es una tarjeta que abre el día. */}
       <ul className="mt-4 divide-y divide-mufin-border text-sm lg:hidden">
-        {sorted.map(({ original: r }) => (
-          <li key={r.date}>
-            <Link href={r.href} aria-label={`${r.label}, ver ventas del día`} className={`-mx-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 rounded-xl px-2 py-3 hover:bg-mufin-bg ${focus}`}>
+        {sorted.map(({ original: r }) => {
+          const grid = "grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 py-3";
+          const body = (
+            <>
               <span className="min-w-0">
                 <span className="flex items-baseline justify-between gap-3">
                   <span className={`font-medium ${r.empty ? "text-muted" : "text-mufin-ink"}`}>
@@ -153,12 +159,25 @@ export default function DaysTable({ rows }: { rows: Row[] }) {
                   {r.empty ? "Sin ventas" : `${sales(r.count)}, efectivo ${formatClp(r.cash)}, tarjeta ${formatClp(r.card)}`}
                 </span>
               </span>
-              <span className="self-center text-muted">
-                <Chevron />
-              </span>
-            </Link>
-          </li>
-        ))}
+              {r.href && (
+                <span className="self-center text-muted">
+                  <Chevron />
+                </span>
+              )}
+            </>
+          );
+          return (
+            <li key={r.date}>
+              {r.href ? (
+                <Link href={r.href} aria-label={`${r.label}, ver ventas del día`} className={`${grid} -mx-2 rounded-xl px-2 hover:bg-mufin-bg ${focus}`}>
+                  {body}
+                </Link>
+              ) : (
+                <div className={grid}>{body}</div>
+              )}
+            </li>
+          );
+        })}
       </ul>
       <Pager table={table} total={rows.length} bottom anchor="dias" label="días" />
     </>
