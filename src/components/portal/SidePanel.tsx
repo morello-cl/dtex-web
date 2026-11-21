@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +11,14 @@ export default function SidePanel({ title, subtitle, close, children }: { title:
   const router = useRouter();
   const heading = useRef<HTMLHeadingElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
-  const shut = () => router.replace(close, { scroll: false });
+  const [closing, setClosing] = useState(false);
+  // Primero la animación de salida (globals.css, .side-panel), después la navegación que desmonta el panel.
+  const shut = () => {
+    if (closing) return;
+    setClosing(true);
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(() => router.replace(close, { scroll: false }), still ? 0 : 180);
+  };
 
   // showModal deja el resto de la página inerte: el foco no sale del panel.
   useEffect(() => {
@@ -29,12 +36,13 @@ export default function SidePanel({ title, subtitle, close, children }: { title:
     <dialog
       ref={dialog}
       aria-labelledby="panel-titulo"
+      data-closing={closing || undefined}
       onCancel={(e) => {
         e.preventDefault();
         shut();
       }}
       onClick={(e) => e.target === e.currentTarget && shut()}
-      className="m-0 ml-auto h-dvh max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-mufin-900/40 sm:max-w-md"
+      className="side-panel m-0 ml-auto h-dvh max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-mufin-900/40 sm:max-w-md"
     >
       <section className="flex h-full w-full flex-col bg-white shadow-xl">
         <header className="flex items-start justify-between gap-4 border-b border-mufin-border p-5">
@@ -44,7 +52,15 @@ export default function SidePanel({ title, subtitle, close, children }: { title:
             </h2>
             {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
           </div>
-          <Link href={close} scroll={false} replace className={`inline-flex h-11 items-center rounded-xl border border-mufin-border px-4 text-sm font-semibold text-mufin-ink hover:border-mufin-700 ${focus}`}>
+          <Link
+            href={close}
+            scroll={false}
+            replace
+            onClick={(e) => {
+              e.preventDefault();
+              shut();
+            }}
+            className={`inline-flex h-11 items-center rounded-xl border border-mufin-border px-4 text-sm font-semibold text-mufin-ink hover:border-mufin-700 ${focus}`}>
             Cerrar
           </Link>
         </header>

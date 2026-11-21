@@ -19,9 +19,9 @@ const count = (n: number) => `${n.toLocaleString("es-CL")} ${n === 1 ? "venta" :
 
 function DayPicker({ d, today, min }: { d: DayView; today: string; min: string }) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 lg:flex lg:items-center lg:justify-between lg:gap-4 lg:space-y-0">
       {/* row-reverse: en pantallas angostas el scroll parte al final, donde está hoy. */}
-      <nav aria-label="Elegir día" className="-mx-4 flex flex-row-reverse overflow-x-auto px-4 sm:mx-0 sm:flex-row sm:px-0">
+      <nav aria-label="Elegir día" className="-mx-4 flex min-w-0 flex-row-reverse overflow-x-auto px-4 sm:mx-0 sm:flex-row sm:px-0">
         <ol className="flex min-w-max gap-1.5">
           {d.strip.map((s) => (
             <li key={s.date}>
@@ -47,66 +47,91 @@ function DayPicker({ d, today, min }: { d: DayView; today: string; min: string }
   );
 }
 
+// Una franja de cifras y el desglose plegado: así la lista de ventas queda en la primera pantalla.
 function Summary({ d }: { d: DayView }) {
-  const extra = [`propinas ${formatClp(d.tip)}`];
-  // Cashback: extra cobrado con tarjeta y entregado en efectivo. El vuelto en efectivo no entra.
-  if (d.cashback) extra.push(`efectivo entregado con tarjeta ${formatClp(d.cashback)}`);
   const docTotal = d.documents.reduce((a, x) => a + x.amount, 0);
   const docCount = d.documents.reduce((a, x) => a + x.count, 0);
+  const cardTypes = d.methods.flatMap((m) => m.sub);
+  const stat = "flex flex-col gap-0.5";
+  const line = "flex items-baseline justify-between gap-3";
   return (
-    <div className="grid gap-6 lg:grid-cols-5">
-      <section aria-label="Por medio de pago" className={`${box} p-5 sm:p-6 lg:col-span-3`}>
-        <p className="text-5xl font-extrabold tracking-tight text-mufin-ink tabular-nums">{formatClp(d.total)}</p>
-        <p className="mt-2 text-sm text-muted tabular-nums">
-          {count(d.count)}, {extra.join(", ")}.
-        </p>
-        <dl className="mt-5 divide-y divide-mufin-border border-t border-mufin-border text-sm">
-          {d.methods.map((m) => (
-            <div key={m.key} className="py-3">
-              <div className="flex items-baseline justify-between gap-3">
-                <dt className="flex items-center gap-2 font-semibold text-mufin-ink">
-                  <MethodDot card={m.key === "card"} />
-                  {m.label}
-                  <span className="font-normal text-muted tabular-nums">{count(m.count)}</span>
-                </dt>
-                <dd className="font-semibold tabular-nums text-mufin-ink">{formatClp(m.amount)}</dd>
-              </div>
-              {m.sub.map((s) => (
-                <div key={s.label} className="mt-1.5 flex items-baseline justify-between gap-3 pl-6 text-muted">
-                  <dt>
-                    {s.label} <span className="tabular-nums">{count(s.count)}</span>
-                  </dt>
-                  <dd className="tabular-nums">{formatClp(s.amount)}</dd>
-                </div>
-              ))}
-            </div>
-          ))}
-        </dl>
-      </section>
-      <section className={`${box} p-5 sm:p-6 lg:col-span-2`}>
-        <h2 className="font-semibold text-mufin-ink">Documentos emitidos</h2>
-        {d.documents.length === 0 ? (
-          <p className="mt-4 text-sm text-muted">Sin documentos este día.</p>
-        ) : (
-          <dl className="mt-4 space-y-2 text-sm">
-            {d.documents.map((x) => (
-              <div key={x.dte_type} className="flex items-baseline justify-between gap-3">
-                <dt className="text-mufin-ink">
-                  {x.dte_type_name} <span className="text-muted tabular-nums">{docs(x.count)}</span>
-                </dt>
-                <dd className={`tabular-nums ${x.amount < 0 ? "text-warn-700" : "text-mufin-ink"}`}>{formatClp(x.amount)}</dd>
-              </div>
-            ))}
-            <div className="flex items-baseline justify-between gap-3 border-t border-mufin-border pt-2 font-semibold text-mufin-ink">
-              <dt>
-                Total <span className="font-normal text-muted tabular-nums">{docs(docCount)}</span>
-              </dt>
-              <dd className="tabular-nums">{formatClp(docTotal)}</dd>
-            </div>
-          </dl>
+    <section aria-label="Resumen del día" className={`${box} relative p-5 sm:p-6`}>
+      <dl className="flex flex-wrap items-end gap-x-10 gap-y-4 sm:pr-40">
+        <div className={stat}>
+          <dt className="text-sm text-muted tabular-nums">Total, {count(d.count)}</dt>
+          <dd className="text-4xl font-extrabold tracking-tight text-mufin-ink tabular-nums">{formatClp(d.total)}</dd>
+        </div>
+        {d.methods.map((m) => (
+          <div key={m.key} className={stat}>
+            <dt className="flex items-center gap-2 text-sm text-muted">
+              <MethodDot card={m.key === "card"} />
+              {m.label} <span className="tabular-nums">{count(m.count)}</span>
+            </dt>
+            <dd className="text-xl font-semibold text-mufin-ink tabular-nums">{formatClp(m.amount)}</dd>
+          </div>
+        ))}
+        <div className={stat}>
+          <dt className="text-sm text-muted">Propinas</dt>
+          <dd className="text-xl font-semibold text-mufin-ink tabular-nums">{formatClp(d.tip)}</dd>
+        </div>
+        {/* Cashback: extra cobrado con tarjeta y entregado en efectivo. El vuelto en efectivo no entra. */}
+        {d.cashback > 0 && (
+          <div className={stat}>
+            <dt className="text-sm text-muted">Efectivo entregado con tarjeta</dt>
+            <dd className="text-xl font-semibold text-mufin-ink tabular-nums">{formatClp(d.cashback)}</dd>
+          </div>
         )}
-      </section>
-    </div>
+      </dl>
+      {/* El enlace va arriba a la derecha (absoluto) para no sumar una línea; el desglose se abre debajo. */}
+      <details className="group text-sm">
+        <summary className={`mt-4 inline-flex cursor-pointer list-none items-center rounded font-medium text-mufin-700 hover:underline sm:absolute sm:top-6 sm:right-6 sm:mt-0 ${focus}`}>
+          <span className="group-open:hidden">Ver desglose</span>
+          <span className="hidden group-open:inline">Ocultar desglose</span>
+        </summary>
+        <div className="mt-4 grid gap-6 border-t border-mufin-border pt-4 lg:grid-cols-2">
+          <div>
+            <h2 className="mb-1.5 font-semibold text-mufin-ink">Tarjeta por tipo</h2>
+            {cardTypes.length === 0 ? (
+              <p className="text-muted">Sin ventas con tarjeta este día.</p>
+            ) : (
+              <dl className="space-y-1.5">
+                {cardTypes.map((x) => (
+                  <div key={x.label} className={line}>
+                    <dt className="text-mufin-ink">
+                      {x.label} <span className="text-muted tabular-nums">{count(x.count)}</span>
+                    </dt>
+                    <dd className="tabular-nums text-mufin-ink">{formatClp(x.amount)}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+          </div>
+          <div>
+            <h2 className="mb-1.5 font-semibold text-mufin-ink">Documentos emitidos</h2>
+            {d.documents.length === 0 ? (
+              <p className="text-muted">Sin documentos este día.</p>
+            ) : (
+              <dl className="space-y-1.5">
+                {d.documents.map((x) => (
+                  <div key={x.dte_type} className={line}>
+                    <dt className="text-mufin-ink">
+                      {x.dte_type_name} <span className="text-muted tabular-nums">{docs(x.count)}</span>
+                    </dt>
+                    <dd className={`tabular-nums ${x.amount < 0 ? "text-warn-700" : "text-mufin-ink"}`}>{formatClp(x.amount)}</dd>
+                  </div>
+                ))}
+                <div className={`${line} border-t border-mufin-border pt-1.5 font-semibold text-mufin-ink`}>
+                  <dt>
+                    Total <span className="font-normal text-muted tabular-nums">{docs(docCount)}</span>
+                  </dt>
+                  <dd className="tabular-nums">{formatClp(docTotal)}</dd>
+                </div>
+              </dl>
+            )}
+          </div>
+        </div>
+      </details>
+    </section>
   );
 }
 
@@ -121,34 +146,39 @@ const FILTERS: { key: Method | null; label: string }[] = [
 ];
 
 function SalesList({ d, paged, detail }: { d: DayView; paged: boolean; detail: string }) {
+  const header = (
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+      <h2 className="font-semibold text-mufin-ink">Ventas</h2>
+      <nav aria-label="Filtrar por medio de pago" className="flex gap-2">
+        {FILTERS.map((f) => {
+          const on = f.key === d.method;
+          return (
+            <Link
+              key={f.label}
+              href={href(d.date, f.key)}
+              scroll={false}
+              aria-current={on ? "true" : undefined}
+              className={`inline-flex h-[38px] items-center rounded-[10px] px-3.5 text-sm font-semibold ${focus} ${
+                on ? "bg-mufin-700 text-white" : "border border-mufin-border bg-white text-mufin-ink hover:border-mufin-700"
+              }`}
+            >
+              {f.label}
+            </Link>
+          );
+        })}
+      </nav>
+    </div>
+  );
   const empty = d.method === "cash" ? "No hay ventas en efectivo este día." : d.method === "card" ? "No hay ventas con tarjeta este día." : "No registras ventas este día.";
   return (
     <section id="ventas" className={`${box} scroll-mt-4 p-5 sm:p-6`}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-semibold text-mufin-ink">Ventas</h2>
-        <nav aria-label="Filtrar por medio de pago" className="flex gap-2">
-          {FILTERS.map((f) => {
-            const on = f.key === d.method;
-            return (
-              <Link
-                key={f.label}
-                href={href(d.date, f.key)}
-                scroll={false}
-                aria-current={on ? "true" : undefined}
-                className={`inline-flex h-[38px] items-center rounded-[10px] px-3.5 text-sm font-semibold ${focus} ${
-                  on ? "bg-mufin-700 text-white" : "border border-mufin-border bg-white text-mufin-ink hover:border-mufin-700"
-                }`}
-              >
-                {f.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
       {d.rows.length === 0 ? (
-        <p className="mt-6 text-sm text-muted">{empty}</p>
+        <>
+          {header}
+          <p className="mt-6 text-sm text-muted">{empty}</p>
+        </>
       ) : (
-        <SalesTable key={detail} rows={d.rows} detail={detail} />
+        <SalesTable key={detail} rows={d.rows} detail={detail} header={header} />
       )}
       {/* ponytail: cada página reemplaza a la anterior; acumular exige JS. */}
       {(d.nextCursor || paged) && (
