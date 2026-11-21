@@ -24,33 +24,41 @@ npm run lint     # eslint (config: eslint-config-next)
 ## Arquitectura
 
 ### Composición de la página
-`src/app/page.tsx` orquesta `Navbar` + 8 secciones + `Footer`. Cada sección es autónoma y se autoenvuelve en `<Reveal>` para fade-in al scroll.
+`src/app/page.tsx` orquesta `Navbar` + 7 secciones + `Footer`. Cada sección es autónoma y se autoenvuelve en `<Reveal>` para fade-in al scroll.
 
 **El orden responde a prioridad comercial, no a cronología** — respetarlo al
 agregar secciones:
 
 1. `Hero`
-2. `Beneficios` — 6 tarjetas, no más. Pares como boleta+factura o
-   cuentas+recargas van fusionados: el brief pide "minimalista, mucho espacio
-   visual", y una grilla de 9 ítems del mismo peso no jerarquiza nada.
+2. `Beneficios` — 6 capacidades, no más, y no del mismo peso: «Cobro con
+   tarjeta» ocupa el bloque grande. Pares como boleta+factura o
+   cuentas+recargas van fusionados.
 3. `Equipos` — lo que se vende hoy, va antes que todo lo demás.
-4. `Sencillito`
-5. `Casos` + `Clientes` — prueba social. Van pegados y sin separador entre
-   ellos (Casos no lleva `pb`, Clientes no lleva `border`): el visitante los
-   percibe como un bloque, no como dos secciones.
+4. `Sencillito` — el único bloque oscuro (el brief pide que "se vea MUY importante").
+5. `Portal` — el Portal de pagos MUFIN que viene con el servicio. Montos de
+   ejemplo rotulados como ficticios.
 6. `Redes` — bloque al final: las redes están en certificación y no pueden
    pesar más que lo vendible. Si se aprueban, sube de posición.
 7. `CtaFinal`
 
 Presupuesto de scroll: la home debe mantenerse cerca de las ~9 pantallas.
-Llegó a 11.4 por acumulación de secciones nuevas y hubo que recortarla.
+Llegó a 11.4 por acumulación de secciones nuevas y hubo que recortarla; con el
+rediseño 0.21.0 quedó en 6.5 (1440×900).
+
+**Sin prueba social inventada.** Testimonios, logos de clientes y cifras
+(«+30 % ventas», «24/7») se retiraron en 0.21.0 porque no eran reales. Solo
+vuelven con comercios reales que autoricen aparecer y datos que se puedan
+respaldar.
 
 ### Tailwind v4 — toda la config está en CSS
 **No hay `tailwind.config.{js,ts}`.** Todo se configura en `src/app/globals.css` mediante `@import "tailwindcss"` y un bloque `@theme inline { ... }`. Las clases como `bg-brand-700`, `text-accent-500`, `bg-brand-gradient` se generan automáticamente desde tokens CSS.
 
 **Single source of truth de la paleta**: variables `:root` en `globals.css`:
-- `--brand-50..900` — azules del wordmark del logo (oscuro `#03132e` → claro `#eaf2ff`)
-- `--accent-400/500/600` — turquesa/verde (CTA secundario, acentos)
+- `--brand-50..900` — morado MUFIN de la app: `--brand-700` = `#7C25C4` y
+  `--brand-900` = `#4A1A7A` exactos (iguales a `--mufin-700/900` del portal).
+  Botones principales: `bg-brand-700`.
+- `--accent-400/500/600` — verde para estados de éxito (p. ej. abono pagado),
+  no para botones.
 
 Cambiar un solo valor aquí repinta toda la página. Si introduces un nuevo color, agrégalo como variable + mapéalo en `@theme inline` con `--color-<nombre>`.
 
@@ -63,7 +71,12 @@ Gradientes compuestos (radial + linear) viven como utilities CSS custom: `.bg-br
 `src/components/Reveal.tsx` — componente client que aplica clase `is-visible` cuando el elemento entra en viewport (IntersectionObserver, threshold 0.12). La transición está definida en `globals.css` (`.reveal` / `.is-visible`) y respeta `prefers-reduced-motion`. **No usamos Framer Motion** — mantenerlo así salvo decisión explícita.
 
 ### Mockups visuales
-Los "mockups" de POS, tickets, equipos y pantalla de pago de Sencillito son SVG inline (`PosDevice.tsx`, `DeviceIllustration` en `Equipos.tsx`, `PaymentScreen` en `Sencillito.tsx`). Decisión deliberada del cliente: no usar fotos stock. Cuando ajustes colores en estos SVGs, mantén los stops del gradiente alineados con los tokens `--brand-*` / `--accent-*`.
+Los "mockups" son SVG/HTML inline: `AppCobro.tsx` (hero: la pantalla de cobro
+real de la app redibujada, con un comercio de demostración), `DeviceIllustration`
+en `Equipos.tsx` y la vista del portal en `Portal.tsx`. `AppCobro` no es una
+captura porque el equipo de prueba muestra un sello de firmware TEST y la app de
+desarrollo la cinta DEBUG; reemplazar por captura real cuando haya equipo con
+firmware de producción y APK release, sin datos de comercios reales. Decisión deliberada del cliente: no usar fotos stock. Cuando ajustes colores en estos SVGs, mantén los stops del gradiente alineados con los tokens `--brand-*` / `--accent-*`.
 
 ### Logo
 - **Fuente oficial 2026**: brand pack `dtex_logo_icono` entregado por el cliente.
@@ -129,5 +142,6 @@ VirtualPos (Nexgo N86 Pro) y Kushki (Sunmi P3 — el mismo que ya se arrienda en
 - Faltan fotos de producto de los terminales de las redes en certificación
   (Súper Compraquí, Point Smart, Nexgo N86 Pro, Sunmi P3). Hay que pedírselas a
   cada proveedor: las públicas no sirven (ver sección Redes de pago).
-- Logos reales de comercios/distribuidores en la sección Clientes (`Clientes.tsx`) están como nombres-placeholder + LogoMark SVG genérico.
+- Casos y clientes reales (con autorización) para volver a mostrar prueba social.
+- Captura real de la app para el hero (ver Mockups visuales).
 - El brand pack incluye `DTEX-APP1.svg` (ícono vectorial real). `DTEX-A.svg` (wordmark) es raster embebido, por eso el wordmark del sitio es WebP.

@@ -12,15 +12,15 @@ export default function CtaFinal() {
             Lleva más servicios y más ventas a tu negocio.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-base text-muted sm:text-lg">
-            Conversemos hoy. Te ayudamos a elegir el equipo y activar todas las
-            funcionalidades en minutos.
+            Conversemos. Te ayudamos a elegir el equipo y a dejar tu negocio
+            listo para cobrar.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
             <a
               href={whatsappLink("info")}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-accent-500/20 transition-all hover:-translate-y-0.5 hover:bg-accent-600 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-700 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-700/25 transition-colors hover:bg-brand-800 sm:w-auto"
             >
               Solicitar información
             </a>
@@ -28,7 +28,7 @@ export default function CtaFinal() {
               href={whatsappLink("quote")}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-700 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-brand-800 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-brand-200 bg-white px-6 py-3.5 text-sm font-semibold text-brand-700 transition-colors hover:border-brand-400 sm:w-auto"
             >
               Cotizar equipo
             </a>
@@ -36,7 +36,7 @@ export default function CtaFinal() {
               href={whatsappLink("sencillito")}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-brand-200 bg-white px-6 py-3.5 text-sm font-semibold text-brand-700 transition-all hover:-translate-y-0.5 hover:border-brand-400 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-brand-200 bg-white px-6 py-3.5 text-sm font-semibold text-brand-700 transition-colors hover:border-brand-400 sm:w-auto"
             >
               Activar Punto Sencillito®
             </a>

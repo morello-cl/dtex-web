@@ -2,125 +2,68 @@ import Reveal from "../Reveal";
 import SencillitoLogo from "../SencillitoLogo";
 import { whatsappLink } from "@/lib/site";
 
-const SERVICES = [
-  { label: "Luz", icon: "⚡" },
-  { label: "Agua", icon: "💧" },
-  { label: "Gas", icon: "🔥" },
-  { label: "Internet", icon: "📶" },
-  { label: "Recargas", icon: "📱" },
-  { label: "Educación", icon: "🎓" },
+// El brief pide que esta sección "se vea MUY importante": es el único bloque
+// oscuro de la portada. Sin montos, comisiones ni clientes de ejemplo: no hay
+// cifras reales que mostrar, así que se muestra qué puede pagar la gente.
+const SERVICES: { label: string; detail: string; icon: string }[] = [
+  { label: "Luz", detail: "Cuentas de electricidad", icon: "M13 2 4 14h7l-1 8 9-12h-7l1-8Z" },
+  { label: "Agua", detail: "Cuentas de agua potable", icon: "M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z" },
+  { label: "Gas", detail: "Gas de red", icon: "M12 3c3 4 5 6 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-5 0 2 1 3 2 3 0-3 1-5 1-8Z" },
+  { label: "Internet y TV", detail: "Planes del hogar", icon: "M4 6h16v10H4zM9 20h6" },
+  { label: "Recargas", detail: "Celulares prepago", icon: "M8 2h8v20H8zM11 18h2" },
+  { label: "Educación", detail: "Aranceles y matrículas", icon: "M3 9l9-5 9 5-9 5-9-5Zm4 2.5V16c3 2 7 2 10 0v-4.5" },
 ];
 
 export default function Sencillito() {
   return (
-    <section
-      id="sencillito"
-      className="relative overflow-hidden bg-brand-900 text-white"
-    >
-      {/* Glow púrpura */}
+    <section id="sencillito" className="relative overflow-hidden bg-brand-900 text-white">
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-brand-500/30 blur-3xl"
+        className="pointer-events-none absolute -top-40 right-0 h-[520px] w-[520px] rounded-full bg-brand-700/40 blur-3xl"
       />
       <div className="relative mx-auto grid max-w-6xl gap-12 px-5 py-20 sm:px-8 sm:py-28 md:grid-cols-2 md:items-center">
         <Reveal>
-          <div className="inline-flex items-center gap-3 rounded-full bg-white px-4 py-2 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-wider text-brand-700">
-              Operado por
-            </span>
-            <SencillitoLogo height={22} />
-          </div>
-          <h2 className="mt-6 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl md:text-5xl">
-            Haz que más personas entren a tu negocio ofreciendo pagos y
-            servicios.
-          </h2>
-          <p className="mt-5 max-w-lg text-base text-white/75 sm:text-lg">
-            Activa Punto Sencillito® en tu comercio y suma una nueva fuente de
-            ingresos. Cada pago atrae clientes que también compran.
+          <p className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-foreground">
+            Operado por <SencillitoLogo height={20} />
           </p>
-
-          <div className="mt-8 grid grid-cols-3 gap-3 sm:max-w-md">
-            {SERVICES.map((s) => (
-              <div
-                key={s.label}
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-center text-sm backdrop-blur"
-              >
-                <div className="text-xl">{s.icon}</div>
-                <div className="mt-1 font-medium">{s.label}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-10">
-            <a
-              href={whatsappLink("sencillito")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-accent-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-accent-500/30 transition-all hover:-translate-y-0.5 hover:bg-accent-600"
-            >
-              Activar Punto Sencillito®
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </a>
-          </div>
+          <h2 className="mt-6 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+            Haz que más personas entren a tu negocio.
+          </h2>
+          <p className="mt-5 max-w-lg text-base text-white/80 sm:text-lg">
+            Con Punto Sencillito® tus clientes pagan sus cuentas y recargas en
+            tu local. Cada visita es una oportunidad de venta.
+          </p>
+          <a
+            href={whatsappLink("sencillito")}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-10 inline-flex items-center justify-center rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-brand-800 transition-colors hover:bg-brand-50"
+          >
+            Activar Punto Sencillito®
+          </a>
         </Reveal>
 
         <Reveal delay={120}>
-          <PaymentScreen />
+          <div className="rounded-3xl bg-white p-6 text-foreground shadow-2xl sm:p-8">
+            <h3 className="text-lg font-bold">Lo que tus clientes pueden pagar</h3>
+            <ul className="mt-5 divide-y divide-border">
+              {SERVICES.map((s) => (
+                <li key={s.label} className="flex items-center gap-4 py-3">
+                  <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d={s.icon} />
+                    </svg>
+                  </span>
+                  <span>
+                    <span className="block font-semibold">{s.label}</span>
+                    <span className="block text-sm text-muted">{s.detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </Reveal>
       </div>
     </section>
-  );
-}
-
-function PaymentScreen() {
-  return (
-    <div className="relative mx-auto w-full max-w-md">
-      <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-6 shadow-2xl backdrop-blur-md">
-        <div className="flex items-center justify-between text-xs text-white/60">
-          <span>Pago de cuentas</span>
-          <span>9:41</span>
-        </div>
-        <h3 className="mt-3 text-xl font-bold">Cuenta de luz</h3>
-        <p className="text-sm text-white/60">CGE · Vence en 4 días</p>
-
-        <div className="mt-5 rounded-2xl bg-white/5 p-4">
-          <div className="text-xs text-white/60">Total a pagar</div>
-          <div className="mt-1 text-3xl font-extrabold">
-            $32.480
-          </div>
-          <div className="mt-3 flex items-center justify-between text-xs text-white/60">
-            <span>Cliente</span>
-            <span className="text-white">María S.</span>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          className="mt-5 w-full rounded-full bg-accent-500 py-3 text-sm font-semibold text-white"
-        >
-          Confirmar pago
-        </button>
-
-        <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4 text-xs text-white/50">
-          <span>Comisión comercio</span>
-          <span className="text-accent-500 font-semibold">+ $480</span>
-        </div>
-      </div>
-
-      {/* Tarjeta flotante de "cliente nuevo" */}
-      <div className="absolute -bottom-6 -left-4 hidden rounded-2xl border border-white/10 bg-brand-700/80 px-4 py-3 text-xs shadow-xl backdrop-blur sm:block">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-brand-700 font-bold">
-            +1
-          </span>
-          <div>
-            <div className="font-semibold">Nuevo cliente en tu tienda</div>
-            <div className="text-white/60">Vino a pagar la luz · gastó $4.200</div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }

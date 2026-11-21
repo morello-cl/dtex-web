@@ -46,8 +46,8 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <Link href="/#casos" className="hover:text-brand-700">
-                Casos reales
+              <Link href="/#portal" className="hover:text-brand-700">
+                Portal de pagos
               </Link>
             </li>
             <li>

@@ -10,7 +10,6 @@ const NAV_LINKS = [
   { href: "/#beneficios", label: "Beneficios" },
   { href: "/#equipos", label: "Equipos" },
   { href: "/#sencillito", label: "Punto Sencillito" },
-  { href: "/#casos", label: "Casos" },
   { href: "/contacto", label: "Contacto" },
 ];
 

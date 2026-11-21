@@ -23,6 +23,33 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.21.0",
+    date: "2026-11-20",
+    summary: "Nueva portada: qué es DTEx® de un vistazo, con los colores de la marca.",
+    changes: [
+      {
+        type: "changed",
+        description: "La portada explica desde el inicio que DTEx® convierte tu negocio en un punto de pagos y servicios, y muestra la pantalla de cobro tal como la ves en el equipo.",
+      },
+      {
+        type: "changed",
+        description: "El sitio usa el morado de MUFIN, el mismo de la app y del Portal de pagos.",
+      },
+      {
+        type: "added",
+        description: "Nueva sección del Portal de pagos MUFIN: cómo revisar tus ventas y tus abonos desde cualquier lugar.",
+      },
+      {
+        type: "changed",
+        description: "Punto Sencillito® muestra qué cuentas y recargas pueden pagar tus clientes en tu local.",
+      },
+      {
+        type: "removed",
+        description: "Retiramos los testimonios y logos de ejemplo. Volverán cuando podamos mostrar casos reales de comercios.",
+      },
+    ],
+  },
+  {
     version: "0.20.0",
     date: "2026-11-20",
     summary: "Las ventas del día caben en una pantalla y el detalle abre con suavidad.",
