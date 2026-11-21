@@ -17,6 +17,7 @@ export type SaleDetail = {
     amounts: { net: number | null; tax: number | null; tax_rate: number | null; exempt: number | null; total: number; tip: number; paid: number | null; change: number };
     receiver: { rut: string; name: string; business_activity: string | null; address: string | null; commune: string | null } | null;
     reference: { type_code: number; folio: number; reason: string | null } | null;
+    xml_available?: boolean;
     // null si el documento no es electrónico. Opcional mientras tomahawk no lo publique.
     sii?: { status: SiiStatus; track_id: string | null; sent_at: string | null; message: string | null } | null;
   };
@@ -119,6 +120,8 @@ export function buildSale(s: SaleDetail) {
 
   return {
     sii,
+    // Solo si tomahawk confirma que hay XML; la descarga pasa por /portal/ventas/{uuid}/xml.
+    xmlHref: d.xml_available ? `/portal/ventas/${encodeURIComponent(s.uuid)}/xml` : null,
     total: formatClp(a.total + a.tip),
     brand: c?.brand ?? null,
     // Para mostrar junto al logo de la marca, sin repetir su nombre.

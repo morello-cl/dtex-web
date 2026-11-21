@@ -154,7 +154,7 @@ const METHOD_LABELS: Record<string, string> = { cash: "Efectivo", card: "Tarjeta
 const CARD_TYPES: Record<string, string> = { credit: "Crédito", debit: "Débito", prepaid: "Prepago" };
 
 // Un medio nuevo se muestra con su nombre hasta que tenga etiqueta propia.
-const methodLabel = (m: string) => METHOD_LABELS[m] ?? m.charAt(0).toUpperCase() + m.slice(1);
+export const methodLabel = (m: string) => METHOD_LABELS[m] ?? m.charAt(0).toUpperCase() + m.slice(1);
 
 // El tipo va primero: es lo que el comercio busca (débito y crédito tienen distinta comisión).
 export function cardLabel(c: Card | null): string {

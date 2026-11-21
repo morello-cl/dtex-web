@@ -34,16 +34,7 @@ export default function Equipos() {
                     : "border-border bg-white"
                 }`}
               >
-                <div className="flex items-start justify-between">
-                  <h3 className="text-xl font-bold tracking-tight">
-                    {eq.model}
-                  </h3>
-                  {eq.badge && (
-                    <span className="rounded-full bg-brand-700 px-2.5 py-1 text-xs font-semibold text-white">
-                      {eq.badge}
-                    </span>
-                  )}
-                </div>
+                <h3 className="text-xl font-bold tracking-tight">{eq.model}</h3>
                 <p className="mt-1 text-sm text-muted">{eq.tagline}</p>
 
                 <div className="mt-3">

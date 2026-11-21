@@ -14,7 +14,6 @@ export type Equipo = {
   /** Descripción larga (para JSON-LD Product.description y posibles páginas
    *  futuras de detalle de equipo). */
   description: string;
-  badge?: string;
   specs: Spec[];
   availability: Availability;
   /** Si highlight=true, la card se renderiza destacada. */
@@ -45,7 +44,6 @@ export const EQUIPOS: Equipo[] = [
     tagline: "Robusto y rápido, con grip ergonómico. Equipo de gama alta.",
     description:
       "Terminal POS Android Sunmi P3 de gama alta con pantalla 6.75 pulgadas HD, conectividad 4G + WiFi ac + Bluetooth 5.0, batería 2630 mAh e impresora térmica integrada de 58 mm a 70 mm/s. Lectores 1D/2D, chip, banda y NFC.",
-    badge: "Más vendido",
     specs: [
       { label: "Pantalla", value: '6.75" HD' },
       { label: "Conexión", value: "4G + WiFi ac + BT 5.0" },

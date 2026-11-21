@@ -54,7 +54,15 @@ function Sii({ s }: { s: NonNullable<SaleView["sii"]> }) {
         </div>
       )}
       {s.sentAt && <p className="mt-2 text-xs text-muted">Enviado al SII el {s.sentAt}.</p>}
-      {s.trackId && <p className="mt-2 text-xs text-muted">Con el track ID puedes consultar el envío en el SII.</p>}
+      {s.trackId && (
+        <p className="mt-2 text-xs text-muted">
+          Con el track ID puedes consultar el envío en{" "}
+          <a href="https://www.sii.cl" target="_blank" rel="noopener noreferrer" className={`font-semibold text-mufin-700 underline underline-offset-2 ${focus}`}>
+            www.sii.cl
+          </a>
+          .
+        </p>
+      )}
     </section>
   );
 }
@@ -117,6 +125,14 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
             <div className="mt-2 border-t border-mufin-border">
               <Rows rows={v.totals} />
             </div>
+            {v.xmlHref && (
+              <a
+                href={v.xmlHref}
+                className={`mt-3 inline-flex h-9 items-center rounded-[10px] border border-mufin-border px-3 text-sm font-semibold text-mufin-700 hover:border-mufin-700 ${focus}`}
+              >
+                Descargar XML
+              </a>
+            )}
           </section>
           {v.payment.length > 0 && (
             <section className={`${card} bg-white`}>

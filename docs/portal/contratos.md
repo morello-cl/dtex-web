@@ -291,12 +291,22 @@ la venta es de otro comercio.
 - `items` viene vacío en las boletas por monto (hoy, 69 % de los documentos).
 - No salen al portal: BIN, costo del adquirente, monto abonado por venta,
   identificadores internos del procesador, ubicación ni el correo del receptor.
-- El XML (`GET …/{uuid}/xml`) queda fuera de esta versión del portal.
+- XML del documento: `GET /api/portal/v1/sales/{uuid}/xml`, con el header
+  `x-token-dtex`. Pedido por Marco (2026-11-21), publicado por tomahawk en dev
+  (v8.13.0): lo lee de Spaces y responde el XML tal cual (`application/xml`,
+  `Content-Disposition: attachment; filename="<type_code>-<folio>.xml"`); los
+  errores van en el sobre JSON (404 `NOT_FOUND`, 401). Hoy solo hay XML
+  individual para boletas 39 y 41: las facturas guardan solo el PDF y el ticket
+  no tiene XML, así que `xml_available` es true solo en esos casos. El portal lo descarga en
+  `/portal/ventas/{uuid}/xml` haciendo de proxy con la sesión: al navegador no
+  llega una URL firmada de Spaces. El botón aparece solo con `xml_available`.
 
 ## 7. Ventas del mes
 
-Pedido por el portal (2026-11-20), pendiente de tomahawk y de aprobación de
-Marco. Los comercios pidieron ver las ventas por mes además de por día. La
+Pedido por el portal (2026-11-20), aprobado por Marco y publicado por tomahawk
+en dev el 2026-11-21 (v8.13.0), sin cambios de campos. El portal lo consume en
+`/portal/ventas?mes=YYYY-MM`; mientras un tomahawk sin §7 responda 404, la vista
+avisa que estará disponible pronto. Los comercios pidieron ver las ventas por mes además de por día. La
 vista sigue la línea de Abonos: tira de meses, resumen del mes y una tabla
 con una fila por día; cada día abre su vista diaria (§3).
 

@@ -23,6 +23,29 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.22.0",
+    date: "2026-11-21",
+    summary: "Tus ventas del mes en una sola vista y el XML de tus documentos.",
+    changes: [
+      {
+        type: "added",
+        description: "En Ventas del Portal de pagos puedes cambiar entre Día y Mes: el total del mes, cuánto fue en efectivo y con tarjeta, y cuánto vendiste cada día. Toca un día para ver sus ventas una por una.",
+      },
+      {
+        type: "added",
+        description: "En el detalle de una boleta electrónica puedes descargar su XML, el archivo oficial que se envía al SII.",
+      },
+      {
+        type: "changed",
+        description: "El detalle de una venta enlaza a www.sii.cl para que consultes el envío con su track ID.",
+      },
+      {
+        type: "removed",
+        description: "Quitamos la etiqueta «Más vendido» de la lista de equipos.",
+      },
+    ],
+  },
+  {
     version: "0.21.0",
     date: "2026-11-20",
     summary: "Nueva portada: qué es DTEx® de un vistazo, con los colores de la marca.",
