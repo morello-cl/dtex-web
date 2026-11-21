@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import MufinEndorsement from "@/components/MufinEndorsement";
+import { SITE_VERSION } from "@/data/changelog";
 import { formattedMufinAddress, site, whatsappLink } from "@/lib/site";
 
 const link =
@@ -41,6 +42,9 @@ export default function PortalFooter() {
           <MufinEndorsement height={14} />
         </span>
         <nav aria-label="Legal" className="flex gap-5">
+          <Link href="/changelog" className={link}>
+            Versión <span className="tabular-nums">{SITE_VERSION}</span>
+          </Link>
           <Link href="/terminos" className={link}>
             Términos
           </Link>

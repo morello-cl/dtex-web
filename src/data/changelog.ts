@@ -4,6 +4,9 @@
 // Convención editorial:
 //  - Una entrada por release significativo. Cambios menores se agrupan.
 //  - El texto es para visitantes del sitio (comercios), no para devs.
+//  - Sin jerga técnica (SEO, WebP, rutas, componentes, «paginador»): contar qué
+//    cambió para el comercio y para qué le sirve, en palabras simples.
+//  - Cada entrada lleva summary: es el titular de la versión en /changelog.
 //  - "added" = funcionalidad nueva · "changed" = mejoras visibles
 //  - "fixed" = correcciones · "removed" = funcionalidad retirada
 
@@ -13,12 +16,35 @@ export type Release = {
   version: string;
   /** Formato ISO: YYYY-MM-DD */
   date: string;
-  /** Resumen corto opcional (1 línea) para destacar la versión. */
-  summary?: string;
+  /** Titular de la versión en /changelog: qué cambió para el comercio, en una línea. */
+  summary: string;
   changes: { type: ChangeType; description: string }[];
 };
 
 export const CHANGELOG: Release[] = [
+  {
+    version: "0.20.0",
+    date: "2026-11-20",
+    summary: "Las ventas del día caben en una pantalla y el detalle abre con suavidad.",
+    changes: [
+      {
+        type: "changed",
+        description: "Las ventas del día se muestran de 10 en 10, y los botones para pasar de página están arriba de la lista, a la vista sin bajar.",
+      },
+      {
+        type: "changed",
+        description: "El resumen del día ocupa menos espacio: el total, lo vendido en efectivo y con tarjeta y las propinas se ven de una mirada. El detalle por tipo de tarjeta y por documento aparece al tocar «Ver desglose».",
+      },
+      {
+        type: "changed",
+        description: "Al abrir una venta o un abono, su detalle aparece deslizándose desde la derecha y se retira de la misma forma al cerrarlo.",
+      },
+      {
+        type: "added",
+        description: "El pie del portal muestra la versión actual. Al tocarla llegas a esta página, con las mejoras de cada versión.",
+      },
+    ],
+  },
   {
     version: "0.19.1",
     date: "2026-11-19",
@@ -26,11 +52,11 @@ export const CHANGELOG: Release[] = [
     changes: [
       {
         type: "added",
-        description: "Paginador en la lista de ventas del día: 25 ventas por página, con «Anterior» y «Siguiente».",
+        description: "La lista de ventas del día se divide en páginas de 25 ventas, con botones para pasar a la anterior o a la siguiente.",
       },
       {
         type: "changed",
-        description: "Ordenar por hora, monto u otra columna ahora ordena todas las ventas cargadas, no solo las de la página visible.",
+        description: "Al ordenar las ventas por hora, monto u otro dato, se ordenan todas las ventas de la lista y no solo las de la página que estás viendo.",
       },
     ],
   },
@@ -45,15 +71,15 @@ export const CHANGELOG: Release[] = [
       },
       {
         type: "added",
-        description: "El detalle de cada abono muestra la marca de cada tarjeta y abre la venta correspondiente.",
+        description: "En el detalle de cada abono ves la marca de tarjeta de cada venta y puedes abrir esa venta.",
       },
       {
         type: "added",
-        description: "Vista previa con la marca MUFIN al compartir un enlace del portal por WhatsApp o correo.",
+        description: "Al compartir un enlace del portal por WhatsApp o correo, se ve una tarjeta con la marca MUFIN en lugar de un enlace sin imagen.",
       },
       {
         type: "changed",
-        description: "Los abonos se ven en una tabla con una columna por dato, se elige el mes en una tira como la de los días y el detalle abre en un panel lateral.",
+        description: "Los abonos se ven en una tabla más ordenada, eliges el mes igual que eliges el día en las ventas y el detalle se abre a un costado sin salir de la lista.",
       },
     ],
   },
@@ -64,7 +90,7 @@ export const CHANGELOG: Release[] = [
     changes: [
       {
         type: "added",
-        description: "Cada venta del portal abre su detalle: documento, productos, pago y estado en el SII con su track ID para copiarlo.",
+        description: "Cada venta del portal abre su detalle: el documento, los productos, cómo se pagó y si el SII ya lo recibió. Puedes copiar el número de seguimiento del SII (track ID) para consultarlo allá.",
       },
       {
         type: "added",
@@ -88,13 +114,14 @@ export const CHANGELOG: Release[] = [
       },
       {
         type: "fixed",
-        description: "Los pagos no completados ya no se repiten al ver más ventas.",
+        description: "Los pagos que no se completaron ya no aparecen repetidos al cargar más ventas del día.",
       },
     ],
   },
   {
     version: "0.17.0",
     date: "2026-11-15",
+    summary: "Las ventas del portal, en una tabla que puedes ordenar.",
     changes: [
       {
         type: "changed",
@@ -109,6 +136,7 @@ export const CHANGELOG: Release[] = [
   {
     version: "0.16.1",
     date: "2026-11-14",
+    summary: "Más claro si una venta fue con débito o con crédito.",
     changes: [
       {
         type: "changed",
@@ -190,12 +218,12 @@ export const CHANGELOG: Release[] = [
   {
     version: "0.13.0",
     date: "2026-10-26",
-    summary: "Documentación App2App en Markdown para asistentes de IA.",
+    summary: "La guía App2App, lista para usarla con un asistente de inteligencia artificial.",
     changes: [
       {
         type: "added",
         description:
-          "La documentación App2App también está disponible en Markdown, para entregársela a un asistente de IA. El sitio publica además un índice llms.txt con las páginas para desarrolladores.",
+          "La guía App2App también está disponible como texto simple, para entregársela a un asistente de inteligencia artificial y que te ayude con la integración.",
       },
       {
         type: "added",
@@ -207,7 +235,7 @@ export const CHANGELOG: Release[] = [
   {
     version: "0.12.0",
     date: "2026-10-26",
-    summary: "App2App: documentación del vuelto en el cobro con tarjeta.",
+    summary: "Guía App2App: cómo cobrar con vuelto.",
     changes: [
       {
         type: "added",
@@ -224,7 +252,7 @@ export const CHANGELOG: Release[] = [
   {
     version: "0.11.0",
     date: "2026-10-26",
-    summary: "App2App: ticket electrónico y descarga de folios.",
+    summary: "Guía App2App: ticket electrónico y descarga de folios.",
     changes: [
       {
         type: "added",
@@ -234,7 +262,7 @@ export const CHANGELOG: Release[] = [
       {
         type: "changed",
         description:
-          "En App2App, el cobro emite un ticket electrónico cuando tu app no indica otro documento. El cajero confirma el pago directamente en la pantalla del adquirente, sin un paso previo en DTEx®.",
+          "En App2App, el cobro emite un ticket electrónico cuando tu app no indica otro documento. El cajero confirma el pago directamente en la pantalla de la red de pago, sin un paso previo en DTEx®.",
       },
       {
         type: "changed",
@@ -252,7 +280,7 @@ export const CHANGELOG: Release[] = [
       {
         type: "added",
         description:
-          "Nueva sección Desarrolladores: si tienes un ERP, un sistema de restaurante o un punto de venta, ahora puedes conectarlo con DTEx®. App2App ya está documentado y permite que una app Android instalada en el mismo equipo inicie cobros con tarjeta y emita boletas. Las integraciones vía cloud y por USB están en desarrollo.",
+          "Nueva sección Desarrolladores: si tienes un sistema de gestión, de restaurante o de punto de venta, ahora puedes conectarlo con DTEx®. Con App2App, una aplicación instalada en el mismo equipo puede cobrar con tarjeta y emitir boletas. La conexión por internet y por cable USB está en desarrollo.",
       },
       {
         type: "fixed",
@@ -282,12 +310,12 @@ export const CHANGELOG: Release[] = [
     version: "0.8.0",
     date: "2026-10-26",
     summary:
-      "Identidad visual actualizada con el brand pack oficial y anuncio de Compraquí de BancoEstado.",
+      "Nueva imagen de DTEx® y las redes de pago con las que nos estamos certificando.",
     changes: [
       {
         type: "changed",
         description:
-          "Logo, ícono e imagen social actualizados al nuevo brand pack oficial de DTEx®.",
+          "El logo y el ícono de DTEx® se actualizaron a la nueva imagen oficial de la marca, también en la imagen que aparece al compartir el sitio.",
       },
       {
         type: "added",
@@ -310,22 +338,22 @@ export const CHANGELOG: Release[] = [
     version: "0.7.0",
     date: "2026-06-11",
     summary:
-      "Nueva página para inscribir comercios y anuncio de soporte multi-idioma.",
+      "Nueva página para inscribir tu comercio y DTEx® en más idiomas.",
     changes: [
       {
         type: "added",
         description:
-          "Nueva página /comercios para inscribir tu negocio en la red DTEx®. Completa los datos de la empresa y del representante legal en dos pasos guiados y te contactamos para coordinar la activación.",
+          "Nueva página para inscribir tu negocio en la red DTEx®. Completa los datos de la empresa y del representante legal en dos pasos guiados y te contactamos para coordinar la activación.",
       },
       {
         type: "added",
         description:
-          "DTEx® ya está disponible en español, portugués e inglés. Soporte para chino próximamente — visible en la sección de beneficios.",
+          "DTEx® ya está disponible en español, portugués e inglés. El soporte para chino llegará pronto.",
       },
       {
         type: "changed",
         description:
-          "Por seguridad, la Clave SII y los datos bancarios para abonos ya no se solicitan por formulario web. Los coordinamos contigo por canal seguro durante el onboarding.",
+          "Por seguridad, la Clave SII y los datos bancarios para abonos ya no se solicitan por formulario web. Los coordinamos contigo por canal seguro durante la activación.",
       },
     ],
   },
@@ -354,17 +382,17 @@ export const CHANGELOG: Release[] = [
       {
         type: "changed",
         description:
-          "El formulario ahora conserva lo que escribiste si hay un error al enviar, no necesitas volver a tipear nada.",
+          "El formulario ahora conserva lo que escribiste si hay un error al enviar, no necesitas volver a escribir nada.",
       },
       {
         type: "changed",
         description:
-          "Inputs del formulario en tamaño más cómodo para evitar el zoom automático al tocarlos en iPhone.",
+          "Los campos del formulario tienen un tamaño más cómodo, y en iPhone la pantalla ya no se agranda sola al tocarlos.",
       },
       {
         type: "changed",
         description:
-          "Mensajes de error y campos obligatorios mejor anunciados para lectores de pantalla, y el foco salta automáticamente al primer campo con problema.",
+          "Si falta un dato o hay un error, el formulario te lleva directo al campo que debes corregir, y los lectores de pantalla lo anuncian.",
       },
       {
         type: "added",
@@ -381,7 +409,7 @@ export const CHANGELOG: Release[] = [
       {
         type: "added",
         description:
-          "Página de contacto en /contacto con formulario para escribirnos sin salir del sitio. Los mensajes llegan directo al correo comercial y respondemos en horario hábil.",
+          "Nueva página de contacto con un formulario para escribirnos sin salir del sitio. Los mensajes llegan directo al correo comercial y respondemos en horario hábil.",
       },
       {
         type: "added",
@@ -393,44 +421,44 @@ export const CHANGELOG: Release[] = [
   {
     version: "0.5.1",
     date: "2026-05-26",
-    summary: "Mejoras de accesibilidad detectadas por Lighthouse.",
+    summary: "El sitio se lee mejor, también con lectores de pantalla.",
     changes: [
       {
         type: "changed",
         description:
-          "Botones de acción principales con turquesa más oscuro para cumplir el estándar de contraste WCAG AA (texto blanco sobre turquesa).",
+          "Los botones principales usan un turquesa más oscuro para que su texto se lea mejor.",
       },
       {
         type: "fixed",
         description:
-          "Jerarquía de encabezados del pie del sitio corregida (las columnas Producto/Contacto/Legal pasaron de h4 a h3).",
+          "El pie del sitio se recorre mejor con lectores de pantalla.",
       },
       {
         type: "fixed",
         description:
-          "Descripción accesible del distintivo de versión incluye el texto visible para coincidir con lo que ven los lectores de pantalla.",
+          "Los lectores de pantalla anuncian el número de versión del sitio tal como se ve.",
       },
     ],
   },
   {
     version: "0.5.0",
     date: "2026-05-25",
-    summary: "Más SEO: datos estructurados de productos y preguntas frecuentes.",
+    summary: "DTEx® aparece mejor en Google.",
     changes: [
       {
         type: "added",
         description:
-          "Cada equipo POS (Kozen P8 Neo, Sunmi P3, Sunmi D3 mini) ahora tiene datos estructurados de producto. Google podrá mostrar marca, modelo y disponibilidad para búsquedas relacionadas.",
+          "Cuando alguien busca un equipo POS (Kozen P8 Neo, Sunmi P3 o Sunmi D3 mini), Google puede mostrar su marca, modelo y disponibilidad.",
       },
       {
         type: "added",
         description:
-          "Preguntas frecuentes con datos estructurados (FAQ) para captar respuestas destacadas en Google sobre tarjetas, boletas electrónicas, Punto Sencillito® y arriendo.",
+          "Las respuestas a las preguntas frecuentes sobre tarjetas, boletas electrónicas, Punto Sencillito® y arriendo pueden aparecer directamente en Google.",
       },
       {
         type: "added",
         description:
-          "Aviso de aceptación de Política de Privacidad y Términos junto a los botones principales de contacto.",
+          "Junto a los botones de contacto se indica que al escribirnos aceptas la Política de Privacidad y los Términos.",
       },
       {
         type: "changed",
@@ -440,61 +468,61 @@ export const CHANGELOG: Release[] = [
       {
         type: "changed",
         description:
-          "Descripciones para buscadores acortadas en las páginas de Novedades y Aviso Legal.",
+          "Las páginas de Novedades y Aviso Legal se muestran completas en los resultados de Google.",
       },
       {
         type: "changed",
         description:
-          "Logo de Sencillito® con descripción accesible más completa.",
+          "El logo de Sencillito® se describe mejor para los lectores de pantalla.",
       },
     ],
   },
   {
     version: "0.4.0",
     date: "2026-05-25",
-    summary: "Mejoras de SEO y rendimiento.",
+    summary: "El sitio carga más rápido y se encuentra mejor en Google.",
     changes: [
       {
         type: "changed",
         description:
-          "Logo de DTEx® y de Sencillito® migrados a WebP. Tiempo de carga ~80% más rápido en estos recursos.",
+          "Los logos de DTEx® y de Sencillito® cargan cerca de un 80 % más rápido.",
       },
       {
         type: "changed",
         description:
-          "Imagen de previsualización para redes sociales (Open Graph) optimizada: 501 KB → 51 KB.",
+          "La imagen que aparece al compartir el sitio en redes sociales pesa diez veces menos y se muestra más rápido.",
       },
       {
         type: "added",
         description:
-          "Datos estructurados de migas de pan (BreadcrumbList) en páginas internas: Google podrá mostrar la ruta de navegación como rich snippet en los resultados.",
+          "En los resultados de Google se ve en qué sección del sitio está cada página.",
       },
       {
         type: "added",
         description:
-          "Bloque 'Otros documentos legales' al final de cada página legal con enlaces cruzados.",
+          "Al final de cada página legal hay enlaces a los demás documentos legales.",
       },
       {
         type: "changed",
         description:
-          "Metadescripciones y palabras clave optimizadas con foco en comercios chilenos (Villarrica, Araucanía, SII, almacenes, minimarkets).",
+          "Los textos que muestra Google están pensados para comercios chilenos, como almacenes y minimarkets.",
       },
       {
         type: "added",
         description:
-          "Descripciones de accesibilidad (alt text) en los mockups de equipos POS Kozen P8 Neo, Sunmi P3 y Sunmi D3 mini.",
+          "Las ilustraciones de los equipos POS Kozen P8 Neo, Sunmi P3 y Sunmi D3 mini se describen para los lectores de pantalla.",
       },
     ],
   },
   {
     version: "0.3.0",
     date: "2026-05-25",
-    summary: "Datos corporativos de MUFIN incorporados y dominio oficial.",
+    summary: "Datos de MUFIN SpA en las páginas legales y dirección oficial del sitio.",
     changes: [
       {
         type: "changed",
         description:
-          "Datos corporativos reales de MUFIN SpA (RUT, domicilio en Villarrica) reemplazan los placeholders en las páginas legales y en los datos estructurados para Google.",
+          "Las páginas legales muestran los datos de MUFIN SpA: su RUT y su domicilio en Villarrica.",
       },
       {
         type: "added",
@@ -504,7 +532,7 @@ export const CHANGELOG: Release[] = [
       {
         type: "changed",
         description:
-          "Dominio canónico del sitio actualizado a https://www.dtex.cl.",
+          "La dirección oficial del sitio es www.dtex.cl.",
       },
     ],
   },
@@ -516,27 +544,27 @@ export const CHANGELOG: Release[] = [
       {
         type: "added",
         description:
-          "Política de Privacidad conforme a la Ley 19.628 chilena (en /privacidad).",
+          "Política de Privacidad conforme a la Ley 19.628 chilena.",
       },
       {
         type: "added",
         description:
-          "Términos y Condiciones generales del sitio (en /terminos).",
+          "Términos y Condiciones generales del sitio.",
       },
       {
         type: "added",
         description:
-          "Términos específicos de arriendo de equipos POS (en /arriendo).",
+          "Términos específicos de arriendo de equipos POS.",
       },
       {
         type: "added",
         description:
-          "Aviso Legal con información corporativa de MUFIN SpA (en /aviso-legal).",
+          "Aviso Legal con información corporativa de MUFIN SpA.",
       },
       {
         type: "added",
         description:
-          "Columna 'Legal' en el footer con acceso a todas las páginas legales.",
+          "El pie del sitio reúne el acceso a todas las páginas legales.",
       },
     ],
   },
@@ -549,7 +577,7 @@ export const CHANGELOG: Release[] = [
       {
         type: "added",
         description:
-          "Landing comercial con presentación del producto: hero, beneficios, Punto Sencillito®, equipos POS, casos reales y CTA final.",
+          "El sitio de DTEx® presenta lo que ofrece a tu comercio: beneficios, Punto Sencillito®, equipos POS y casos de comercios reales.",
       },
       {
         type: "added",
@@ -559,7 +587,7 @@ export const CHANGELOG: Release[] = [
       {
         type: "added",
         description:
-          "Contacto directo por WhatsApp en cada CTA, con mensajes precargados según intención (información, cotización o activación de Sencillito®).",
+          "Cada botón de contacto abre WhatsApp con un mensaje ya escrito según lo que necesitas: información, cotización o activación de Sencillito®.",
       },
       {
         type: "added",
@@ -569,7 +597,7 @@ export const CHANGELOG: Release[] = [
       {
         type: "added",
         description:
-          "Página de novedades en /changelog con historial de cambios del sitio.",
+          "Esta página de novedades, con el historial de cambios del sitio.",
       },
     ],
   },
