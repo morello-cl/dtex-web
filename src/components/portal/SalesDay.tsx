@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { DayView, Method } from "@/lib/portal/day";
 import { formatClp } from "@/lib/portal/sales";
 import DateField from "./DateField";
+import { ViewToggle } from "./SalesMonth";
 import SalesTable from "./SalesTable";
 
 const box = "rounded-2xl border border-mufin-border bg-white";
@@ -241,9 +242,12 @@ function Rejections({ d }: { d: DayView }) {
 export default function SalesDay({ d, today, min, paged, self }: { d: DayView; today: string; min: string; paged: boolean; self: string }) {
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold text-mufin-ink first-letter:uppercase">{d.title}</h1>
-        {d.isToday && <p className="mt-1 text-sm text-muted">Actualizado a las {d.asOf}.</p>}
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-mufin-ink first-letter:uppercase">{d.title}</h1>
+          {d.isToday && <p className="mt-1 text-sm text-muted">Actualizado a las {d.asOf}.</p>}
+        </div>
+        <ViewToggle day={d.date} month={d.date.slice(0, 7)} current="day" />
       </header>
       <DayPicker d={d} today={today} min={min} />
       <Summary d={d} />

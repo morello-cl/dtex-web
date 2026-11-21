@@ -38,12 +38,13 @@ export function passwordError(pw: string): string | null {
     : "La contraseña debe tener entre 10 y 72 caracteres.";
 }
 
+// ponytail: variable propia del portal para apuntarlo a dev sin mover la página de pagos; se borra cuando tomahawk publique el portal en producción.
+export const portalUrl = (path: string) => new URL(path, process.env.PORTAL_TOMAHAWK_URL ?? process.env.TOMAHAWK_BASE_URL ?? "https://api.dtex.app");
+
 export async function portalRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
-  // ponytail: variable propia del portal para apuntarlo a dev sin mover la página de pagos; se borra cuando tomahawk publique el portal en producción.
-  const base = process.env.PORTAL_TOMAHAWK_URL ?? process.env.TOMAHAWK_BASE_URL ?? "https://api.dtex.app";
   let response: Response;
   try {
-    response = await fetch(new URL(path, base), {
+    response = await fetch(portalUrl(path), {
       ...init,
       cache: "no-store",
       headers: {

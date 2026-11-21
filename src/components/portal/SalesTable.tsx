@@ -107,7 +107,7 @@ const makeColumns = (detail: string, tips: boolean, cashback: boolean) => [
 const RIGHT = new Set(["amount", "tip", "cashback", "folio"]);
 
 // Flecha doble tenue = se puede ordenar; flecha sola = orden actual.
-function SortIcon({ dir }: { dir: false | "asc" | "desc" }) {
+export function SortIcon({ dir }: { dir: false | "asc" | "desc" }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 12 16" className={`h-3.5 w-3 fill-current ${dir ? "" : "opacity-40"}`}>
       {dir !== "desc" && <path d="M6 2 10 7H2z" />}
@@ -116,7 +116,7 @@ function SortIcon({ dir }: { dir: false | "asc" | "desc" }) {
   );
 }
 
-const PAGE = 10;
+export const PAGE = 10;
 
 function Arrow({ back }: { back?: boolean }) {
   return (
@@ -128,19 +128,20 @@ function Arrow({ back }: { back?: boolean }) {
 
 // Arriba, junto a los filtros, para que se vea sin bajar. En el celular se repite al pie de la lista
 // y al cambiar de página se vuelve al inicio de la lista.
-function Pager({ table, total, bottom }: { table: Table<Row>; total: number; bottom?: boolean }) {
+// `anchor`: id de la sección a la que se vuelve al paginar desde el pie. `label`: qué se pagina, para lectores de pantalla.
+export function Pager<T>({ table, total, bottom, anchor = "ventas", label = "ventas" }: { table: Table<T>; total: number; bottom?: boolean; anchor?: string; label?: string }) {
   if (table.getPageCount() <= 1) return null;
   const { pageIndex } = table.getState().pagination;
   const from = pageIndex * PAGE + 1;
   const to = Math.min(from + PAGE - 1, total);
   const go = (fn: () => void) => {
     fn();
-    if (bottom) document.getElementById("ventas")?.scrollIntoView({ block: "start" });
+    if (bottom) document.getElementById(anchor)?.scrollIntoView({ block: "start" });
   };
   const btn = `inline-flex h-11 w-11 items-center justify-center rounded-xl border border-mufin-border bg-white text-mufin-ink hover:border-mufin-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-mufin-border ${focus}`;
   return (
     <nav
-      aria-label={bottom ? "Páginas de ventas, al pie" : "Páginas de ventas"}
+      aria-label={bottom ? `Páginas de ${label}, al pie` : `Páginas de ${label}`}
       className={`flex items-center gap-3 text-sm ${bottom ? "mt-3 justify-between border-t border-mufin-border pt-3 lg:hidden" : ""}`}
     >
       <p className="text-muted tabular-nums" aria-live={bottom ? undefined : "polite"}>
