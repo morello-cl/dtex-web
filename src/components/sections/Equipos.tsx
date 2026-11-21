@@ -15,18 +15,13 @@ export default function Equipos() {
       <div className="bg-dotgrid absolute inset-0 opacity-60" aria-hidden />
       <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
         <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">
-              Equipos Android DTEx®
-            </p>
-            <h2 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Tecnología real, en tus manos.
-            </h2>
-            <p className="mt-4 text-base text-muted">
-              Equipos modernos con impresora integrada, software DTEx® y
-              conexión 4G. Diseñados para el comercio chileno.
-            </p>
-          </div>
+          <h2 className="max-w-2xl text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Elige el equipo para tu negocio.
+          </h2>
+          <p className="mt-4 max-w-xl text-base text-muted">
+            Tres equipos Android con impresora integrada, el software DTEx® y
+            conexión 4G. Se venden o se arriendan.
+          </p>
         </Reveal>
 
         <ul className="mt-14 grid gap-6 md:grid-cols-3">
@@ -35,7 +30,7 @@ export default function Equipos() {
               <article
                 className={`flex h-full flex-col rounded-2xl border p-6 transition-all hover:-translate-y-1 ${
                   eq.highlight
-                    ? "border-brand-200 bg-white shadow-[0_30px_60px_-30px_rgba(63,24,128,0.35)]"
+                    ? "border-brand-200 bg-white shadow-[0_30px_60px_-30px_rgba(74,26,122,0.35)]"
                     : "border-border bg-white"
                 }`}
               >
@@ -44,7 +39,7 @@ export default function Equipos() {
                     {eq.model}
                   </h3>
                   {eq.badge && (
-                    <span className="rounded-full bg-accent-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-accent-600">
+                    <span className="rounded-full bg-brand-700 px-2.5 py-1 text-xs font-semibold text-white">
                       {eq.badge}
                     </span>
                   )}
@@ -143,33 +138,33 @@ function DeviceIllustration({ variant }: { variant: number }) {
         aria-label="Equipo POS Kozen P8 Neo con impresora térmica integrada"
       >
         {/* Ticket saliendo por arriba */}
-        <rect x="32" y="0" width="56" height="26" rx="2" fill="#eaf2ff" />
-        <rect x="38" y="6" width="44" height="2" rx="1" fill="#9ec1f5" />
-        <rect x="38" y="12" width="34" height="2" rx="1" fill="#9ec1f5" />
-        <rect x="38" y="18" width="40" height="2" rx="1" fill="#9ec1f5" />
+        <rect x="32" y="0" width="56" height="26" rx="2" fill="#f6f0fc" />
+        <rect x="38" y="6" width="44" height="2" rx="1" fill="#d8bff2" />
+        <rect x="38" y="12" width="34" height="2" rx="1" fill="#d8bff2" />
+        <rect x="38" y="18" width="40" height="2" rx="1" fill="#d8bff2" />
 
         {/* Cuerpo */}
-        <rect x="22" y="22" width="76" height="172" rx="22" fill="#142446" />
+        <rect x="22" y="22" width="76" height="172" rx="22" fill="#221338" />
         {/* Zona impresora (más oscura, parte superior del cuerpo) */}
         <path
           d="M22 44 H98 V36 Q98 22 84 22 H36 Q22 22 22 36 Z"
-          fill="#07112a"
+          fill="#150a24"
         />
         {/* Ranura de salida del papel */}
-        <rect x="34" y="29" width="52" height="3" rx="1.5" fill="#1d2c4d" />
+        <rect x="34" y="29" width="52" height="3" rx="1.5" fill="#2c1d45" />
 
         {/* Pantalla edge-to-edge */}
         <rect x="28" y="52" width="64" height="128" rx="14" fill="url(#kozen-screen)" />
         {/* Botón home / lector huella */}
-        <circle cx="60" cy="188" r="2.5" fill="#1d2c4d" />
+        <circle cx="60" cy="188" r="2.5" fill="#2c1d45" />
         {/* Botones laterales */}
-        <rect x="98" y="80" width="2" height="14" rx="1" fill="#1d2c4d" />
-        <rect x="98" y="100" width="2" height="22" rx="1" fill="#1d2c4d" />
+        <rect x="98" y="80" width="2" height="14" rx="1" fill="#2c1d45" />
+        <rect x="98" y="100" width="2" height="22" rx="1" fill="#2c1d45" />
 
         <defs>
           <linearGradient id="kozen-screen" x1="0" y1="0" x2="1" y2="1">
-            <stop stopColor="#3a6fd6" />
-            <stop offset="1" stopColor="#0d2e72" />
+            <stop stopColor="#9d5fd9" />
+            <stop offset="1" stopColor="#7c25c4" />
           </linearGradient>
         </defs>
       </svg>
@@ -188,32 +183,32 @@ function DeviceIllustration({ variant }: { variant: number }) {
         aria-label="Equipo POS Sunmi P3 con grip ergonómico e impresora superior"
       >
         {/* Ticket saliendo por arriba */}
-        <rect x="32" y="0" width="66" height="28" rx="2" fill="#eaf2ff" />
-        <rect x="40" y="6" width="50" height="2" rx="1" fill="#9ec1f5" />
-        <rect x="40" y="12" width="38" height="2" rx="1" fill="#9ec1f5" />
-        <rect x="40" y="18" width="46" height="2" rx="1" fill="#9ec1f5" />
-        <rect x="40" y="24" width="30" height="2" rx="1" fill="#9ec1f5" />
+        <rect x="32" y="0" width="66" height="28" rx="2" fill="#f6f0fc" />
+        <rect x="40" y="6" width="50" height="2" rx="1" fill="#d8bff2" />
+        <rect x="40" y="12" width="38" height="2" rx="1" fill="#d8bff2" />
+        <rect x="40" y="18" width="46" height="2" rx="1" fill="#d8bff2" />
+        <rect x="40" y="24" width="30" height="2" rx="1" fill="#d8bff2" />
 
         {/* Cabeza ancha (impresora) */}
-        <rect x="6" y="24" width="118" height="44" rx="10" fill="#07112a" />
+        <rect x="6" y="24" width="118" height="44" rx="10" fill="#150a24" />
         {/* Ranura de salida del papel */}
-        <rect x="28" y="32" width="74" height="3" rx="1.5" fill="#1d2c4d" />
+        <rect x="28" y="32" width="74" height="3" rx="1.5" fill="#2c1d45" />
 
         {/* Cuerpo / grip (más estrecho) */}
-        <rect x="20" y="60" width="90" height="138" rx="14" fill="#142446" />
+        <rect x="20" y="60" width="90" height="138" rx="14" fill="#221338" />
 
         {/* Pantalla */}
         <rect x="26" y="72" width="78" height="100" rx="6" fill="url(#sunmi-p3-screen)" />
         {/* Botón inferior pantalla */}
-        <rect x="58" y="178" width="14" height="3" rx="1.5" fill="#1d2c4d" />
+        <rect x="58" y="178" width="14" height="3" rx="1.5" fill="#2c1d45" />
         {/* Texturas grip lateral */}
-        <rect x="22" y="124" width="3" height="40" rx="1" fill="#1d2c4d" opacity="0.7" />
-        <rect x="105" y="124" width="3" height="40" rx="1" fill="#1d2c4d" opacity="0.7" />
+        <rect x="22" y="124" width="3" height="40" rx="1" fill="#2c1d45" opacity="0.7" />
+        <rect x="105" y="124" width="3" height="40" rx="1" fill="#2c1d45" opacity="0.7" />
 
         <defs>
           <linearGradient id="sunmi-p3-screen" x1="0" y1="0" x2="1" y2="1">
-            <stop stopColor="#3ec5ad" />
-            <stop offset="1" stopColor="#143f95" />
+            <stop stopColor="#bb90e6" />
+            <stop offset="1" stopColor="#8130c9" />
           </linearGradient>
         </defs>
       </svg>
@@ -231,39 +226,39 @@ function DeviceIllustration({ variant }: { variant: number }) {
       aria-label="Equipo POS Sunmi D3 mini de mesón con doble pantalla cajero y cliente"
     >
       {/* Ticket saliendo por arriba */}
-      <rect x="50" y="0" width="60" height="22" rx="2" fill="#eaf2ff" />
-      <rect x="58" y="6" width="44" height="2" rx="1" fill="#9ec1f5" />
-      <rect x="58" y="12" width="34" height="2" rx="1" fill="#9ec1f5" />
+      <rect x="50" y="0" width="60" height="22" rx="2" fill="#f6f0fc" />
+      <rect x="58" y="6" width="44" height="2" rx="1" fill="#d8bff2" />
+      <rect x="58" y="12" width="34" height="2" rx="1" fill="#d8bff2" />
 
       {/* Cabezal impresora sobre la pantalla principal */}
-      <rect x="20" y="20" width="120" height="22" rx="6" fill="#07112a" />
-      <rect x="35" y="30" width="90" height="3" rx="1.5" fill="#1d2c4d" />
+      <rect x="20" y="20" width="120" height="22" rx="6" fill="#150a24" />
+      <rect x="35" y="30" width="90" height="3" rx="1.5" fill="#2c1d45" />
 
       {/* Pantalla principal 10.1" */}
-      <rect x="20" y="40" width="120" height="110" rx="6" fill="#142446" />
+      <rect x="20" y="40" width="120" height="110" rx="6" fill="#221338" />
       <rect x="25" y="45" width="110" height="100" rx="3" fill="url(#d3-main)" />
 
       {/* Soporte central */}
-      <rect x="68" y="150" width="24" height="10" fill="#07112a" />
+      <rect x="68" y="150" width="24" height="10" fill="#150a24" />
 
       {/* Base */}
-      <rect x="14" y="158" width="152" height="32" rx="6" fill="#07112a" />
-      <rect x="14" y="158" width="152" height="5" rx="2" fill="#142446" />
+      <rect x="14" y="158" width="152" height="32" rx="6" fill="#150a24" />
+      <rect x="14" y="158" width="152" height="5" rx="2" fill="#221338" />
 
       {/* Pantalla cliente 4" (a la derecha, más baja) */}
-      <rect x="148" y="78" width="30" height="56" rx="4" fill="#142446" />
+      <rect x="148" y="78" width="30" height="56" rx="4" fill="#221338" />
       <rect x="151" y="82" width="24" height="48" rx="2" fill="url(#d3-client)" />
       {/* Soporte cliente */}
-      <rect x="156" y="134" width="14" height="24" fill="#07112a" />
+      <rect x="156" y="134" width="14" height="24" fill="#150a24" />
 
       <defs>
         <linearGradient id="d3-main" x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#1f55bd" />
-          <stop offset="1" stopColor="#07204f" />
+          <stop stopColor="#8a3fcf" />
+          <stop offset="1" stopColor="#621f9f" />
         </linearGradient>
         <linearGradient id="d3-client" x1="0" y1="0" x2="0" y2="1">
-          <stop stopColor="#4ddfc4" />
-          <stop offset="1" stopColor="#143f95" />
+          <stop stopColor="#d8bff2" />
+          <stop offset="1" stopColor="#8130c9" />
         </linearGradient>
       </defs>
     </svg>

@@ -8,8 +8,7 @@ import Beneficios from "@/components/sections/Beneficios";
 import Sencillito from "@/components/sections/Sencillito";
 import Redes from "@/components/sections/Redes";
 import Equipos from "@/components/sections/Equipos";
-import Casos from "@/components/sections/Casos";
-import Clientes from "@/components/sections/Clientes";
+import Portal from "@/components/sections/Portal";
 import CtaFinal from "@/components/sections/CtaFinal";
 
 export default function HomePage() {
@@ -21,14 +20,13 @@ export default function HomePage() {
       <Navbar />
       <main className="flex-1">
         {/* Orden por prioridad comercial: primero lo que se vende hoy
-            (Equipos, Sencillito), luego la prueba social, y al final lo que
-            todavía está en certificación (las redes de pago). */}
+            (Equipos, Sencillito), luego el Portal de pagos que viene con el
+            servicio, y al final lo que está en certificación (Redes). */}
         <Hero />
         <Beneficios />
         <Equipos />
         <Sencillito />
-        <Casos />
-        <Clientes />
+        <Portal />
         <Redes />
         <CtaFinal />
       </main>
