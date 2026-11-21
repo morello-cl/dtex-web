@@ -96,7 +96,7 @@ const lastDay = (month: string) => {
   return new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
 };
 
-const shiftMonth = (month: string, n: number) => {
+export const shiftMonth = (month: string, n: number) => {
   const [y, m] = month.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1 + n, 1)).toISOString().slice(0, 7);
 };
