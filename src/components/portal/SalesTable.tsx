@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createColumnHelper, flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type SortingState, type Table } from "@tanstack/react-table";
@@ -17,7 +17,7 @@ function Dot({ card }: { card: boolean }) {
 }
 
 // Con logo no va el nombre: el logo lo dice. El nombre queda para lectores de pantalla y al pasar el mouse.
-function Brand({ name, size = "h-8 w-8" }: { name: string | null; size?: string }) {
+function Brand({ name, size = "-my-1 h-6 w-6" }: { name: string | null; size?: string }) {
   if (!name) return <span className="text-muted">—</span>;
   if (!hasBrand(name)) return <span className="text-muted">{name}</span>;
   return (
@@ -94,7 +94,7 @@ const makeColumns = (detail: string, tips: boolean, cashback: boolean) => [
             scroll={false}
             aria-label={`Ver detalle de ${c.row.original.document}`}
             title="Ver detalle"
-            className={`inline-flex h-9 w-9 items-center justify-center rounded-[10px] text-muted group-hover:bg-white group-hover:text-mufin-700 hover:text-mufin-700 ${focus}`}
+            className={`inline-flex h-8 w-8 items-center justify-center rounded-[10px] text-muted group-hover:bg-white group-hover:text-mufin-700 hover:text-mufin-700 ${focus}`}
           >
             <Chevron />
           </Link>
@@ -116,30 +116,42 @@ function SortIcon({ dir }: { dir: false | "asc" | "desc" }) {
   );
 }
 
-const PAGE = 25;
+const PAGE = 10;
 
-// Al cambiar de página se vuelve al inicio de la lista: los controles están abajo.
-function Pager({ table, total }: { table: Table<Row>; total: number }) {
+function Arrow({ back }: { back?: boolean }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" className="h-5 w-5 fill-none stroke-current" strokeWidth="2">
+      <path d={back ? "m12 5-5 5 5 5" : "m8 5 5 5-5 5"} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// Arriba, junto a los filtros, para que se vea sin bajar. En el celular se repite al pie de la lista
+// y al cambiar de página se vuelve al inicio de la lista.
+function Pager({ table, total, bottom }: { table: Table<Row>; total: number; bottom?: boolean }) {
   if (table.getPageCount() <= 1) return null;
   const { pageIndex } = table.getState().pagination;
   const from = pageIndex * PAGE + 1;
   const to = Math.min(from + PAGE - 1, total);
   const go = (fn: () => void) => {
     fn();
-    document.getElementById("ventas")?.scrollIntoView({ block: "start" });
+    if (bottom) document.getElementById("ventas")?.scrollIntoView({ block: "start" });
   };
-  const btn = `inline-flex h-11 items-center rounded-xl border border-mufin-border bg-white px-4 text-sm font-semibold text-mufin-ink hover:border-mufin-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-mufin-border ${focus}`;
+  const btn = `inline-flex h-11 w-11 items-center justify-center rounded-xl border border-mufin-border bg-white text-mufin-ink hover:border-mufin-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-mufin-border ${focus}`;
   return (
-    <nav aria-label="Páginas de ventas" className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-mufin-border pt-4 text-sm">
-      <p className="text-muted tabular-nums" aria-live="polite">
-        Ventas {from.toLocaleString("es-CL")} a {to.toLocaleString("es-CL")} de {total.toLocaleString("es-CL")}, página {pageIndex + 1} de {table.getPageCount()}
+    <nav
+      aria-label={bottom ? "Páginas de ventas, al pie" : "Páginas de ventas"}
+      className={`flex items-center gap-3 text-sm ${bottom ? "mt-3 justify-between border-t border-mufin-border pt-3 lg:hidden" : ""}`}
+    >
+      <p className="text-muted tabular-nums" aria-live={bottom ? undefined : "polite"}>
+        {from.toLocaleString("es-CL")} a {to.toLocaleString("es-CL")} de {total.toLocaleString("es-CL")}
       </p>
       <span className="flex gap-2">
-        <button type="button" className={btn} disabled={!table.getCanPreviousPage()} onClick={() => go(table.previousPage)}>
-          Anterior
+        <button type="button" aria-label="Página anterior" title="Página anterior" className={btn} disabled={!table.getCanPreviousPage()} onClick={() => go(table.previousPage)}>
+          <Arrow back />
         </button>
-        <button type="button" className={btn} disabled={!table.getCanNextPage()} onClick={() => go(table.nextPage)}>
-          Siguiente
+        <button type="button" aria-label="Página siguiente" title="Página siguiente" className={btn} disabled={!table.getCanNextPage()} onClick={() => go(table.nextPage)}>
+          <Arrow />
         </button>
       </span>
     </nav>
@@ -149,8 +161,8 @@ function Pager({ table, total }: { table: Table<Row>; total: number }) {
 // Ordena y pagina en el navegador sobre lo que trajo tomahawk (hasta 500 ventas, casi siempre el día completo).
 // Abrir o cerrar una venta trae filas nuevas del servidor: la página no se reinicia por eso.
 // Ordenar vuelve a la página 1; cambiar de día o de filtro remonta la tabla (key en SalesDay).
-// `detail`: la URL actual del día; la fila le agrega &venta= para abrir el panel.
-export default function SalesTable({ rows, detail }: { rows: Row[]; detail: string }) {
+// `detail`: la URL actual del día; la fila le agrega &venta= para abrir el panel. `header`: título y filtros de la lista.
+export default function SalesTable({ rows, detail, header }: { rows: Row[]; detail: string; header: ReactNode }) {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const tips = rows.some((r) => r.tip > 0);
@@ -175,6 +187,10 @@ export default function SalesTable({ rows, detail }: { rows: Row[]; detail: stri
 
   return (
     <>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {header}
+        <Pager table={table} total={rows.length} />
+      </div>
       {/* overflow-x-auto: con propina y efectivo entregado son 12 columnas; en pantallas medianas se desplaza dentro del recuadro. */}
       <div className="mt-4 hidden overflow-x-auto lg:block">
         <table className="w-full whitespace-nowrap text-sm">
@@ -220,7 +236,7 @@ export default function SalesTable({ rows, detail }: { rows: Row[]; detail: stri
                   className={href ? "group cursor-pointer hover:bg-mufin-bg" : undefined}
                 >
                   {row.getVisibleCells().map((c) => (
-                    <td key={c.id} className={`py-2 pr-4 align-middle first:pl-2 last:pr-2 ${RIGHT.has(c.column.id) ? "text-right" : ""}`}>
+                    <td key={c.id} className={`py-1 pr-4 align-middle first:pl-2 last:pr-2 ${RIGHT.has(c.column.id) ? "text-right" : ""}`}>
                       {flexRender(c.column.columnDef.cell, c.getContext())}
                     </td>
                   ))}
@@ -276,7 +292,7 @@ export default function SalesTable({ rows, detail }: { rows: Row[]; detail: stri
           );
         })}
       </ul>
-      <Pager table={table} total={rows.length} />
+      <Pager table={table} total={rows.length} bottom />
     </>
   );
 }

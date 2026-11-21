@@ -292,3 +292,35 @@ la venta es de otro comercio.
 - No salen al portal: BIN, costo del adquirente, monto abonado por venta,
   identificadores internos del procesador, ubicación ni el correo del receptor.
 - El XML (`GET …/{uuid}/xml`) queda fuera de esta versión del portal.
+
+## 7. Ventas del mes
+
+Pedido por el portal (2026-11-20), pendiente de tomahawk y de aprobación de
+Marco. Los comercios pidieron ver las ventas por mes además de por día. La
+vista sigue la línea de Abonos: tira de meses, resumen del mes y una tabla
+con una fila por día; cada día abre su vista diaria (§3).
+
+`GET /api/portal/v1/sales/month?month=YYYY-MM`, con el header `x-token-dtex`.
+
+```jsonc
+{ "month": "2026-11", "as_of": "2026-11-20T15:04:00-03:00",
+  "totals": { "amount", "count", "tip_amount", "cashback_amount",
+    "by_payment_method": [ /* igual que §3 */ ],
+    "by_document": [ /* igual que §3 */ ] },
+  "days": [{ "date": "2026-11-01", "amount", "count", "tip_amount", "cashback_amount",
+    "cash_amount", "cash_count", "card_amount", "card_count" }] }
+```
+
+### Reglas
+
+- Montos, anuladas y notas de crédito con las reglas del §2 y §3: `totals`
+  debe cuadrar con la suma de los `sales/day` del mes.
+- `days` trae todos los días del mes hasta hoy, en orden, con 0 los días sin
+  ventas (como `windows` del §2). El mes en curso se corta en `as_of`.
+- `cash_*` y `card_*` siguen el `payment_method` de cada venta; si aparece otro
+  medio, cuenta solo en `amount` y `count`.
+- Un mes futuro, anterior a 2 años o mal formado responde 400 `INVALID_DATE`.
+  Se comparan meses de calendario, con el límite inclusivo: con `as_of`
+  2026-11-20 se aceptan de `2024-11` a `2026-11`, y `2024-10` responde 400.
+- Sin listado de ventas: el detalle de cada venta sigue en el día (§3), así el
+  mes no necesita cursor ni paginar en el servidor.
