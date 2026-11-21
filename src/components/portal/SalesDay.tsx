@@ -92,7 +92,9 @@ function Summary({ d }: { d: DayView }) {
           <div>
             <h2 className="mb-1.5 font-semibold text-mufin-ink">Tarjeta por tipo</h2>
             {cardTypes.length === 0 ? (
-              <p className="text-muted">Sin ventas con tarjeta este día.</p>
+              <p className="text-muted">
+                {d.methods.some((m) => m.key === "card" && m.count > 0) ? "Sin detalle por tipo de tarjeta para este día." : "Sin ventas con tarjeta este día."}
+              </p>
             ) : (
               <dl className="space-y-1.5">
                 {cardTypes.map((x) => (

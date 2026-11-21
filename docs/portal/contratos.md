@@ -320,5 +320,7 @@ con una fila por día; cada día abre su vista diaria (§3).
 - `cash_*` y `card_*` siguen el `payment_method` de cada venta; si aparece otro
   medio, cuenta solo en `amount` y `count`.
 - Un mes futuro, anterior a 2 años o mal formado responde 400 `INVALID_DATE`.
+  Se comparan meses de calendario, con el límite inclusivo: con `as_of`
+  2026-11-20 se aceptan de `2024-11` a `2026-11`, y `2024-10` responde 400.
 - Sin listado de ventas: el detalle de cada venta sigue en el día (§3), así el
   mes no necesita cursor ni paginar en el servidor.

@@ -108,10 +108,16 @@ export default function ChangelogPage() {
           </article>
 
           <h2 className="mt-14 text-xl font-bold text-foreground">Historial</h2>
-          <p className="mt-1 text-sm text-muted">Toca una versión para ver qué cambió.</p>
-          {[...months].map(([month, releases]) => (
-            <section key={month} aria-label={formatMonth(month)} className="mt-6">
-              <h3 className="text-sm font-semibold text-muted first-letter:uppercase">{formatMonth(month)}</h3>
+          <p className="mt-1 text-sm text-muted">Toca un mes y luego una versión para ver qué cambió.</p>
+          {[...months].map(([month, releases], i) => (
+            <details key={month} open={i === 0} className="group/mes mt-6">
+              <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded text-sm font-semibold text-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 [&::-webkit-details-marker]:hidden">
+                <span className="first-letter:uppercase">{formatMonth(month)}</span>
+                <span className="font-normal tabular-nums">({releases.length})</span>
+                <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4 transition-transform group-open/mes:rotate-180 motion-reduce:transition-none">
+                  <path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </summary>
               <div className="mt-2 divide-y divide-border rounded-2xl border border-border bg-white">
                 {releases.map((r) => (
                   <details key={r.version} className="group">
@@ -131,7 +137,7 @@ export default function ChangelogPage() {
                   </details>
                 ))}
               </div>
-            </section>
+            </details>
           ))}
 
           <p className="mt-12 rounded-2xl bg-surface px-6 py-5 text-base text-muted">

@@ -12,12 +12,18 @@ export default function SidePanel({ title, subtitle, close, children }: { title:
   const heading = useRef<HTMLHeadingElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const [closing, setClosing] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   // Primero la animación de salida (globals.css, .side-panel), después la navegación que desmonta el panel.
+  // El dialog se cierra antes de navegar: si el servidor tarda, la página queda usable y no atrapada en el modal.
   const shut = () => {
     if (closing) return;
     setClosing(true);
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setTimeout(() => router.replace(close, { scroll: false }), still ? 0 : 180);
+    timer.current = setTimeout(() => {
+      dialog.current?.close();
+      document.body.style.overflow = "";
+      router.replace(close, { scroll: false });
+    }, still ? 0 : 180);
   };
 
   // showModal deja el resto de la página inerte: el foco no sale del panel.
@@ -27,6 +33,7 @@ export default function SidePanel({ title, subtitle, close, children }: { title:
     heading.current?.focus();
     document.body.style.overflow = "hidden";
     return () => {
+      clearTimeout(timer.current);
       document.body.style.overflow = "";
     };
   }, []);
