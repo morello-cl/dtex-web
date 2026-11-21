@@ -19,8 +19,8 @@ export default function Equipos() {
             Elige el equipo para tu negocio.
           </h2>
           <p className="mt-4 max-w-xl text-base text-muted">
-            Tres equipos Android con impresora integrada, el software DTEx® y
-            conexión 4G. Se venden o se arriendan.
+            Tres equipos Android con impresora integrada y el software DTEx®:
+            dos portátiles con 4G y uno de mesón.
           </p>
         </Reveal>
 

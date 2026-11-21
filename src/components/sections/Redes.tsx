@@ -97,7 +97,7 @@ export default function Redes() {
               {REDES.map((r) => (
                 <li key={r.nombre} className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-5">
                   <div className="flex h-9 items-center">
-                    <Image src={r.logo} alt={r.nombre} width={r.logoW} height={r.logoH} className={`${r.alto} w-auto`} />
+                    <Image src={r.logo} alt={r.nombre} width={r.logoW} height={r.logoH} className={`${r.alto} w-auto max-w-full object-contain object-left`} />
                   </div>
                   <p className="text-sm text-muted">
                     {r.equipo ? <>Con {r.equipo}. </> : null}En certificación.
