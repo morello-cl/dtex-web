@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import PortalFooter from "@/components/portal/PortalFooter";
-import PortalHeader from "@/components/portal/PortalHeader";
+import PortalShell from "@/components/portal/PortalShell";
 import { PayoutList, PayoutPanel } from "@/components/portal/Payouts";
 import { PortalApiError } from "@/lib/portal/auth";
 import { chileToday } from "@/lib/portal/day";
@@ -45,16 +44,9 @@ export default async function AbonosPage({ searchParams }: { searchParams: Promi
   const panel = detail && (await detail);
 
   return (
-    <div className="flex flex-1 flex-col bg-mufin-bg">
-      <PortalHeader merchant={me.merchant.name} current="/portal/abonos" />
-      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-        <p className="mb-6 truncate text-sm font-medium text-mufin-ink md:hidden">{me.merchant.name}</p>
-        <PayoutList v={buildPayouts(data, month, today)} />
-        {panel && <PayoutPanel v={panel.v} error={panel.error} close={self} />}
-      </main>
-      <div className="mx-auto mt-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
-        <PortalFooter />
-      </div>
-    </div>
+    <PortalShell merchant={me.merchant.name} current="/portal/abonos">
+      <PayoutList v={buildPayouts(data, month, today)} />
+      {panel && <PayoutPanel v={panel.v} error={panel.error} close={self} />}
+    </PortalShell>
   );
 }

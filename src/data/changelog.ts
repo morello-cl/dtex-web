@@ -23,6 +23,27 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.23.0",
+    date: "2026-11-23",
+    summary: "Un menú lateral para moverte por el portal y un detalle de venta más claro.",
+    changes: [
+      {
+        type: "added",
+        description:
+          "Menú lateral con Inicio, Ventas y Abonos. En el celular se abre con el botón de menú, arriba a la izquierda.",
+      },
+      {
+        type: "changed",
+        description:
+          "El detalle de cada venta muestra de entrada el estado en el SII, separa el total en documento y propina, y sigue el envío al SII paso a paso.",
+      },
+      {
+        type: "changed",
+        description: "Descargar el XML y copiar el número de seguimiento del SII quedan siempre a mano, al pie del detalle.",
+      },
+    ],
+  },
+  {
     version: "0.22.0",
     date: "2026-11-21",
     summary: "Tus ventas del mes en una sola vista y el XML de tus documentos.",
