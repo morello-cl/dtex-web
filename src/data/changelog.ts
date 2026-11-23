@@ -23,6 +23,18 @@ export type Release = {
 
 export const CHANGELOG: Release[] = [
   {
+    version: "0.23.1",
+    date: "2026-11-23",
+    summary: "El portal responde al instante cuando cambias de sección.",
+    changes: [
+      {
+        type: "fixed",
+        description:
+          "Al elegir Inicio, Ventas o Abonos en el menú, la pantalla cambia de inmediato y muestra que está cargando, en vez de quedarse quieta varios segundos. El menú se mantiene en su lugar.",
+      },
+    ],
+  },
+  {
     version: "0.23.0",
     date: "2026-11-23",
     summary: "Un menú lateral para moverte por el portal y un detalle de venta más claro.",

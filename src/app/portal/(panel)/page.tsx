@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Dashboard from "@/components/portal/Dashboard";
-import PortalShell from "@/components/portal/PortalShell";
 import { NextPayout } from "@/components/portal/Payouts";
 import { PortalApiError } from "@/lib/portal/auth";
 import { buildCards, buildTips, getSalesCards } from "@/lib/portal/cards";
@@ -11,7 +10,6 @@ import { getPayouts, nextPayout } from "@/lib/portal/payouts";
 import { buildDashboard, getSalesSummary, parseCompare, type SalesSummary } from "@/lib/portal/sales";
 import { requireMe, SESSION_COOKIE } from "@/lib/portal/session";
 
-// La plantilla de portal/layout no aplica a la página de su mismo segmento.
 export const metadata: Metadata = {
   title: { absolute: "Inicio | Portal de pagos MUFIN" },
 };
@@ -21,7 +19,7 @@ export default async function PortalPage({
 }: {
   searchParams: Promise<{ vs?: string | string[] }>;
 }) {
-  const me = await requireMe();
+  await requireMe();
   const vs = parseCompare((await searchParams).vs);
   const jwt = (await cookies()).get(SESSION_COOKIE)?.value ?? "";
 
@@ -47,9 +45,9 @@ export default async function PortalPage({
   const d = buildDashboard(summary, vs);
 
   return (
-    <PortalShell merchant={me.merchant.name} current="/portal">
+    <>
       {next && <NextPayout n={next} />}
       <Dashboard d={d} vs={vs} cards={cv} tips={buildTips(d, cv)} />
-    </PortalShell>
+    </>
   );
 }

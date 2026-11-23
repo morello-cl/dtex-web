@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import PortalShell from "@/components/portal/PortalShell";
 import { PayoutList, PayoutPanel } from "@/components/portal/Payouts";
 import { PortalApiError } from "@/lib/portal/auth";
 import { chileToday } from "@/lib/portal/day";
@@ -11,7 +10,7 @@ import { requireMe, SESSION_COOKIE } from "@/lib/portal/session";
 export const metadata: Metadata = { title: "Abonos" };
 
 export default async function AbonosPage({ searchParams }: { searchParams: Promise<{ mes?: string | string[]; abono?: string | string[] }> }) {
-  const me = await requireMe();
+  await requireMe();
   const today = chileToday();
   const p = await searchParams;
   const month = parseMonth(p.mes, today);
@@ -44,9 +43,9 @@ export default async function AbonosPage({ searchParams }: { searchParams: Promi
   const panel = detail && (await detail);
 
   return (
-    <PortalShell merchant={me.merchant.name} current="/portal/abonos">
+    <>
       <PayoutList v={buildPayouts(data, month, today)} />
       {panel && <PayoutPanel v={panel.v} error={panel.error} close={self} />}
-    </PortalShell>
+    </>
   );
 }
