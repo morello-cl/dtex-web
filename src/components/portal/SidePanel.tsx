@@ -7,7 +7,22 @@ import { useRouter } from "next/navigation";
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700";
 
 // Panel lateral sobre la página; en el celular ocupa la pantalla. La URL lo abre y cerrarlo vuelve a `close`.
-export default function SidePanel({ title, subtitle, close, children }: { title: string; subtitle?: string | null; close: string; children: ReactNode }) {
+export default function SidePanel({
+  title,
+  subtitle,
+  badge,
+  footer,
+  close,
+  children,
+}: {
+  title: string;
+  subtitle?: string | null;
+  badge?: ReactNode;
+  // Acciones fijas al pie del panel (en el celular quedan al alcance del pulgar).
+  footer?: ReactNode;
+  close: string;
+  children: ReactNode;
+}) {
   const router = useRouter();
   const heading = useRef<HTMLHeadingElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -49,11 +64,12 @@ export default function SidePanel({ title, subtitle, close, children }: { title:
         shut();
       }}
       onClick={(e) => e.target === e.currentTarget && shut()}
-      className="side-panel m-0 ml-auto h-dvh max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-mufin-900/40 sm:max-w-md"
+      className="side-panel m-0 ml-auto h-dvh max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-mufin-900/40 sm:max-w-lg"
     >
       <section className="flex h-full w-full flex-col bg-white shadow-xl">
         <header className="flex items-start justify-between gap-4 border-b border-mufin-border p-5">
-          <div>
+          <div className="min-w-0">
+            {badge}
             <h2 id="panel-titulo" ref={heading} tabIndex={-1} className="text-lg font-bold text-mufin-ink outline-none first-letter:uppercase">
               {title}
             </h2>
@@ -72,6 +88,7 @@ export default function SidePanel({ title, subtitle, close, children }: { title:
           </Link>
         </header>
         <div className="flex-1 space-y-4 overflow-y-auto bg-mufin-bg p-5">{children}</div>
+        {footer && <footer className="flex flex-wrap gap-2 border-t border-mufin-border bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">{footer}</footer>}
       </section>
     </dialog>
   );

@@ -69,14 +69,15 @@ const dateTime = new Intl.DateTimeFormat("es-CL", { dateStyle: "long", timeStyle
 const day = (iso: string) => new Intl.DateTimeFormat("es-CL", { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
 
 // tone: ok (verde), warn (ámbar), wait (neutro). Un rechazo del SII es ámbar: hay que corregir, no es una venta perdida.
-const SII: Record<SiiStatus, { label: string; tone: "ok" | "warn" | "wait" }> = {
-  accepted: { label: "Aceptado por el SII", tone: "ok" },
-  accepted_with_remarks: { label: "Aceptado con reparos por el SII", tone: "warn" },
-  rejected: { label: "Rechazado por el SII", tone: "warn" },
-  duplicate: { label: "Duplicado en el SII", tone: "warn" },
-  pending: { label: "Esperando respuesta del SII", tone: "wait" },
-  unknown: { label: "Sin respuesta del SII por ahora", tone: "wait" },
+const SII: Record<SiiStatus, { label: string; short: string; tone: "ok" | "warn" | "wait" }> = {
+  accepted: { label: "Aceptado por el SII", short: "Aceptado", tone: "ok" },
+  accepted_with_remarks: { label: "Aceptado con reparos por el SII", short: "Con reparos", tone: "warn" },
+  rejected: { label: "Rechazado por el SII", short: "Rechazado", tone: "warn" },
+  duplicate: { label: "Duplicado en el SII", short: "Duplicado", tone: "warn" },
+  pending: { label: "Esperando respuesta del SII", short: "En revisión", tone: "wait" },
+  unknown: { label: "Sin respuesta del SII por ahora", short: "Sin respuesta", tone: "wait" },
 };
+type Step = { label: string; state: "done" | "current" | "todo" | "warn" };
 
 export type SaleView = ReturnType<typeof buildSale>;
 
@@ -111,18 +112,26 @@ export function buildSale(s: SaleDetail) {
       });
   }
 
-  const sii = d.sii && Object.hasOwn(SII, d.sii.status) ? {
-    ...SII[d.sii.status],
-    trackId: d.sii.track_id,
-    sentAt: d.sii.sent_at && dateTime.format(new Date(d.sii.sent_at)),
-    message: d.sii.message,
-  } : null;
+  let sii = null;
+  if (d.sii && Object.hasOwn(SII, d.sii.status)) {
+    const m = SII[d.sii.status];
+    // Sin fecha de envío pero con respuesta, el envío ocurrió igual.
+    const sent = d.sii.sent_at !== null || m.tone !== "wait";
+    const steps: Step[] = [
+      { label: "Emitido", state: "done" },
+      { label: "Enviado al SII", state: sent ? "done" : "current" },
+      { label: m.tone === "wait" ? "Respuesta del SII" : m.label, state: m.tone === "ok" ? "done" : m.tone === "warn" ? "warn" : sent ? "current" : "todo" },
+    ];
+    sii = { ...m, steps, trackId: d.sii.track_id, sentAt: d.sii.sent_at && dateTime.format(new Date(d.sii.sent_at)), message: d.sii.message };
+  }
 
   return {
     sii,
     // Solo si tomahawk confirma que hay XML; la descarga pasa por /portal/ventas/{uuid}/xml.
     xmlHref: d.xml_available ? `/portal/ventas/${encodeURIComponent(s.uuid)}/xml` : null,
     total: formatClp(a.total + a.tip),
+    // El total cobrado incluye la propina; sin este desglose no calza con el total del documento.
+    breakdown: a.tip ? { doc: formatClp(a.total), tip: formatClp(a.tip) } : null,
     brand: c?.brand ?? null,
     // Para mostrar junto al logo de la marca, sin repetir su nombre.
     methodNoBrand: p?.method === "card" ? cardLabel(c && { type: c.type, brand: null, last_four: c.last4 }) : null,
@@ -138,6 +147,9 @@ export function buildSale(s: SaleDetail) {
     })),
     totals,
     payment,
-    place: `Equipo ${s.equipment.tid}${s.cashier_code ? `, cajero ${s.cashier_code}` : ""}`,
+    meta: [
+      { label: "Equipo", value: s.equipment.tid },
+      ...(s.cashier_code ? [{ label: "Cajero", value: s.cashier_code }] : []),
+    ],
   };
 }

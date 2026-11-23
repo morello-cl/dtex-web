@@ -455,7 +455,35 @@ body {
   opacity: 0;
   transition-duration: 180ms;
 }
+/* Cajón del menú en el celular: igual al panel, pero entra desde la izquierda. */
+.nav-drawer {
+  translate: 0 0;
+  transition: translate 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-drawer::backdrop {
+  opacity: 1;
+  transition: opacity 240ms ease-out;
+}
+@starting-style {
+  .nav-drawer[open] {
+    translate: -100% 0;
+  }
+  .nav-drawer[open]::backdrop {
+    opacity: 0;
+  }
+}
+.nav-drawer[data-closing] {
+  translate: -100% 0;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+.nav-drawer[data-closing]::backdrop {
+  opacity: 0;
+  transition-duration: 180ms;
+}
 @media (prefers-reduced-motion: reduce) {
+  .nav-drawer,
+  .nav-drawer::backdrop,
   .side-panel,
   .side-panel::backdrop {
     transition: none;

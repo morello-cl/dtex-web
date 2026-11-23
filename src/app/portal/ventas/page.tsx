@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import PortalFooter from "@/components/portal/PortalFooter";
-import PortalHeader from "@/components/portal/PortalHeader";
+import PortalShell from "@/components/portal/PortalShell";
 import SalePanel from "@/components/portal/SalePanel";
 import SalesDay from "@/components/portal/SalesDay";
 import SalesMonth, { ViewToggle } from "@/components/portal/SalesMonth";
@@ -54,17 +53,10 @@ export default async function VentasPage({ searchParams }: { searchParams: Promi
   const panel = sale && (await sale);
 
   return (
-    <div className="flex flex-1 flex-col bg-mufin-bg">
-      <PortalHeader merchant={me.merchant.name} current="/portal/ventas" />
-      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-        <p className="mb-6 truncate text-sm font-medium text-mufin-ink md:hidden">{me.merchant.name}</p>
-        <SalesDay d={buildDay(data, method, today)} today={today} min={minDate(today)} paged={cursor !== null} self={self} />
-        {panel && <SalePanel v={panel.v} error={panel.error} close={self} />}
-      </main>
-      <div className="mx-auto mt-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
-        <PortalFooter />
-      </div>
-    </div>
+    <PortalShell merchant={me.merchant.name} current="/portal/ventas">
+      <SalesDay d={buildDay(data, method, today)} today={today} min={minDate(today)} paged={cursor !== null} self={self} />
+      {panel && <SalePanel v={panel.v} error={panel.error} close={self} />}
+    </PortalShell>
   );
 }
 
@@ -84,27 +76,20 @@ async function MonthPage({ merchant, month, today }: { merchant: string; month: 
   // ponytail: 404 = tomahawk aún no publica §7; se avisa en vez de mandar a mantención. Borrar cuando esté en producción.
   if (!v && status !== 404) redirect("/portal/mantencion");
   return (
-    <div className="flex flex-1 flex-col bg-mufin-bg">
-      <PortalHeader merchant={merchant} current="/portal/ventas" />
-      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-        <p className="mb-6 truncate text-sm font-medium text-mufin-ink md:hidden">{merchant}</p>
-        {v ? (
-          <SalesMonth v={v} />
-        ) : (
-          <div className="space-y-6">
-            <header className="flex flex-wrap items-start justify-between gap-4">
-              <h1 className="text-2xl font-bold text-mufin-ink">Ventas del mes</h1>
-              <ViewToggle day={today} month={month} current="month" />
-            </header>
-            <p className="rounded-2xl border border-mufin-border bg-white p-5 text-sm text-mufin-ink sm:p-6">
-              La vista por mes estará disponible muy pronto. Mientras tanto, revisa tus ventas día por día.
-            </p>
-          </div>
-        )}
-      </main>
-      <div className="mx-auto mt-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
-        <PortalFooter />
-      </div>
-    </div>
+    <PortalShell merchant={merchant} current="/portal/ventas">
+      {v ? (
+        <SalesMonth v={v} />
+      ) : (
+        <div className="space-y-6">
+          <header className="flex flex-wrap items-start justify-between gap-4">
+            <h1 className="text-2xl font-bold text-mufin-ink">Ventas del mes</h1>
+            <ViewToggle day={today} month={month} current="month" />
+          </header>
+          <p className="rounded-2xl border border-mufin-border bg-white p-5 text-sm text-mufin-ink sm:p-6">
+            La vista por mes estará disponible muy pronto. Mientras tanto, revisa tus ventas día por día.
+          </p>
+        </div>
+      )}
+    </PortalShell>
   );
 }

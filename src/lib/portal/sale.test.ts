@@ -85,3 +85,17 @@ test("getSale: corta la espera con un plazo", async (t) => {
   t.mock.method(globalThis, "fetch", (_u: unknown, init: RequestInit) => new Promise((_, rej) => init.signal?.addEventListener("abort", () => rej(init.signal!.reason))));
   await assert.rejects(getSale("jwt", "u1", 20), { status: 0 });
 });
+
+test("detalle: desglose documento + propina, datos de la venta y etapas del SII", () => {
+  const s = sale({ cashier_code: "C2" });
+  assert.deepEqual(buildSale(s).breakdown, { doc: "$10.000", tip: "$1.000" });
+  assert.equal(buildSale(sale({ document: { ...sale().document, amounts: { ...sale().document.amounts, tip: 0 } } })).breakdown, null);
+  assert.deepEqual(buildSale(s).meta.map((m) => m.label), ["Equipo", "Cajero"]);
+  s.document.sii = { status: "accepted", track_id: "1", sent_at: "2026-11-13T14:40:00-03:00", message: null };
+  assert.deepEqual(buildSale(s).sii?.steps.map((x) => x.state), ["done", "done", "done"]);
+  assert.equal(buildSale(s).sii?.short, "Aceptado");
+  s.document.sii = { status: "pending", track_id: null, sent_at: null, message: null };
+  assert.deepEqual(buildSale(s).sii?.steps.map((x) => x.state), ["done", "current", "todo"]);
+  s.document.sii = { status: "rejected", track_id: "2", sent_at: "2026-11-13T14:40:00-03:00", message: "Error" };
+  assert.deepEqual(buildSale(s).sii?.steps.map((x) => x.state), ["done", "done", "warn"]);
+});
