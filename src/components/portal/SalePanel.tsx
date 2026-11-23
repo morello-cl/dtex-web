@@ -149,8 +149,8 @@ export default function SalePanel({ v, error, close }: { v: SaleView | null; err
               )}
             </div>
             {v.payment[0] && (
-              <div className="flex items-center justify-between gap-3 border-t border-mufin-border bg-mufin-bg/50 px-5 py-3">
-                <p className="flex min-w-0 items-center gap-2.5 text-sm font-medium whitespace-nowrap text-mufin-ink">
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-mufin-border bg-mufin-bg/50 px-5 py-3">
+                <p className="flex min-w-0 items-center gap-2.5 text-sm font-medium text-mufin-ink">
                   {hasBrand(v.brand) && v.methodNoBrand ? (
                     <>
                       <BrandMark name={v.brand} size="h-8 w-8" />
