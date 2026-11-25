@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import MufinLogo from "@/components/portal/MufinLogo";
 import { logoutAction } from "@/lib/portal/actions";
 
@@ -8,7 +11,6 @@ export const NAV = [
   { href: "/portal/ventas", label: "Ventas", icon: "M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2zM9 8h6M9 12h6M9 16h3" },
   { href: "/portal/abonos", label: "Abonos", icon: "M2 7h20v10H2zM12 14.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5M6 10v4M18 10v4" },
 ] as const;
-export type NavHref = (typeof NAV)[number]["href"];
 
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mufin-700";
 
@@ -21,7 +23,8 @@ export function Icon({ d, className = "h-5 w-5" }: { d: string; className?: stri
 }
 
 /** Contenido del menú: lo usan la barra lateral (computador) y el cajón (celular). */
-export default function PortalNav({ merchant, current }: { merchant: string; current: NavHref }) {
+export default function PortalNav({ merchant }: { merchant: string }) {
+  const path = usePathname();
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center px-5">
@@ -32,7 +35,7 @@ export default function PortalNav({ merchant, current }: { merchant: string; cur
       <nav aria-label="Secciones" className="flex-1 px-3 py-4">
         <ul className="space-y-1">
           {NAV.map((n) => {
-            const on = n.href === current;
+            const on = n.href === "/portal" ? path === n.href : path.startsWith(n.href);
             return (
               <li key={n.href}>
                 <Link

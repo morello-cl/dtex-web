@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import PortalShell from "@/components/portal/PortalShell";
 import SalePanel from "@/components/portal/SalePanel";
 import SalesDay from "@/components/portal/SalesDay";
 import SalesMonth, { ViewToggle } from "@/components/portal/SalesMonth";
@@ -16,11 +15,11 @@ export const metadata: Metadata = { title: "Ventas" };
 type Params = { mes?: string | string[]; fecha?: string | string[]; medio?: string | string[]; cursor?: string | string[]; venta?: string | string[] };
 
 export default async function VentasPage({ searchParams }: { searchParams: Promise<Params> }) {
-  const me = await requireMe();
+  await requireMe();
   const p = await searchParams;
   const today = chileToday();
   const month = parseSalesMonth(p.mes, today);
-  if (month) return <MonthPage merchant={me.merchant.name} month={month} today={today} />;
+  if (month) return <MonthPage month={month} today={today} />;
   if (p.mes) redirect("/portal/ventas?mes=" + today.slice(0, 7));
   const date = parseDate(p.fecha, today);
   const method = parseMethod(p.medio);
@@ -53,15 +52,15 @@ export default async function VentasPage({ searchParams }: { searchParams: Promi
   const panel = sale && (await sale);
 
   return (
-    <PortalShell merchant={me.merchant.name} current="/portal/ventas">
+    <>
       <SalesDay d={buildDay(data, method, today)} today={today} min={minDate(today)} paged={cursor !== null} self={self} />
       {panel && <SalePanel v={panel.v} error={panel.error} close={self} />}
-    </PortalShell>
+    </>
   );
 }
 
 // Vista mensual (§7): ?mes=YYYY-MM. Cada día enlaza a su vista diaria.
-async function MonthPage({ merchant, month, today }: { merchant: string; month: string; today: string }) {
+async function MonthPage({ month, today }: { month: string; today: string }) {
   const jwt = (await cookies()).get(SESSION_COOKIE)?.value ?? "";
   let v = null;
   let status = 0;
@@ -76,7 +75,7 @@ async function MonthPage({ merchant, month, today }: { merchant: string; month: 
   // ponytail: 404 = tomahawk aún no publica §7; se avisa en vez de mandar a mantención. Borrar cuando esté en producción.
   if (!v && status !== 404) redirect("/portal/mantencion");
   return (
-    <PortalShell merchant={merchant} current="/portal/ventas">
+    <>
       {v ? (
         <SalesMonth v={v} />
       ) : (
@@ -90,6 +89,6 @@ async function MonthPage({ merchant, month, today }: { merchant: string; month: 
           </p>
         </div>
       )}
-    </PortalShell>
+    </>
   );
 }

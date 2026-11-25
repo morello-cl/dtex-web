@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getMe, isServiceDown, type Me, type Session } from "./auth";
@@ -21,7 +22,8 @@ export async function clearSessionCookie(): Promise<void> {
 
 // ponytail: valida contra tomahawk en cada página protegida (1 request extra);
 // así se aplica la revocación por cambio de correo sin estado propio.
-export async function requireMe(): Promise<Me> {
+// cache: el layout y la página la llaman en la misma request; una sola consulta.
+export const requireMe = cache(async (): Promise<Me> => {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   let me: Me | null = null;
   let down = false;
@@ -35,4 +37,4 @@ export async function requireMe(): Promise<Me> {
   if (down) redirect("/portal/mantencion");
   if (!me) redirect("/portal/ingresar");
   return me;
-}
+});
